@@ -17,4 +17,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
+if (require.main === module) {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        console.log(`Server teče na portu ${PORT}`);
+        console.log(`Obiščite: http://localhost:${PORT}/`);
+    });
+}
+
 module.exports = app;
