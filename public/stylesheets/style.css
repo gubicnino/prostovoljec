@@ -1,7 +1,15 @@
 :root {
     --bs-main: #D32F2F;
     --bs-secondary: #212121;
-    --bs-white: #FAFAFA;
+    --bs-white: rgba(250, 250, 250, 1);  
+    --bs-white8: rgba(250, 250, 250, 0.8);  
+    --bs-white6: rgba(250, 250, 250, 0.6);  
+    --bs-white5: rgba(250, 250, 250, 0.5);  
+    --bs-dark: rgba(33, 33, 33, 1);
+    --bs-dark8: rgba(33, 33, 33, 0.8);
+    --bs-dark6: rgba(33, 33, 33, 0.6);
+    --bs-dark5: rgba(33, 33, 33, 0.5);
+    --bs-dark2: rgba(33, 33, 33, 0.2);
     --font-heading: 'Montserrat', sans-serif;
     --font-body: 'Roboto', sans-serif;
 }
@@ -10,6 +18,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    transition: all 0.3s ease;
 }
 body {
     font-family: var(--font-body);
@@ -50,8 +59,15 @@ h6 {
 p {
     font-size: 1.2rem;
     line-height: 1.6;
-    color: var(--bs-white);
+    color: var(--bs-white8);
 }
+a {
+    text-decoration: none;
+}
+section {
+    padding: 100px 0; 
+}
+
 /* Buttons */
 .btn {
     background-color: var(--bs-main);
@@ -61,6 +77,7 @@ p {
     border-radius: 5px;
     transition: all 0.5s ease;
     border: 2px solid var(--bs-main);
+    font-weight: 500;
 }
 .btn:hover {
     background-color: var(--bs-white);
@@ -101,9 +118,13 @@ p {
 
 /* Hero section */
 .hero-section {
+    padding: 0px 0 0 0;
     position: relative;
     overflow: hidden;
     height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .hero-title {
@@ -201,6 +222,166 @@ p {
 .redText {
     color: var(--bs-main);
 }
+.diagonalCorner{
+    border-radius: 0 30px 0 30px ;
+}
+.povdrajenParagraph {
+    color: var(--bs-white);
+}
+
+/*Index*/
+.features-section {
+    text-align: center;
+}
+
+.section-subtitle {
+    color: var(--bs-main);
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.section-title {
+    margin-bottom: 20px;
+}
+
+.section-description {
+    max-width: 700px;
+    margin: 0 auto 60px;
+}
+
+.feature-card {
+    background-color: var(--bs-white);
+    padding: 40px 25px;
+    height: 100%;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 25px;
+}
+
+.feature-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--bs-main);
+
+}
+
+.feature-description {
+    color: var(--bs-dark6);
+    font-size: 0.95rem;
+}
+
+.campaign-cards {
+    padding: 40px 0;
+}
+
+.campaign-card {
+    background-color: var(--bs-white);
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    height: 100%;
+    position: relative;
+    color: var(--bs-dark);
+    padding-bottom: 80px;
+}
+
+.campaign-image {
+    position: relative;
+    height: 240px;
+    overflow: hidden;
+}
+
+.campaign-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.progress-container {
+    position: relative;
+    padding: 20px 30px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.progress-label {
+    color: var(--bs-dark8);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.progress-value {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.percentage {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.percentage-symbol {
+    font-size: 1.2rem;
+    vertical-align: super;
+}
+
+.campaign-details {
+    padding: 20px 30px;
+}
+
+.campaign-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    line-height: 1.3;
+}
+
+.campaign-description {
+    color: var(--bs-dark8);
+    font-size: 1rem;
+    margin-bottom: 30px;
+}
+
+.donate-btn {
+    width: 90px;
+    height: 80px;
+    border-radius: 40px 0 0 0;
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+}
+.campainGreyLine{
+    width: 1px;
+    height: 50px;
+    background-color: var(--bs-dark2);
+}
+.campaignGreyLineH{
+    width: 80%;
+    margin: 0 auto;
+    height: 1px;
+    background-color: var(--bs-dark2);
+}
+
+#header .navbar {
+    background-color: transparent !important;
+}
 
 /* SOcial media ikone pod ABOUS US */
 .social-icon {
@@ -222,8 +403,4 @@ p {
     background-color: var(--bs-main) !important;
     color: var(--bs-white) !important;
     transform: translateY(-3px);
-}
-
-#header .navbar {
-    background-color: transparent !important;
 }
