@@ -202,3 +202,24 @@ p {
     color: var(--bs-main);
 }
 
+/* SOcial media ikone pod ABOUS US */
+.social-icon {
+    width: 40px !important;
+    height: 40px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.3s ease;
+    color: var(--bs-white);
+}
+
+.social-icon i {
+    font-size: 1rem;
+}
+
+.social-icon:hover {
+    background-color: var(--bs-main) !important;
+    color: var(--bs-white) !important;
+    transform: translateY(-3px);
+}
