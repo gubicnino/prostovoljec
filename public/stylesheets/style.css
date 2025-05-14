@@ -118,6 +118,7 @@ section {
 
 /* Hero section */
 .hero-section {
+    margin-top: -100px;
     padding: 0px 0 0 0;
     position: relative;
     overflow: hidden;
@@ -189,6 +190,9 @@ section {
 }
 
 /* Navigation */
+nav {
+    padding: 2rem 0;
+}
 .nav-item {
     position: relative;
     display: inline-block;
@@ -381,6 +385,9 @@ section {
 
 #header .navbar {
     background-color: transparent !important;
+    height: 100px !important;
+    position: relative !important;
+    z-index: 9999 !important; 
 }
 
 /* SOcial media ikone pod ABOUS US */
@@ -403,4 +410,123 @@ section {
     background-color: var(--bs-main) !important;
     color: var(--bs-white) !important;
     transform: translateY(-3px);
+}
+/* ABOUS US */
+.section-alternate {
+    position: relative;
+    z-index: 1;
+
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.section-alternate::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url(../img/MapBackground.png) center/contain repeat;
+    opacity: 0.5; /* Adjust the opacity as needed */
+    z-index: 0; /* Ensure it stays behind the content */
+}
+.section-alternate .container {
+    position: relative;
+}
+.card-item {
+    transition: all 0.6s ease;
+    cursor: pointer;
+    position: relative;
+    padding: 0;
+}
+
+.card-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.3);
+}
+
+.image-wrapper {
+    overflow: hidden;
+    border-top-right-radius: 3rem;
+    position: relative;
+}
+
+.image-wrapper img {
+    transition: transform 0.6s ease;
+    transform: scale(1);
+}
+
+.card-item h3,
+.card-item p {
+    padding: 0 2.5rem;
+}
+
+.card-item h3 {
+    padding-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.card-item p {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+}
+
+
+.card-item:hover .image-wrapper img {
+    transform: scale(1.1);
+}
+
+/* STAtistika kartice */
+.section-alternate .card-item {
+    padding: 1.75rem 1rem 1.75rem 1.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-align: left;
+    position: relative;
+    cursor: default;
+    z-index: 5;
+    background-color: rgba(105, 105, 105, 0.671);
+}
+
+
+
+.section-alternate .card-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.section-alternate .card-item i {
+    font-size: 2rem;
+    color: var(--bs-warning);
+    padding-left: 0.5rem;
+    position: relative;
+}
+
+.section-alternate .card-item .stat-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.section-alternate .card-item h3 {
+    font-size: 1.75rem;
+    margin-bottom: 0;
+    padding: 0;
+    line-height: 1.2;
+}
+
+.section-alternate .card-item p {
+    font-size: 0.9rem;
+    margin: 0;
+    padding: 0;
+    line-height: 1.4;
+}
+#higherH2{
+    position: relative;
+    z-index: 9999;
 }
