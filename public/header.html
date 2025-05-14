@@ -1,78 +1,112 @@
-<!-- Main Header -->
-<div class="main-header">
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
     <div class="container">
-        <div class="main-header-content">
-            <a href="index.html" class="logo">
-                <i class="fas fa-heart" style="color: var(--primary-color);"></i>
-                <div>Be<span>Kind</span></div>
-            </a>
-            <nav class="main-nav">
-                <ul class="main-menu">
-                    <li class="menu-item">
-                        <a href="#">Nav1</a>
-                        <ul class="dropdown">
-                            <li class="dropdown-item"><a href="#">Link 1</a></li>
-                            <li class="dropdown-item"><a href="#">Link 2</a></li>
-                            <li class="dropdown-item"><a href="#">Link 3</a></li>
-                        </ul>
-                    </li>
-                    <li class="menu-item">
-                        <a href="#">Nav2</a>
-                        <ul class="dropdown">
-                            <li class="dropdown-item"><a href="#">Link 1</a></li>
-                            <li class="dropdown-item"><a href="#">Link 2</a></li>
-                            <li class="dropdown-item"><a href="#">Link 3</a></li>
-                        </ul>
-                    </li>
-                    <li class="menu-item">
-                        <a href="#">Nav3</a>
-                        <ul class="dropdown">
-                            <li class="dropdown-item"><a href="#">Link 1</a></li>
-                            <li class="dropdown-item"><a href="#">Link 2</a></li>
-                            <li class="dropdown-item"><a href="#">Link 3</a></li>
-                        </ul>
-                    </li>
-                    <li class="menu-item">
-                        <a href="#">Nav4</a>
-                        <ul class="dropdown">
-                            <li class="dropdown-item"><a href="#">Link 1</a></li>
-                            <li class="dropdown-item"><a href="#">Link 2</a></li>
-                            <li class="dropdown-item"><a href="#">Link 3</a></li>
-                        </ul>
-                    </li>
-                    <li class="menu-item">
-                        <a href="#">Nav5</a>
-                        <ul class="dropdown">
-                            <li class="dropdown-item"><a href="#">Link 1</a></li>
-                            <li class="dropdown-item"><a href="#">Link 2</a></li>
-                            <li class="dropdown-item"><a href="#">Link 3</a></li>
-                        </ul>
-                    </li>
-                    <li class="menu-item">
-                        <a href="#">Nav6</a>
-                        <ul class="dropdown">
-                            <li class="dropdown-item"><a href="#">Link 1</a></li>
-                            <li class="dropdown-item"><a href="#">Link 2</a></li>
-                            <li class="dropdown-item"><a href="#">Link 3</a></li>
-                        </ul>
-                    </li>
-                    <li class="menu-item">
-                        <a href="#">Nav7</a>
-                        <ul class="dropdown">
-                            <li class="dropdown-item"><a href="#">Link 1</a></li>
-                            <li class="dropdown-item"><a href="#">Link 2</a></li>
-                            <li class="dropdown-item"><a href="#">Link 3</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </nav>
-            
-            <div class="header-actions">
-                <div class="search-btn">
+        <a class="navbar-brand d-flex align-items-center" href="index.html">
+            <i class="fas fa-heart text-danger me-2"></i>
+            <div class="fw-bold">Manus<span class="text-danger">Mano</span></div>
+        </a>
+
+        <button class="navbar-toggler ms-auto me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="d-flex d-lg-none">
+            <button class="btn btn-light rounded-circle me-2" type="button">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+
+        <div class="d-flex d-lg-none">
+            <a href="#" class="btn btn-danger">Gumb1</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="nav1Dropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Nav1
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="nav1Dropdown">
+                        <li><a class="dropdown-item" href="#">Link 1</a></li>
+                        <li><a class="dropdown-item" href="#">Link 2</a></li>
+                        <li><a class="dropdown-item" href="#">Link 3</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="nav2Dropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Nav2
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="nav2Dropdown">
+                        <li><a class="dropdown-item" href="#">Link 1</a></li>
+                        <li><a class="dropdown-item" href="#">Link 2</a></li>
+                        <li><a class="dropdown-item" href="#">Link 3</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="nav3Dropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Nav3
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="nav3Dropdown">
+                        <li><a class="dropdown-item" href="#">Link 1</a></li>
+                        <li><a class="dropdown-item" href="#">Link 2</a></li>
+                        <li><a class="dropdown-item" href="#">Link 3</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="nav4Dropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Nav4
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="nav4Dropdown">
+                        <li><a class="dropdown-item" href="#">Link 1</a></li>
+                        <li><a class="dropdown-item" href="#">Link 2</a></li>
+                        <li><a class="dropdown-item" href="#">Link 3</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="nav5Dropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Nav5
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="nav5Dropdown">
+                        <li><a class="dropdown-item" href="#">Link 1</a></li>
+                        <li><a class="dropdown-item" href="#">Link 2</a></li>
+                        <li><a class="dropdown-item" href="#">Link 3</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="nav6Dropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Nav6
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="nav6Dropdown">
+                        <li><a class="dropdown-item" href="#">Link 1</a></li>
+                        <li><a class="dropdown-item" href="#">Link 2</a></li>
+                        <li><a class="dropdown-item" href="#">Link 3</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="nav7Dropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Nav7
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="nav7Dropdown">
+                        <li><a class="dropdown-item" href="#">Link 1</a></li>
+                        <li><a class="dropdown-item" href="#">Link 2</a></li>
+                        <li><a class="dropdown-item" href="#">Link 3</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <div class="d-none d-lg-flex align-items-center">
+                <button class="btn btn-light rounded-circle me-3" type="button">
                     <i class="fas fa-search"></i>
-                </div>
-                <a href="#" class="donate-btn">Gumb1</a>
+                </button>
+                <a href="#" class="btn btn-danger">Gumb1</a>
             </div>
         </div>
     </div>
-</div>
+</nav>

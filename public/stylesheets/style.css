@@ -1,247 +1,27 @@
 :root {
---primary-color: #ff0000;
---secondary-color: #3c3998;
---text-color: #444444;
---light-color: #ffffff;
---dark-color: #222222;
---gray-color: #f7f7f7;
---border-color: #e9e9e9;
-}
-
-* {
-margin: 0;
-padding: 0;
-box-sizing: border-box;
+    --bs-danger: #ff0000;
+    --bs-secondary: #000000;
 }
 
 body {
-font-family: 'Poppins', sans-serif;
-color: var(--text-color);
-font-size: 15px;
-line-height: 1.6;
+    font-family: 'Poppins', sans-serif;
+    color: #444444;
+    font-size: 15px;
+    line-height: 1.6;
 }
 
-a {
-text-decoration: none;
-color: inherit;
-transition: all 0.3s ease;
+.footer-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    background-color: var(--bs-danger);
 }
 
-ul {
-list-style: none;
-}
-
-.container {
-width: 100%;
-max-width: 1200px;
-margin: 0 auto;
-padding: 0 15px;
-}
-
-/* Header Styles */
-.main-header {
-background-color: var(--light-color);
-padding: 20px 0;
-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-position: relative;
-z-index: 10;
-}
-
-.main-header-content {
-display: flex;
-justify-content: space-between;
-align-items: center;
-}
-
-.logo {
-font-size: 24px;
-font-weight: 700;
-color: var(--secondary-color);
-display: flex;
-align-items: center;
-gap: 10px;
-}
-
-.logo span {
-color: var(--primary-color);
-}
-
-.main-menu {
-display: flex;
-gap: 30px;
-}
-
-.menu-item {
-position: relative;
-padding: 10px 0;
-}
-
-.menu-item>a {
-font-weight: 500;
-color: var(--dark-color);
-}
-
-.menu-item>a:hover {
-color: var(--primary-color);
-}
-
-.dropdown {
-position: absolute;
-top: 100%;
-left: 0;
-width: 200px;
-background-color: var(--light-color);
-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-border-radius: 5px;
-padding: 10px 0;
-opacity: 0;
-visibility: hidden;
-transform: translateY(20px);
-transition: all 0.3s ease;
-z-index: 100;
-}
-
-.menu-item:hover .dropdown {
-opacity: 1;
-visibility: visible;
-transform: translateY(0);
-}
-
-.dropdown-item {
-padding: 8px 20px;
-}
-
-.dropdown-item a:hover {
-color: var(--primary-color);
-}
-
-.header-actions {
-display: flex;
-gap: 20px;
-align-items: center;
-}
-
-.search-btn {
-width: 40px;
-height: 40px;
-display: flex;
-align-items: center;
-justify-content: center;
-background-color: var(--gray-color);
-border-radius: 50%;
-cursor: pointer;
-}
-
-.donate-btn {
-background-color: var(--primary-color);
-padding: 10px 25px;
-border-radius: 5px;
-color: var(--light-color);
-font-weight: 500;
-}
-
-.donate-btn:hover {
-background-color: var(--secondary-color);
-}
-
-/* Footer Styles */
-.main-footer {
-background-color: #292945;
-color: var(--light-color);
-padding: 80px 0 0;
-}
-
-.footer-widgets {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-gap: 30px;
-margin-bottom: 60px;
-}
-
-.footer-widget {
-margin-bottom: 30px;
-}
-
-.widget-title {
-font-size: 18px;
-font-weight: 600;
-margin-bottom: 25px;
-position: relative;
-padding-bottom: 10px;
-}
-
-.widget-title:after {
-content: '';
-position: absolute;
-bottom: 0;
-left: 0;
-width: 50px;
-height: 2px;
-background-color: var(--primary-color);
-}
-
-.about-widget p {
-margin-bottom: 20px;
-opacity: 0.8;
-}
-
-.footer-socials {
-display: flex;
-gap: 10px;
-}
-
-.footer-social-icon {
-width: 40px;
-height: 40px;
-display: flex;
-align-items: center;
-justify-content: center;
-background-color: rgba(255, 255, 255, 0.1);
-border-radius: 50%;
-transition: all 0.3s ease;
-}
-
-.footer-social-icon:hover {
-background-color: var(--primary-color);
-}
-
-.links-widget ul li {
-margin-bottom: 12px;
-}
-
-.links-widget ul li a {
-opacity: 0.8;
-transition: all 0.3s ease;
-}
-
-.links-widget ul li a:hover {
-opacity: 1;
-color: var(--primary-color);
-padding-left: 5px;
-}
-
-.contact-widget .contact-item {
-display: flex;
-gap: 15px;
-margin-bottom: 20px;
-}
-
-.contact-icon {
-color: var(--primary-color);
-font-size: 18px;
-}
-
-.contact-text {
-opacity: 0.8;
-}
-
-.footer-bottom {
-background-color: #1e1e35;
-padding: 25px 0;
-text-align: center;
-}
-
-.footer-bottom-text {
-opacity: 0.7;
-font-size: 14px;
+.hover-link:hover {
+    color: var(--bs-danger) !important;
+    padding-left: 5px;
+    transition: all 0.3s ease;
 }
