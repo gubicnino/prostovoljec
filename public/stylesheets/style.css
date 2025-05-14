@@ -223,3 +223,7 @@ p {
     color: var(--bs-white) !important;
     transform: translateY(-3px);
 }
+
+#header .navbar {
+    background-color: transparent !important;
+}
