@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ManusMano - Projekti</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="stylesheets/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="scripts/loader.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <header id="header" class="position-absolute w-100 top-0 start-0" style="z-index: 1030;"></header>
+        <main class="main-content">
+            <section class="d-flex align-items-center justify-content-center position-relative"
+                style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url(img/HeroProjekti.jpg) center/cover no-repeat; min-height: 60vh;">
+                <div class="position-absolute rounded-circle bg-warning"
+                    style="width: 15px; height: 15px; top: 20%; left: 10%;"></div>
+                <div class="position-absolute rounded-circle bg-danger"
+                    style="width: 15px; height: 15px; bottom: 20%; right: 15%;"></div>
+                <div class="container py-5 mt-4">
+                    <div class="row justify-content-center text-center">
+                        <div class="col-lg-8">
+                            <h1 class="hero-title fw-bold mb-3">Projekti</h1>
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb justify-content-center mb-0">
+                                    <li class="breadcrumb-item">
+                                        <a href="index.html"
+                                            class="text-white text-decoration-none hover-link">ManusMano</a>
+                                    </li>
+                                    <li class="breadcrumb-item">
+                                        <span class="redText">Projekti</span>
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="d-flex align-items-center justify-content-center position-relative"
+                style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url(img/ProjektiBackground.jpg) center/cover no-repeat;">
+                <div class="position-absolute rounded-circle bg-warning"
+                    style="width: 15px; height: 15px; top: 20%; left: 10%;">
+                </div>
+                <div class="position-absolute rounded-circle bg-danger"
+                    style="width: 15px; height: 15px; bottom: 20%; right: 15%;">
+                </div>
+                <div class="container">
+                    <div class="text-center mb-5">
+                        <h6 class="section-subtitle">Naši projekti</h6>
+                        <h2 class="section-title">PROJEKTI, KI <span class="redText">DELAJO SPREMEMBO</span></h2>
+                        <p class="section-description">Lorem Ipsum is simply dummy text of the printing and typesetting
+                            industry.
+                        </p>
+                    </div>
+                    <div class="row g-4" id="projectsContainer">
+                        <!-- Trenuten templatee za psamezno kartico -->
+                        <template id="projectTemplate">
+                            <div class="col-lg-4 col-md-6">
+                                <div class="campaign-card diagonalCorner">
+                                    <div class="campaign-image">
+                                        <img src="" alt="" class="diagonalCorner project-image">
+                                    </div>
+                                    <div class="progress-container">
+                                        <div class="progress-info">
+                                            <div>
+                                                <div class="progress-label">Current</div>
+                                                <div class="progress-value project-current">$0</div>
+                                            </div>
+                                            <div class="campainGreyLine"></div>
+                                            <div class="percentage">
+                                                <span class="project-percentage">0</span><span
+                                                    class="percentage-symbol">%</span>
+                                            </div>
+                                            <div class="campainGreyLine"></div>
+                                            <div>
+                                                <div class="progress-label">Target</div>
+                                                <div class="progress-value project-target">$0</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="campaignGreyLineH"></div>
+                                    <div class="campaign-details">
+                                        <h3 class="campaign-title project-title">Project Title</h3>
+                                        <p class="campaign-description project-description">Tu bo description projekta</p>
+                                        <div class="orange-line"></div>
+                                        <button class="btn donate-btn" data-project-id="">
+                                            <svg width="24" height="24" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                                aria-hidden="true">
+                                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"
+                                                    fill="none">
+                                                </circle>
+                                                <path d="M10 8l4 4-4 4" stroke="currentColor" stroke-width="2"
+                                                    fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </section>
+            <script>
+                function nalaudajProjects() {
+                    const projectsData = [
+                        {
+                            id: 1,
+                            title: "Sample Project 1",
+                            description: "Lorem Ipsum is simply dummy text",
+                            image: "img/campaing-3.jpg",
+                            current: 1000,
+                            target: 5000
+                        },
+                        {
+                            id: 1,
+                            title: "Sample Project 1",
+                            description: "Lorem Ipsum is simply dummy text",
+                            image: "img/campaing-3.jpg",
+                            current: 1000,
+                            target: 5000
+                        },
+                        {
+                            id: 1,
+                            title: "Sample Project 1",
+                            description: "Lorem Ipsum is simply dummy text",
+                            image: "img/campaing-3.jpg",
+                            current: 1000,
+                            target: 5000
+                        },
+                        {
+                            id: 1,
+                            title: "Sample Project 1",
+                            description: "Lorem Ipsum is simply dummy text",
+                            image: "img/campaing-3.jpg",
+                            current: 1000,
+                            target: 5000
+                        },
+                        {
+                            id: 1,
+                            title: "Sample Project 1",
+                            description: "Lorem Ipsum is simply dummy text",
+                            image: "img/campaing-3.jpg",
+                            current: 1000,
+                            target: 5000
+                        },
+                        {
+                            id: 1,
+                            title: "Sample Project 1",
+                            description: "Lorem Ipsum is simply dummy text",
+                            image: "img/campaing-3.jpg",
+                            current: 1000,
+                            target: 5000
+                        },
+                        {
+                            id: 1,
+                            title: "Sample Project 1",
+                            description: "Lorem Ipsum is simply dummy text",
+                            image: "img/campaing-3.jpg",
+                            current: 1000,
+                            target: 5000
+                        },
+                        {
+                            id: 1,
+                            title: "Sample Project 1",
+                            description: "Lorem Ipsum is simply dummy text",
+                            image: "img/campaing-3.jpg",
+                            current: 1000,
+                            target: 5000
+                        },
+                        {
+                            id: 1,
+                            title: "Sample Project 1",
+                            description: "Lorem Ipsum is simply dummy text",
+                            image: "img/campaing-3.jpg",
+                            current: 1000,
+                            target: 5000
+                        },
+                        {
+                            id: 1,
+                            title: "Sample Project 1",
+                            description: "Lorem Ipsum is simply dummy text",
+                            image: "img/campaing-3.jpg",
+                            current: 1000,
+                            target: 5000
+                        },
+                        {
+                            id: 1,
+                            title: "Sample Project 1",
+                            description: "Lorem Ipsum is simply dummy text",
+                            image: "img/campaing-3.jpg",
+                            current: 1000,
+                            target: 5000
+                        },
+                        {
+                            id: 1,
+                            title: "Sample Project 1",
+                            description: "Lorem Ipsum is simply dummy text",
+                            image: "img/campaing-3.jpg",
+                            current: 1000,
+                            target: 5000
+                        }
+                    ];
+
+                    const container = document.getElementById('projectsContainer');
+                    const template = document.getElementById('projectTemplate');
+
+                    // Updejtaa celoten info v karticaj
+                    projectsData.forEach(project => {
+                        const clone = template.content.cloneNode(true);
+                        clone.querySelector('.project-image').src = project.image;
+                        clone.querySelector('.project-image').alt = project.title;
+                        clone.querySelector('.project-title').textContent = project.title;
+                        clone.querySelector('.project-description').textContent = project.description;
+                        clone.querySelector('.project-current').textContent = `$${project.current}`;
+                        clone.querySelector('.project-target').textContent = `$${project.target}`;
+                        clone.querySelector('.project-percentage').textContent = Math.round((project.current / project.target) * 100);
+                        clone.querySelector('.donate-btn').setAttribute('data-project-id', project.id);
+                        container.appendChild(clone);
+                    });
+                }
+                document.addEventListener('DOMContentLoaded', nalaudajProjects);
+            </script>
+        </main>
+        <footer id="footer"></footer>
+    </div>
+</body>
+</html>
