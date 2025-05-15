@@ -133,27 +133,25 @@
             const selectedValue = this.value;
             const prostovoljecForm = document.getElementById('prostovoljecForm');
             const drustvoForm = document.getElementById('drustvoForm');
-            if (selectedValue === 'prostovoljec') {
-                drustvoForm.classList.remove('show');
-            } else if (selectedValue === 'drustvo') {
-                prostovoljecForm.classList.remove('show');
-            } else {
-                prostovoljecForm.classList.remove('show');
-                drustvoForm.classList.remove('show');
-            }
+
+            // Najprej nastavi opacity na 0 za obe formi
+            prostovoljecForm.style.opacity = '0';
+            drustvoForm.style.opacity = '0';
+
             setTimeout(() => {
+                // Odstrani show iz obeh form
+                prostovoljecForm.classList.remove('show');
+                drustvoForm.classList.remove('show');
+
+                // Doda show in opacity 1 na izbrano formo
                 if (selectedValue === 'prostovoljec') {
                     prostovoljecForm.classList.add('show');
-                    drustvoForm.classList.remove('show');
+                    prostovoljecForm.style.opacity = '1';
                 } else if (selectedValue === 'drustvo') {
                     drustvoForm.classList.add('show');
-                    prostovoljecForm.classList.remove('show');
-                } else {
-                    prostovoljecForm.classList.remove('show');
-                    drustvoForm.classList.remove('show');
+                    drustvoForm.style.opacity = '1';
                 }
             }, 300);
-
         });
     </script>
 </body>
