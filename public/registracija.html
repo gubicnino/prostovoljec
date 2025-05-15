@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ManusMano</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="stylesheets/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="scripts/loader.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+    <header id="header"></header>
+
+    <section class="register" style="min-height: 800px;">
+        <div class="container">
+            <div class="prijavaRegistracijaWrapper">
+                <h2 class="mb-4">Registracija</h2>
+                <div class="mb-3">
+                    <label for="registracijaTip" class="form-label">Ali se registrirate kot prostovoljec ali
+                        društvo?</label>
+                    <select id="registracijaTip" class="form-select">
+                        <option value="">Izberite...</option>
+                        <option value="prostovoljec">Prostovoljec</option>
+                        <option value="drustvo">Društvo</option>
+                    </select>
+                </div>
+                <!-- Forma za prostovoljca -->
+                <div id="prostovoljecForm">
+                    <form class="register-form needs-validation" name="registerProstovoljec" method="post" novalidate>
+                        <div class="mb-3">
+                            <label for="ime" class="form-label">Ime</label>
+                            <input type="text" id="ime" name="ime" class="form-control" placeholder="Ime" required>
+                            <div class="invalid-feedback">Prosimo, vnesite ime.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="priimek" class="form-label">Priimek</label>
+                            <input type="text" id="priimek" name="priimek" class="form-control" placeholder="Priimek"
+                                required>
+                            <div class="invalid-feedback">Prosimo, vnesite priimek.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="telefon" class="form-label">Telefonska številka</label>
+                            <input type="tel" id="telefon" name="telefon" class="form-control"
+                                placeholder="Telefonska številka" required>
+                            <div class="invalid-feedback">Prosimo, vnesite telefonsko številko.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="datumRojstva" class="form-label">Datum rojstva</label>
+                            <input type="date" id="datumRojstva" name="datumRojstva" class="form-control" required>
+                            <div class="invalid-feedback">Prosimo, vnesite datum rojstva.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" id="email" name="email" class="form-control" placeholder="Email"
+                                required>
+                            <div class="invalid-feedback">Prosimo, vnesite veljaven email naslov.</div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="naslov" class="form-label">Naslov</label>
+                            <input type="text" id="naslov" name="naslov" class="form-control" placeholder="Naslov"
+                                required>
+                            <div class="invalid-feedback">Prosimo, vnesite naslov.</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Registriraj</button>
+                        <button type="reset" class="btn mx-3">Ponastavi</button>
+                    </form>
+                    <a href="prijava.html" class="d-block mt-3">Prijavi se</a>
+                </div>
+                <!-- Forma za društvo -->
+                <div id="drustvoForm">
+                    <form class="register-form needs-validation" name="registerDrustvo" method="post" novalidate>
+                        <div class="mb-3">
+                            <label for="naziv" class="form-label">Naziv</label>
+                            <input type="text" id="naziv" name="naziv" class="form-control" placeholder="Naziv društva"
+                                required>
+                            <div class="invalid-feedback">Prosimo, vnesite naziv društva.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="poslanstvo" class="form-label">Poslanstvo</label>
+                            <textarea id="poslanstvo" name="poslanstvo" class="form-control"
+                                placeholder="Poslanstvo društva" required></textarea>
+                            <div class="invalid-feedback">Prosimo, vnesite poslanstvo društva.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="lokacija" class="form-label">Lokacija delovanja</label>
+                            <input type="text" id="lokacija" name="lokacija" class="form-control"
+                                placeholder="Lokacija delovanja" required>
+                            <div class="invalid-feedback">Prosimo, vnesite lokacijo delovanja.</div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="tipDrustva" class="form-label">Tip društva</label>
+                            <select id="tipDrustva" name="tipDrustva" class="form-select" required>
+                                <option value="">Izberite tip društva</option>
+                                <option value="humanitarna">Humanitarna</option>
+                                <option value="okoljevarstvena">Okoljevarstvena</option>
+                            </select>
+                            <div class="invalid-feedback">Prosimo, izberite tip društva.</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Registriraj</button>
+                        <button type="reset" class="btn mx-3">Ponastavi</button>
+                    </form>
+                    <a href="prijava.html" class="d-block mt-3">Prijavi se</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="footer"></footer>
+    <script>
+        (function () {
+            'use strict';
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+        document.getElementById('registracijaTip').addEventListener('change', function () {
+            const selectedValue = this.value;
+            const prostovoljecForm = document.getElementById('prostovoljecForm');
+            const drustvoForm = document.getElementById('drustvoForm');
+            if (selectedValue === 'prostovoljec') {
+                drustvoForm.classList.remove('show');
+            } else if (selectedValue === 'drustvo') {
+                prostovoljecForm.classList.remove('show');
+            } else {
+                prostovoljecForm.classList.remove('show');
+                drustvoForm.classList.remove('show');
+            }
+            setTimeout(() => {
+                if (selectedValue === 'prostovoljec') {
+                    prostovoljecForm.classList.add('show');
+                    drustvoForm.classList.remove('show');
+                } else if (selectedValue === 'drustvo') {
+                    drustvoForm.classList.add('show');
+                    prostovoljecForm.classList.remove('show');
+                } else {
+                    prostovoljecForm.classList.remove('show');
+                    drustvoForm.classList.remove('show');
+                }
+            }, 300);
+
+        });
+    </script>
+</body>
+
+</html>

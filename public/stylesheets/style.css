@@ -63,6 +63,10 @@ p {
 }
 a {
     text-decoration: none;
+    color: var(--bs-main);
+}
+a:hover {
+    color: var(--bs-white);
 }
 section {
     padding: 100px 0; 
@@ -221,6 +225,26 @@ nav {
 }
 .navbar-nav{
     margin-right: 2rem;
+}
+/* Stil za ikono v headerju */
+.iconNav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%; /* Poskrbi, da je ikona centrirana vertikalno */
+}
+
+.iconNav a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--bs-white); /* Bela barva ikone */
+    font-size: 1.5rem; /* Velikost ikone */
+    transition: color 0.3s ease; /* Gladek prehod barve */
+}
+
+.iconNav a:hover {
+    color: var(--bs-main); /* Rdeča barva ob hoverju */
 }
 /* Random Helpers */
 .redText {
@@ -529,4 +553,41 @@ nav {
 #higherH2{
     position: relative;
     z-index: 9999;
+}
+
+/* Prijava Registracija */
+.prijavaRegistracijaWrapper {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 2rem;
+    width: 60%;
+    margin: 0 auto;
+
+}
+.customDropdown {
+    background-color: rgba(0, 0, 0, 0);
+}
+.customDropdown li a{
+    color: var(--bs-main);
+}
+.customDropdown li a:hover{
+    background-color: rgba(0, 0, 0, 0);
+    color: var(--bs-white);
+}
+#prostovoljecForm, #drustvoForm {
+    opacity: 0;
+    transform: translateY(-20px);
+    visibility: hidden;
+    position: absolute; /* Odstrani iz toka dokumenta */
+    width: 100%; /* Zagotovi, da zavzame celotno širino */
+    transition: opacity 0.5s ease;
+}
+
+/* Ko je forma vidna */
+#prostovoljecForm.show, #drustvoForm.show {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    position: relative; /* Vrne formo v tok dokumenta */
 }
