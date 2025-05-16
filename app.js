@@ -6,6 +6,7 @@ require('dotenv').config();
 
 const database = require('./db/database');
 
+const prijavaRouter = require('./routes/prijava');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/prijava', prijavaRouter);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 

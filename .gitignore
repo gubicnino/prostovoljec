@@ -20,10 +20,6 @@ tmp/
 temp/
 out/
 
-# Environment variables
-.env
-.env.local
-.env.*.local
 
 # Coverage and testing
 coverage/
