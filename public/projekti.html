@@ -14,6 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <script src="/scripts/produktiLoader.js" defer></script>
 </head>
 
 <body>
@@ -64,174 +65,82 @@
                     <div class="row g-4" id="projectsContainer">
                         <!-- Trenuten templatee za psamezno kartico -->
                         <template id="projectTemplate">
-                            <div class="col-lg-4 col-md-6">
-                                <div class="campaign-card diagonalCorner">
-                                    <div class="campaign-image">
-                                        <img src="" alt="" class="diagonalCorner project-image">
-                                    </div>
-                                    <div class="progress-container">
-                                        <div class="progress-info">
-                                            <div>
-                                                <div class="progress-label">Current</div>
-                                                <div class="progress-value project-current">$0</div>
-                                            </div>
-                                            <div class="campainGreyLine"></div>
-                                            <div class="percentage">
-                                                <span class="project-percentage">0</span><span
-                                                    class="percentage-symbol">%</span>
-                                            </div>
-                                            <div class="campainGreyLine"></div>
-                                            <div>
-                                                <div class="progress-label">Target</div>
-                                                <div class="progress-value project-target">$0</div>
-                                            </div>
+                            <div class="col-lg-4 col-md-6 mb-4">
+                                <div class="campaign-card diagonalCorner h-100 d-flex flex-column position-relative">
+                                    <!-- Slika -->
+                                    <div class="campaign-image position-relative">
+                                        <img src="" alt="" class="diagonalCorner project-image w-100">
+                                        <span
+                                            class="badge project-difficulty position-absolute top-0 end-0 m-3 py-2 px-3 d-flex align-items-center">
+                                            <i class="fas fa-person-hiking me-1" title="Težavnost projekta"></i>
+                                            <span>Težavnost</span>
+                                        </span>
+
+                                        <!-- UrE pridobljene za vsakofga posameznika za delo -->
+                                        <div class="position-absolute rounded-pill bg-danger text-white shadow-sm d-flex align-items-center py-1 px-3"
+                                            style="bottom: 15px; right: 20px; z-index: 10;">
+                                            <span class="project-duration-hours fs-1 fw-bold lh-1">6</span>
+                                            <span class="small fw-medium ms-1">ur</span>
                                         </div>
                                     </div>
-                                    <div class="campaignGreyLineH"></div>
-                                    <div class="campaign-details">
-                                        <h3 class="campaign-title project-title">Project Title</h3>
-                                        <p class="campaign-description project-description">Tu bo description projekta</p>
-                                        <div class="orange-line"></div>
-                                        <button class="btn donate-btn" data-project-id="">
-                                            <svg width="24" height="24" viewBox="0 0 24 24"
-                                                xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                                aria-hidden="true">
-                                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"
-                                                    fill="none">
-                                                </circle>
-                                                <path d="M10 8l4 4-4 4" stroke="currentColor" stroke-width="2"
-                                                    fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
-                                            </svg>
-                                        </button>
+
+                                    <!-- Header -->
+                                    <div class="p-4 flex-column flex-grow-1 d-flex justify-content-between gap-3">
+                                        <div class="">
+                                            <h3 class="campaign-title project-title fs-4 mb-1 overflow-hidden"
+                                                style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.3;">
+                                                Project Title</h3>
+                                            <p class="text-muted mb-2 project-organization small"><i class="fas fa-building me-1"></i> <span>Organizacija</span></p>
+                                        </div>
+                                        <div class="campaignGreyLineH"></div>
+                                        <div class="d-flex flex-column">
+                                            <!-- lokaCIJa -->
+                                            <div class="d-flex mb-2 small">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-location-dot text-danger me-2"></i>
+                                                    <span class="project-location">Lokacija</span>
+                                                </div>
+                                            </div>
+                                            <!-- Datumee -->
+                                            <div class="d-flex flex-column small">
+                                                <div class="d-flex align-items-center mb-1">
+                                                    <i class="fas fa-calendar-days text-primary me-2"></i>
+                                                    <strong>Izvaja se:</strong> <span
+                                                        class="project-date ms-1">Datum</span>
+                                                </div>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-calendar-xmark text-info me-2"></i>
+                                                    <strong>Prijave do:</strong> <span class="project-deadline ms-1">Rok
+                                                        prijave</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="campaignGreyLineH" style="width: 100%;"></div>
+                                        <!-- Description -->
+                                        <div class="">
+                                            <p class="campaign-description project-description mb-3 text-dark fw-medium overflow-hidden text-uppercase"
+                                                style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; font-size: 1.1rem;">
+                                                Tu bo description projekta</p>
+                                            <p class="project-goal mb-0 text-muted small">
+                                                <i class="fas fa-clipboard-check text-success me-1"
+                                                    title="Cilj projekta"></i>
+                                                <span class="project-goal-text fst-italic">Cilj
+                                                    projekta</span>
+                                            </p>
+                                        </div>
                                     </div>
+                                    <button class="btn donate-btn" data-project-id="" title="Podrobnosti projekta">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
                                 </div>
                             </div>
                         </template>
                     </div>
                 </div>
             </section>
-            <script>
-                function nalaudajProjects() {
-                    const projectsData = [
-                        {
-                            id: 1,
-                            title: "Sample Project 1",
-                            description: "Lorem Ipsum is simply dummy text",
-                            image: "img/campaing-3.jpg",
-                            current: 1000,
-                            target: 5000
-                        },
-                        {
-                            id: 1,
-                            title: "Sample Project 1",
-                            description: "Lorem Ipsum is simply dummy text",
-                            image: "img/campaing-3.jpg",
-                            current: 1000,
-                            target: 5000
-                        },
-                        {
-                            id: 1,
-                            title: "Sample Project 1",
-                            description: "Lorem Ipsum is simply dummy text",
-                            image: "img/campaing-3.jpg",
-                            current: 1000,
-                            target: 5000
-                        },
-                        {
-                            id: 1,
-                            title: "Sample Project 1",
-                            description: "Lorem Ipsum is simply dummy text",
-                            image: "img/campaing-3.jpg",
-                            current: 1000,
-                            target: 5000
-                        },
-                        {
-                            id: 1,
-                            title: "Sample Project 1",
-                            description: "Lorem Ipsum is simply dummy text",
-                            image: "img/campaing-3.jpg",
-                            current: 1000,
-                            target: 5000
-                        },
-                        {
-                            id: 1,
-                            title: "Sample Project 1",
-                            description: "Lorem Ipsum is simply dummy text",
-                            image: "img/campaing-3.jpg",
-                            current: 1000,
-                            target: 5000
-                        },
-                        {
-                            id: 1,
-                            title: "Sample Project 1",
-                            description: "Lorem Ipsum is simply dummy text",
-                            image: "img/campaing-3.jpg",
-                            current: 1000,
-                            target: 5000
-                        },
-                        {
-                            id: 1,
-                            title: "Sample Project 1",
-                            description: "Lorem Ipsum is simply dummy text",
-                            image: "img/campaing-3.jpg",
-                            current: 1000,
-                            target: 5000
-                        },
-                        {
-                            id: 1,
-                            title: "Sample Project 1",
-                            description: "Lorem Ipsum is simply dummy text",
-                            image: "img/campaing-3.jpg",
-                            current: 1000,
-                            target: 5000
-                        },
-                        {
-                            id: 1,
-                            title: "Sample Project 1",
-                            description: "Lorem Ipsum is simply dummy text",
-                            image: "img/campaing-3.jpg",
-                            current: 1000,
-                            target: 5000
-                        },
-                        {
-                            id: 1,
-                            title: "Sample Project 1",
-                            description: "Lorem Ipsum is simply dummy text",
-                            image: "img/campaing-3.jpg",
-                            current: 1000,
-                            target: 5000
-                        },
-                        {
-                            id: 1,
-                            title: "Sample Project 1",
-                            description: "Lorem Ipsum is simply dummy text",
-                            image: "img/campaing-3.jpg",
-                            current: 1000,
-                            target: 5000
-                        }
-                    ];
-
-                    const container = document.getElementById('projectsContainer');
-                    const template = document.getElementById('projectTemplate');
-
-                    // Updejtaa celoten info v karticaj
-                    projectsData.forEach(project => {
-                        const clone = template.content.cloneNode(true);
-                        clone.querySelector('.project-image').src = project.image;
-                        clone.querySelector('.project-image').alt = project.title;
-                        clone.querySelector('.project-title').textContent = project.title;
-                        clone.querySelector('.project-description').textContent = project.description;
-                        clone.querySelector('.project-current').textContent = `$${project.current}`;
-                        clone.querySelector('.project-target').textContent = `$${project.target}`;
-                        clone.querySelector('.project-percentage').textContent = Math.round((project.current / project.target) * 100);
-                        clone.querySelector('.donate-btn').setAttribute('data-project-id', project.id);
-                        container.appendChild(clone);
-                    });
-                }
-                document.addEventListener('DOMContentLoaded', nalaudajProjects);
-            </script>
         </main>
         <footer id="footer"></footer>
     </div>
 </body>
+
 </html>
