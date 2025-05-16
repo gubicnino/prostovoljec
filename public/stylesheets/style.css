@@ -204,17 +204,17 @@ nav {
     padding-bottom: 4px; /* space for underline */
 }
 .nav-item::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 3px;
-  width: 0%;
-  background-color: var(--bs-main); /* same color as text */
-  transition: width 0.3s ease-in-out;
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 0%;
+    background-color: var(--bs-main); /* same color as text */
+    transition: width 0.3s ease-in-out;
 }
 .nav-item:hover::after {
-  width: 100%;
+    width: 100%;
 }
 .nav-item:hover .nav-link {
     color: var(--bs-main);
@@ -388,12 +388,17 @@ nav {
 }
 
 .donate-btn {
-    width: 90px;
-    height: 80px;
+    width: 55px;
+    height: 55px;
     border-radius: 40px 0 0 0;
     position: absolute;
     bottom: 0px;
     right: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 30px;
+    padding-top: 10px;
 }
 .campainGreyLine{
     width: 1px;
@@ -617,4 +622,50 @@ nav {
     font-size: 0.9rem;
     font-weight: 500;
     text-transform: lowercase;
+}
+
+/* Pagination styles */
+.pagination {
+    gap: 0.5rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+    padding: 1rem 0;
+}
+
+.pagination .page-item {
+    margin: 0 2px;
+    display: flex;
+}
+
+.pagination .page-link {
+    color: var(--bs-white);
+    border-radius: 0.5rem;
+    border: 1px solid var(--bs-main);
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+    background-color: transparent;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--bs-main);
+    border-color: var(--bs-main);
+    color: var(--bs-white);
+}
+
+.pagination .page-link:hover {
+    background-color: var(--bs-main);
+    border-color: var(--bs-main);
+    color: var(--bs-white);
+}
+
+.pagination .page-link:focus {
+    box-shadow: 0 0 0 0.2rem rgba(211, 47, 47, 0.25);
+    outline: none;
+}
+
+.pagination .fa-chevron-left,
+.pagination .fa-chevron-right {
+    font-size: 0.875rem;
 }
