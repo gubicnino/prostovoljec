@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ManusMano</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="stylesheets/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="scripts/loader.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <script src="scripts/urejanjeProfilov.js" defer></script>
+    <script src="scripts/produktiLoader.js" defer></script>
+</head>
+
+<body>
+    <header id="header"></header>
+    <main class="main-content py-5">
+        <!-- DRUŠTVO -->
+        <div class="container profile-page role-drustvo py-5">
+            <h2 class="mb-4 text-center">Moj profil (Društvo)</h2>
+            <ul class="nav nav-tabs justify-content-center mb-4" id="profileTabsDrustvo" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="projekti-tab" data-bs-toggle="tab" data-bs-target="#projekti"
+                        type="button" role="tab">Naši projekti</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link " id="osnovni-tab" data-bs-toggle="tab" data-bs-target="#osnovni"
+                        type="button" role="tab">Osnovni podatki</button>
+                </li>
+
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="prijavnice-tab" data-bs-toggle="tab" data-bs-target="#prijavnice"
+                        type="button" role="tab">Prijavnice</button>
+                </li>
+            </ul>
+            <div class="tab-content bg-dark rounded-4 p-4 shadow" id="profileTabsContentDrustvo">
+                <!-- Naši projekti društva -->
+                <div class="tab-pane fade p-4 active show" id="projekti" role="tabpanel">
+                    <div class="row g-3 " id="projectsContainer">
+                        <template id="projectTemplate">
+                            <div class="col-lg-4 col-md-6 mb-4">
+                                <div class="campaign-card diagonalCorner h-100 d-flex flex-column position-relative">
+                                    <!-- Slika -->
+                                    <div class="campaign-image position-relative">
+                                        <img src="" alt="" class="diagonalCorner project-image w-100">
+                                        <span
+                                            class="badge project-difficulty position-absolute top-0 end-0 m-3 py-2 px-3 d-flex align-items-center">
+                                            <i class="fas fa-person-hiking me-1" title="Težavnost projekta"></i>
+                                            <span>Težavnost</span>
+                                        </span>
+
+                                        <!-- UrE pridobljene za vsakofga posameznika za delo -->
+                                        <div class="position-absolute rounded-pill bg-danger text-white shadow-sm d-flex align-items-center py-1 px-3"
+                                            style="bottom: 15px; right: 20px; z-index: 10;">
+                                            <span class="project-duration-hours fs-1 fw-bold lh-1">6</span>
+                                            <span class="small fw-medium ms-1">ur</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Header -->
+                                    <div class="p-4 flex-column flex-grow-1 d-flex justify-content-between gap-3">
+                                        <div class="">
+                                            <h3 class="campaign-title project-title fs-4 mb-1 overflow-hidden"
+                                                style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.3;">
+                                                Project Title</h3>
+                                            <p class="text-muted mb-2 project-organization small"><i
+                                                    class="fas fa-building me-1"></i> <span>Organizacija</span></p>
+                                        </div>
+                                        <div class="campaignGreyLineH"></div>
+                                        <div class="d-flex flex-column">
+                                            <!-- lokaCIJa -->
+                                            <div class="d-flex mb-2 small">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-location-dot text-danger me-2"></i>
+                                                    <span class="project-location">Lokacija</span>
+                                                </div>
+                                            </div>
+                                            <!-- Datumee -->
+                                            <div class="d-flex flex-column small">
+                                                <div class="d-flex align-items-center mb-1">
+                                                    <i class="fas fa-calendar-days text-primary me-2"></i>
+                                                    <strong>Izvaja se:</strong> <span
+                                                        class="project-date ms-1">Datum</span>
+                                                </div>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-calendar-xmark text-info me-2"></i>
+                                                    <strong>Prijave do:</strong> <span class="project-deadline ms-1">Rok
+                                                        prijave</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="campaignGreyLineH" style="width: 100%;"></div>
+                                        <!-- Description -->
+                                        <div class="">
+                                            <p class="campaign-description project-description mb-3 text-dark fw-medium overflow-hidden text-uppercase"
+                                                style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; font-size: 1.1rem;">
+                                                Tu bo description projekta</p>
+                                            <p class="project-goal mb-0 text-muted small">
+                                                <i class="fas fa-clipboard-check text-success me-1"
+                                                    title="Cilj projekta"></i>
+                                                <span class="project-goal-text fst-italic">Cilj
+                                                    projekta</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button class="btn donate-btn" data-project-id="" title="Podrobnosti projekta">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                    <nav aria-label="Project pagination" class="mt-5">
+                        <ul class="pagination justify-content-center"></ul>
+                    </nav>
+                </div>
+                <!-- Osnovni podatki društva -->
+                <div class="tab-pane fade " id="osnovni" role="tabpanel">
+                    <form class="row g-3" id="formDrustvo" method="post">
+                        <div class="col-md-6">
+                            <label for="naziv" class="form-label">Naziv društva</label>
+                            <input type="text" class="form-control" id="naziv" disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lokacija" class="form-label">Lokacija</label>
+                            <input type="text" class="form-control" id="lokacija" disabled>
+                        </div>
+                        <div class="col-12">
+                            <label for="poslanstvo" class="form-label">Poslanstvo</label>
+                            <textarea class="form-control" id="poslanstvo" rows="2" disabled></textarea>
+                        </div>
+                        <div class="col-12">
+                            <a class="btn urediBtn" onclick="omogociUredi()">Uredi</a>
+                            <button type="submit" class="btn shraniSpremembe" style="display: none;">Shrani
+                                spremembe</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- Prijavnice društva -->
+                <div class="tab-pane fade" id="prijavnice" role="tabpanel">
+                    <h5 class="mb-3">Prijavnice prostovoljcev</h5>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Prostovoljec</th>
+                                    <th>Projekt</th>
+                                    <th>Datum prijave</th>
+                                    <th>Akcija</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Ana Novak</td>
+                                    <td>Zbiranje igrač</td>
+                                    <td>12. 5. 2024</td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm me-2">Sprejmi</button>
+                                        <button class="btn btn-danger btn-sm">Zavrni</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Marko Kovač</td>
+                                    <td>Pomoč starejšim</td>
+                                    <td>10. 5. 2024</td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm me-2">Sprejmi</button>
+                                        <button class="btn btn-danger btn-sm">Zavrni</button>
+                                    </td>
+                                </tr>
+                                <!-- Dodaj več prijav po potrebi -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROSTOVOLJEC -->
+        <div class="container profile-page role-prostovoljec">
+            <h2 class="mb-4 text-center">Moj profil (Prostovoljec)</h2>
+            <ul class="nav nav-tabs justify-content-center mb-4" id="profileTabsProstovoljec" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="mojprofil-tab" data-bs-toggle="tab" data-bs-target="#mojprofil"
+                        type="button" role="tab">Moj profil</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="mojiprojekti-tab" data-bs-toggle="tab" data-bs-target="#mojiprojekti"
+                        type="button" role="tab">Moji projekti</button>
+                </li>
+            </ul>
+            <div class="tab-content bg-dark rounded-4 p-4 shadow" id="profileTabsContentProstovoljec">
+                <div class="tab-pane fade show active" id="mojprofil" role="tabpanel">
+                    <form class="row g-3" id="formProstovoljec" method="post">
+                        <div class="col-md-6">
+                            <label for="ime" class="form-label">Ime</label>
+                            <input type="text" class="form-control" id="ime" disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="primek" class="form-label">Priimek</label>
+                            <input type="text" class="form-control" id="primek" disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="telStevilka" class="form-label">Telefonska številka</label>
+                            <input type="text" class="form-control" id="telStevilka" disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="datumRojstva" class="form-label">Datum rojstva</label>
+                            <input type="date" class="form-control" id="datumRojstva" disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="naslov" class="form-label">Naslov</label>
+                            <input type="text" class="form-control" id="naslov" disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="spretnost" class="form-label">Spretnost</label>
+                            <select class="form-select" id="spretnost" disabled>
+                                <option value="">Izberi...</option>
+                                <option value="Fizicno delo">Fizično delo</option>
+                                <option value="Ročne spretnosti">Ročne spretnosti</option>
+                                <option value="Komunikacijeske spretnosti">Komunikacijske spretnosti</option>
+                            </select>
+                        </div>
+                        <div class="col-12 d-flex align-items-end gap-3">
+                            <div>
+                                <span class="fw-bold">Opravljene ure:</span>
+                                <span class="badge bg-primary fs-5" id="opravljeneUre"></span>
+                            </div>
+                            <div>
+                                <span class="fw-bold">Značka:</span>
+                                <span class="badge bg-warning text-dark fs-6" id="znacka"></span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <a class="btn urediBtn" onclick="omogociUredi()">Uredi</a>
+                            <button type="submit" class="btn shraniSpremembe" style="display: none;">Shrani
+                                spremembe</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="tab-pane fade p-4" id="mojiprojekti" role="tabpanel">
+                    <div class="row g-3 " id="projectsContainerProstovoljec">
+                        <template id="projectTemplateProstovoljec">
+                            <div class="col-lg-4 col-md-6 mb-4">
+                                <div class="campaign-card diagonalCorner h-100 d-flex flex-column position-relative">
+                                    <!-- Slika -->
+                                    <div class="campaign-image position-relative">
+                                        <img src="" alt="" class="diagonalCorner project-image w-100">
+                                        <span
+                                            class="badge project-difficulty position-absolute top-0 end-0 m-3 py-2 px-3 d-flex align-items-center">
+                                            <i class="fas fa-person-hiking me-1" title="Težavnost projekta"></i>
+                                            <span>Težavnost</span>
+                                        </span>
+
+                                        <!-- UrE pridobljene za vsakofga posameznika za delo -->
+                                        <div class="position-absolute rounded-pill bg-danger text-white shadow-sm d-flex align-items-center py-1 px-3"
+                                            style="bottom: 15px; right: 20px; z-index: 10;">
+                                            <span class="project-duration-hours fs-1 fw-bold lh-1">6</span>
+                                            <span class="small fw-medium ms-1">ur</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Header -->
+                                    <div class="p-4 flex-column flex-grow-1 d-flex justify-content-between gap-3">
+                                        <div class="">
+                                            <h3 class="campaign-title project-title fs-4 mb-1 overflow-hidden"
+                                                style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.3;">
+                                                Project Title</h3>
+                                            <p class="text-muted mb-2 project-organization small"><i
+                                                    class="fas fa-building me-1"></i> <span>Organizacija</span></p>
+                                        </div>
+                                        <div class="campaignGreyLineH"></div>
+                                        <div class="d-flex flex-column">
+                                            <!-- lokaCIJa -->
+                                            <div class="d-flex mb-2 small">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-location-dot text-danger me-2"></i>
+                                                    <span class="project-location">Lokacija</span>
+                                                </div>
+                                            </div>
+                                            <!-- Datumee -->
+                                            <div class="d-flex flex-column small">
+                                                <div class="d-flex align-items-center mb-1">
+                                                    <i class="fas fa-calendar-days text-primary me-2"></i>
+                                                    <strong>Izvaja se:</strong> <span
+                                                        class="project-date ms-1">Datum</span>
+                                                </div>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-calendar-xmark text-info me-2"></i>
+                                                    <strong>Prijave do:</strong> <span class="project-deadline ms-1">Rok
+                                                        prijave</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="campaignGreyLineH" style="width: 100%;"></div>
+                                        <!-- Description -->
+                                        <div class="">
+                                            <p class="campaign-description project-description mb-3 text-dark fw-medium overflow-hidden text-uppercase"
+                                                style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; font-size: 1.1rem;">
+                                                Tu bo description projekta</p>
+                                            <p class="project-goal mb-0 text-muted small">
+                                                <i class="fas fa-clipboard-check text-success me-1"
+                                                    title="Cilj projekta"></i>
+                                                <span class="project-goal-text fst-italic">Cilj
+                                                    projekta</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button class="btn donate-btn" data-project-id="" title="Podrobnosti projekta">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                    <nav aria-label="Project pagination" class="mt-5">
+                        <ul class="pagination justify-content-center"></ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer id="footer"></footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
