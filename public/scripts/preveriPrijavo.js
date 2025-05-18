@@ -1,22 +1,19 @@
-const e = require("express");
-
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     console.log("Skripta preveriPrijavo.js je naložena");
-    const loginForm = document.getElementById("loginForm");
 
-    if(!loginForm) {
+    const loginForm = document.getElementById("loginForm");
+    const errorMessageDiv = document.getElementById("error-message"); // Usklajen ID
+
+    if (!loginForm) {
         console.error("Element z ID 'loginForm' ni najden");
         return;
     }
 
-    // Preveri ali obrazec obstaja
-    loginForm.addEventListener("submit", function(event) {
-        event.preventDefault(); 
-        
+    loginForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
         const username = document.getElementById("username").value;
-        console.log("Vneseno uporabniško ime:", username);
         const password = document.getElementById("password").value;
-        console.log("Vneseno geslo:", password);
 
         console.log("Pošiljanje podatkov na strežnik...");
         fetch("/prijava", {
@@ -26,25 +23,29 @@ document.addEventListener("DOMContentLoaded", function() {
             },
             body: JSON.stringify({ username, password })
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Prejeti podatki:", data);
-            if (data.success) {
-                sessionStorage.setItem('vpisaniUporabniki', JSON.stringify({
-                    id: data.user.idUporabnik,
-                    administrator: data.user.administrator
-                }));
-                sessionStorage.setItem('prijavljen', true);
-                window.location.href = 'index.html'; // Preusmeri na domačo stran
-            } else {
+            .then(response => response.json())
+            .then(data => {
+                console.log("Prejeti podatki:", data);
+                if (data.success) {
+                    // Shrani ID v localStorage
+                    if (data.user.drustvoId) {
+                        localStorage.setItem("drustvoId", data.user.drustvoId);
+                    } else if (data.user.prostovoljecId) {
+                        localStorage.setItem("prostovoljecId", data.user.prostovoljecId);
+                    }
+
+                    localStorage.setItem("prijavljen", "true");
+
+                    window.location.href = "index.html";
+                } else {
+                    errorMessageDiv.style.display = 'block';
+                    errorMessageDiv.textContent = data.error || 'Uporabniško ime ali geslo je napačno!';
+                }
+            })
+            .catch(error => {
+                console.error("Napaka pri prijavi:", error);
                 errorMessageDiv.style.display = 'block';
-                errorMessageDiv.textContent = data.error || 'Uporabniško ime ali geslo je napačno!';
-            }
-        })
-        .catch(error => {
-            console.error("Napaka pri prijavi:", error);
-            errorMessageDiv.style.display = 'block';
-            errorMessageDiv.textContent = 'Prišlo je do napake pri prijavi. Poskusite znova.';
-        });
+                errorMessageDiv.textContent = 'Prišlo je do napake pri prijavi. Poskusite znova.';
+            });
     });
 });

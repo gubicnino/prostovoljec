@@ -14,6 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <script src="scripts/registracija.js" defer></script>
 
 </head>
 
@@ -42,14 +43,14 @@
                             <div class="invalid-feedback">Prosimo, vnesite ime.</div>
                         </div>
                         <div class="mb-3">
-                            <label for="priimek" class="form-label">Priimek</label>
-                            <input type="text" id="priimek" name="priimek" class="form-control" placeholder="Priimek"
+                            <label for="primek" class="form-label">Priimek</label>
+                            <input type="text" id="primek" name="primek" class="form-control" placeholder="Priimek"
                                 required>
                             <div class="invalid-feedback">Prosimo, vnesite priimek.</div>
                         </div>
                         <div class="mb-3">
-                            <label for="telefon" class="form-label">Telefonska številka</label>
-                            <input type="tel" id="telefon" name="telefon" class="form-control"
+                            <label for="telStevilka" class="form-label">Telefonska številka</label>
+                            <input type="tel" id="telStevilka" name="telStevilka" class="form-control"
                                 placeholder="Telefonska številka" required>
                             <div class="invalid-feedback">Prosimo, vnesite telefonsko številko.</div>
                         </div>
@@ -69,6 +70,16 @@
                             <input type="text" id="naslov" name="naslov" class="form-control" placeholder="Naslov"
                                 required>
                             <div class="invalid-feedback">Prosimo, vnesite naslov.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Uporabniško ime</label>
+                            <input type="text" id="username" name="username" class="form-control" placeholder="Uporabniško ime" required>
+                            <div class="invalid-feedback">Prosimo, vnesite uporabniško ime.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Geslo</label>
+                            <input type="password" id="password" name="password" class="form-control" placeholder="Geslo" required>
+                            <div class="invalid-feedback">Prosimo, vnesite geslo.</div>
                         </div>
                         <button type="submit" class="btn btn-primary">Registriraj</button>
                         <button type="reset" class="btn mx-3">Ponastavi</button>
@@ -91,8 +102,8 @@
                             <div class="invalid-feedback">Prosimo, vnesite poslanstvo društva.</div>
                         </div>
                         <div class="mb-3">
-                            <label for="lokacija" class="form-label">Lokacija delovanja</label>
-                            <input type="text" id="lokacija" name="lokacija" class="form-control"
+                            <label for="naslov" class="form-label">Lokacija delovanja</label>
+                            <input type="text" id="naslov" name="naslov" class="form-control"
                                 placeholder="Lokacija delovanja" required>
                             <div class="invalid-feedback">Prosimo, vnesite lokacijo delovanja.</div>
                         </div>
@@ -104,6 +115,31 @@
                                 <option value="okoljevarstvena">Okoljevarstvena</option>
                             </select>
                             <div class="invalid-feedback">Prosimo, izberite tip društva.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="telStevilka" class="form-label">Telefonska številka</label>
+                            <input type="tel" id="telStevilka" name="telStevilka" class="form-control" placeholder="Telefonska številka" required>
+                            <div class="invalid-feedback">Prosimo, vnesite telefonsko številko.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" id="email" name="email" class="form-control" placeholder="Email" required>
+                            <div class="invalid-feedback">Prosimo, vnesite email.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="steviloClanov" class="form-label">Število članov</label>
+                            <input type="number" id="steviloClanov" name="steviloClanov" class="form-control" placeholder="Število članov" required>
+                            <div class="invalid-feedback">Prosimo, vnesite število članov.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Uporabniško ime</label>
+                            <input type="text" id="username" name="username" class="form-control" placeholder="Uporabniško ime" required>
+                            <div class="invalid-feedback">Prosimo, vnesite uporabniško ime.</div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="password" class="form-label">Geslo</label>
+                            <input type="password" id="password" name="password" class="form-control" placeholder="Geslo" required>
+                            <div class="invalid-feedback">Prosimo, vnesite geslo.</div>
                         </div>
                         <button type="submit" class="btn btn-primary">Registriraj</button>
                         <button type="reset" class="btn mx-3">Ponastavi</button>
