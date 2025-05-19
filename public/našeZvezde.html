@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ManusMano - Naše zvezde</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="stylesheets/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="scripts/loader.js" defer></script>
+    <script src="scripts/TopVolunteers.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <script src="scripts/badges.js" defer></script>
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <header id="header"></header>
+        <main class="main-content">
+            <section class="hero-podstran"
+                style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url(img/naseZvezdeHero.jpg) center/cover no-repeat;">
+                <div class="position-absolute rounded-circle bg-warning"
+                    style="width: 15px; height: 15px; top: 20%; left: 10%;"></div>
+                <div class="position-absolute rounded-circle bg-danger"
+                    style="width: 15px; height: 15px; bottom: 20%; right: 15%;"></div>
+                <div class="container py-5 mt-4">
+                    <div class="row justify-content-center text-center">
+                        <div class="col-lg-8">
+                            <h1 class="hero-title fw-bold mb-3">Naše zvezde</h1>
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb justify-content-center mb-0">
+                                    <li class="breadcrumb-item">
+                                        <a href="index.html"
+                                            class="text-white text-decoration-none hover-link">ManusMano</a>
+                                    </li>
+                                    <li class="breadcrumb-item">
+                                        <span class="redText">Naše zvezde</span>
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- prostovoljce top 6 -->
+            <section class="section-alternate">
+                <div class="container">
+                    <div class="row text-center mb-5">
+                        <div class="col-lg-8 mx-auto">
+                            <h6 class="section-subtitle">NAJBOLJŠI MED NAJBOLJŠIMI</h6>
+                            <h2 class="section-title" id="higherH2">Prostovoljci z največ opravljenimi urami</h2>
+                            <p class="section-description">Ti izjemni posamezniki predstavljajo srce našega poslanstva. Z njihovo neizmerno predanostjo in številnimi urami prostovoljnega dela so postali zgled v naši skupnosti</p>
+                        </div>
+                    </div>
+
+                    <div class="row" id="top-volunteers-container">
+                        <div class="col-12 text-center" id="loading-indicator">
+                            <div class="spinner-border text-danger" role="status">
+                                <span class="visually-hidden">Nalaganje...</span>
+                            </div>
+                            <p class="mt-2">Nalaganje podatkov o prostovoljcih...</p>
+                        </div>
+                        
+                        <!-- tu se prikazejo top 6 -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- stats -->
+            <section class="bg-white">
+                <div class="container">
+                    <div class="row text-center mb-5">
+                        <div class="col-lg-8 mx-auto">
+                            <h6 class="section-subtitle">SKUPNA STATISTIKA</h6>
+                            <h2 class="section-title">Naši dosežki</h2>
+                            <p class="section-description">Vsaka ura prostovoljnega dela šteje in vsak prispevek je pomemben. Skupaj ustvarjamo boljši svet za vse</p>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 justify-content-center">
+                        <div class="col-md-3 col-sm-6">
+                            <div class="card-item-vertical diagonalCorner">
+                                <i class="fas fa-clock fa-3x text-danger mb-2"></i>
+                                <h3 class="counter-value" id="total-hours">0</h3>
+                                <h5>Opravljenih ur</h5>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="card-item-vertical diagonalCorner">
+                                <i class="fas fa-users fa-3x text-danger mb-2"></i>
+                                <h3 class="counter-value" id="total-volunteers">0</h3>
+                                <h5>Prostovoljcev</h5>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="card-item-vertical diagonalCorner">
+                                <i class="fas fa-briefcase fa-3x text-danger mb-2"></i>
+                                <h3 class="counter-value" id="total-projects">0</h3>
+                                <h5>Projektov</h5>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="card-item-vertical diagonalCorner">
+                                <i class="fas fa-handshake fa-3x text-danger mb-2"></i>
+                                <h3 class="counter-value" id="total-organizations">0</h3>
+                                <h5>Društev</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- pridruze se nan -->
+            <section class="section-alternate"">
+                <div class="container">
+                    <div class="row justify-content-center text-center">
+                        <div class="col-lg-8">
+                            <h2 class="text-dark mb-4">PRIDRUŽITE SE NAŠIM ZVEZDAM</h2>
+                            <p class="text-dark mb-5">Tudi vi lahko postanete del naše ekipe prostovoljcev in pomagate spreminjati svet na bolje. Vsaka pomoč šteje</p>
+                            <a href="registracija.html" class="btn diagonalCorner">Postani prostovoljec</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer id="footer"></footer>
+    </div>
+</body>
+</html>

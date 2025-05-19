@@ -10,6 +10,8 @@ var usersRouter = require('./routes/users');
 var projektiRouter = require('./routes/projekti');
 var profilRouter = require('./routes/profil');
 var registracijaRouter = require('./routes/registracija');
+var naseZvezdeRouter = require('./routes/naseZvezde'); 
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -22,6 +24,7 @@ app.use('/users', usersRouter);
 app.use('/api/projekti', projektiRouter);
 app.use('/api/profil', profilRouter);
 app.use('/registracija', registracijaRouter);
+app.use('/api/naseZvezde', naseZvezdeRouter);
 
 
 if (require.main === module) {
