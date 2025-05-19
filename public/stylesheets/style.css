@@ -269,6 +269,8 @@ nav {
 .redText {
     color: var(--bs-main);
 }
+
+/* TODO: */
 .diagonalCorner{
     border-radius: 0 30px 0 30px ;
 }
@@ -672,6 +674,7 @@ nav {
 .pagination .fa-chevron-right { 
     font-size: 0.875rem;
 }
+
 
 .hero-podstran {
     display: flex;
