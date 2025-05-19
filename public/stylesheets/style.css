@@ -691,3 +691,47 @@ nav {
 .tab-content label{
     color: var(--bs-dark);
 }
+
+
+
+
+/* header (black tekst on white pages, white tekst on dark pages */
+header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: transparent !important;
+}
+
+header .navbar {
+    background-color: transparent !important;
+}
+
+.white-page .nav-link,
+.white-page .navbar-nav .iconNav a,
+.white-page .logoText {
+    color: var(--bs-dark) !important;
+}
+
+.logoTextRed {
+    color: var(--bs-main) !important;
+}
+
+.white-page .nav-item:hover .nav-link {
+    color: var(--bs-main) !important;
+}
+
+.white-page .navbar-toggler-icon {
+    filter: brightness(0) !important;
+}
+
+.hero-section {
+    padding-top: 100px;
+    margin-top: 0;
+}
+
+.hero-podstran {
+    padding-top: 100px;
+}
