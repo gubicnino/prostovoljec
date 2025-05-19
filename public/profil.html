@@ -124,12 +124,40 @@
                 <div class="tab-pane fade " id="osnovni" role="tabpanel">
                     <form class="row g-3" id="formDrustvo" method="post">
                         <div class="col-md-6">
+                            <label for="usernameDrustva" class="form-label">Uporabniško ime</label>
+                            <input type="text" class="form-control" id="usernameDrustva" disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="passwordDrustva" class="form-label">Geslo</label>
+                            <input type="password" class="form-control" id="passwordDrustva" disabled>
+                        </div>
+                        <div class="col-md-6">
                             <label for="naziv" class="form-label">Naziv društva</label>
                             <input type="text" class="form-control" id="naziv" disabled>
                         </div>
                         <div class="col-md-6">
+                            <label for="telStevilkaDrustva" class="form-label">Telefonska številka</label>
+                            <input type="text" class="form-control" id="telStevilkaDrustva" disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="emailDrustva" class="form-label">Email</label>
+                            <input type="text" class="form-control" id="emailDrustva" disabled>
+                        </div>
+                        <div class="col-md-6">
                             <label for="lokacija" class="form-label">Lokacija</label>
                             <input type="text" class="form-control" id="lokacija" disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="steviloClanov" class="form-label">Število članov</label>
+                            <input type="text" class="form-control" id="steviloClanov" disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="tipDrustva" class="form-label">Tip društva</label>
+                            <select id="tipDrustva" name="tipDrustva" class="form-select" disabled>
+                                <option value="">Izberite tip društva</option>
+                                <option value="humanitarna">Humanitarna</option>
+                                <option value="okoljevarstvena">Okoljevarstvena</option>
+                            </select>
                         </div>
                         <div class="col-12">
                             <label for="poslanstvo" class="form-label">Poslanstvo</label>
@@ -139,6 +167,9 @@
                             <a class="btn urediBtn" onclick="omogociUredi()">Uredi</a>
                             <button type="submit" class="btn shraniSpremembe" style="display: none;">Shrani
                                 spremembe</button>
+                        </div>
+                        <div class="col-12">
+                            <a class="btn" onclick="narediOdjavo()">Odjava</a>
                         </div>
                     </form>
                 </div>
@@ -199,6 +230,14 @@
                 <div class="tab-pane fade show active" id="mojprofil" role="tabpanel">
                     <form class="row g-3" id="formProstovoljec" method="post">
                         <div class="col-md-6">
+                            <label for="username" class="form-label">Uporabniško ime</label>
+                            <input type="text" class="form-control" id="username" disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="password" class="form-label">Geslo</label>
+                            <input type="password" class="form-control" id="password" disabled>
+                        </div>
+                        <div class="col-md-6">
                             <label for="ime" class="form-label">Ime</label>
                             <input type="text" class="form-control" id="ime" disabled>
                         </div>
@@ -245,6 +284,9 @@
                             <a class="btn urediBtn" onclick="omogociUredi()">Uredi</a>
                             <button type="submit" class="btn shraniSpremembe" style="display: none;">Shrani
                                 spremembe</button>
+                        </div>
+                        <div class="col-12">
+                            <a class="btn" onclick="narediOdjavo()">Odjava</a>
                         </div>
                     </form>
                 </div>

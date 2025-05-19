@@ -8,7 +8,7 @@ router.get("/drustvo", function (req, res, next) {
     if (!drustvoId) return res.status(400).json({ error: 'Manjka id društva' });
 
     const query = `
-        SELECT d.idDrustvo, d.naziv, d.naslov, d.poslanstvo
+        SELECT d.idDrustvo, d.naziv, d.naslov, d.poslanstvo, d.username, d.password, d.telStevilka, d.email, d.tipDrustva, d.steviloClanov
         FROM Drustvo d
         WHERE d.idDrustvo = ?
     `;
@@ -39,7 +39,9 @@ router.get("/prostovoljec", function (req, res, next) {
             p.opravljeneUre, 
             p.naslov, 
             p.spretnost, 
-            p.znacka
+            p.znacka,
+            p.username,
+            p.password
         FROM Prostovoljec p
         WHERE p.idProstovoljec = ?
     `;
@@ -54,7 +56,7 @@ router.get("/prostovoljec", function (req, res, next) {
 });
 
 router.post("/drustvoShrani", function (req, res, next) {
-    const { id, naziv, lokacija, poslanstvo } = req.body;
+    const { id, naziv, lokacija, poslanstvo, usernameDrustva, passwordDrustva, telStevilkaDrustva, emailDrustva, tipDrustva } = req.body;
     console.log("Shranjevanje podatkov za društvo z id: " + id);
 
     if (!id || !naziv || !lokacija || !poslanstvo) {
@@ -62,32 +64,36 @@ router.post("/drustvoShrani", function (req, res, next) {
     }
     const query = `
         UPDATE Drustvo
-        SET naziv = ?, naslov = ?, poslanstvo = ?
+        SET naziv = ?, naslov = ?, poslanstvo = ?, username = ?, password = ?, telStevilka = ?, email = ?, tipDrustva = ?
         WHERE idDrustvo = ?
     `;
-    connection.query(query, [naziv, lokacija, poslanstvo, id], function (err, results) {
-        if (err) {
-            console.error("Napaka pri shranjevanju podatkov za društvo:", err);
-            return res.status(500).json({ error: "Napaka pri shranjevanju podatkov" });
+    connection.query(
+        query,
+        [naziv, lokacija, poslanstvo, usernameDrustva, passwordDrustva, telStevilkaDrustva, emailDrustva, tipDrustva, id],
+        function (err, results) {
+            if (err) {
+                console.error("Napaka pri shranjevanju podatkov za društvo:", err);
+                return res.status(500).json({ error: "Napaka pri shranjevanju podatkov" });
+            }
+            res.json({ message: "Podatki uspešno shranjeni" });
+            console.log("Podatki uspešno shranjeni za društvo z id: " + id);
         }
-        res.json({ message: "Podatki uspešno shranjeni" });
-        console.log("Podatki uspešno shranjeni za društvo z id: " + id);
-    });
+    );
 });
 
 router.post("/prostovoljecShrani", function (req, res, next) {
-    const { id, ime, primek, telStevilka, datumRojstva, email, naslov, spretnost } = req.body;
+    const { id, ime, primek, telStevilka, datumRojstva, email, naslov, spretnost, username, password } = req.body;
     console.log("Shranjevanje podatkov za prostovoljca z id: " + id);
 
-    if (!id || !ime || !primek || !telStevilka || !datumRojstva || !email || !naslov || !spretnost) {
+    if (!id || !ime || !primek || !telStevilka || !datumRojstva || !email || !naslov || !spretnost || !username || !password) {
         return res.status(400).json({ error: 'Manjkajoči podatki' });
     }
     const query = `
         UPDATE Prostovoljec
-        SET ime = ?, primek = ?, telStevilka = ?, datumRojstva = ?, email = ?, naslov = ?, spretnost = ?
+        SET ime = ?, primek = ?, telStevilka = ?, datumRojstva = ?, email = ?, naslov = ?, spretnost = ?, username = ?, password = ?
         WHERE idProstovoljec = ?
     `;
-    connection.query(query, [ime, primek, telStevilka, datumRojstva, email, naslov, spretnost, id], function (err, results) {
+    connection.query(query, [ime, primek, telStevilka, datumRojstva, email, naslov, spretnost, username, password, id], function (err, results) {
         if (err) {
             console.error("Napaka pri shranjevanju podatkov za prostovoljca:", err);
             return res.status(500).json({ error: "Napaka pri shranjevanju podatkov" });
