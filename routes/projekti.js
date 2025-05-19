@@ -75,4 +75,40 @@ router.get('/prostovoljec', (req, res) => {
     });
 });
 
+router.get('/latest', (req, res) => {
+    console.log("Fetching latest 3 projects");
+    const query = `
+        SELECT p.idProjekt, p.naziv, p.cilj, p.datumIzvajanja, p.trajanje, p.tezavnost, p.datumRokaPrijave, p.Lokacija, p.kratekOpis, p.opis, d.naziv as drustvo_naziv
+        FROM Projekt p
+        LEFT JOIN Drustvo d ON p.TK_Drustvo = d.idDrustvo
+        WHERE p.datumIzvajanja >= CURDATE()
+        ORDER BY p.datumIzvajanja ASC
+        LIMIT 3
+    `;
+
+    connection.query(query, function (err, results) {
+        if (err) {
+            console.error("Error pri iskanje latest projektov:", err);
+            return res.status(500).json({ error: "Database error" });
+        }
+        
+        results.forEach(project => {
+            console.log(`{
+                idProjekt: ${project.idProjekt},
+                naziv: '${project.naziv}',
+                cilj: '${project.cilj}',
+                datumIzvajanja: ${project.datumIzvajanja.toISOString()},
+                trajanje: '${project.trajanje}',
+                tezavnost: '${project.tezavnost}',
+                datumRokaPrijave: ${project.datumRokaPrijave.toISOString()},
+                Lokacija: '${project.Lokacija}',
+                kratekOpis: '${project.kratekOpis}',
+                opis: '${project.opis}',
+                drustvo_naziv: '${project.drustvo_naziv}'
+                },`);
+        });
+        res.json(results);
+    });
+});
+
 module.exports = router;

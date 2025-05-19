@@ -114,10 +114,12 @@ function parseUre(timeString) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    // zaenkrat forsiran ID društva
     const page = window.location.pathname.split('/').pop();
 
-    if (page === 'projekti.html') {
+    if (page === 'index.html' || page === '') {
+        // latest 3 projekti (po datumee)
+        loadProjects('/api/projekti/latest', 'projectsContainer', 'projectTemplate');
+    } else if (page === 'projekti.html') {
         // Vsi projekti
         loadProjects('/api/projekti');
     } else if (page === 'profil.html') {
@@ -127,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (drustvoId) {
             loadProjects(`/api/projekti/drustvo?id=${drustvoId}`);
         } else if (prostovoljecId) {
-        loadProjects(`/api/projekti/prostovoljec?id=${prostovoljecId}`, 'projectsContainerProstovoljec', 'projectTemplateProstovoljec');
+            loadProjects(`/api/projekti/prostovoljec?id=${prostovoljecId}`, 'projectsContainerProstovoljec', 'projectTemplateProstovoljec');
         } else {
             // fallback ali opozorilo
             loadProjects();
