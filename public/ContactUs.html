@@ -33,7 +33,7 @@
 
         .contact-card {
             padding: 1.5rem;
-            background-color: rgba(255, 255, 255, 0.05);
+            background-color: var(--bs-dark05);
             border-radius: 0 30px 0 30px;
             height: 100%;
             transition: all 0.3s ease;
@@ -46,9 +46,9 @@
 
         .form-control,
         .form-select {
-            background-color: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--bs-dark6);
-            color: var(--bs-white);
+            background-color: var(--bs-dark05);
+            border: 1px solid var(--bs-dark2);
+            color: var(--bs-dark);
             padding: 0.8rem 1.2rem;
             border-radius: 0 30px 0 30px;
             transition: all 0.3s ease;
@@ -56,14 +56,14 @@
 
         .form-control:focus,
         .form-select:focus {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: var(--bs-white);
             border-color: var(--bs-main);
-            color: var(--bs-white);
+            color: var(--bs-dark);
             box-shadow: 0 0 0 0.25rem rgba(211, 47, 47, 0.25);
         }
 
         .form-label {
-            color: var(--bs-white8);
+            color: var(--bs-dark);
             margin-bottom: 0.5rem;
         }
 
@@ -74,13 +74,13 @@
         }
 
         ::placeholder {
-            color: var(--bs-white6) !important;
+            color: var(--bs-dark6) !important;
             opacity: 1;
         }
 
         .form-select option {
-            background-color: var(--bs-dark);
-            color: var(--bs-white);
+            background-color: var(--bs-white);
+            color: var(--bs-dark);
         }
     </style>
 </head>
@@ -121,7 +121,7 @@
                     <div class="row justify-content-center text-center mb-5">
                         <div class="col-lg-8">
                             <h2 class="section-subtitle redText">Povežite se z nami</h2>
-                            <h3 class="section-title text-white mb-4">Skupaj smo močnejši</h3>
+                            <h3 class="section-title mb-4">Skupaj smo močnejši</h3>
                             <p class="section-description">Odgovorili vam bomo v najkrajšem možnem času</p>
                         </div>
                     </div>
@@ -244,14 +244,10 @@
                     </div>
                 </div>
             </section>
-
         </main>
         <footer id="footer"></footer>
     </div>
-
-    <script src="scripts/contactForm.js"></script>
+0    <script src="scripts/contactForm.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-
 </body>
-
 </html>
