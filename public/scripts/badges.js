@@ -1,8 +1,4 @@
 const BadgeSystem = {
-    /**
-     * @param {number} hours - URE
-     * @return {Object} - VSI PODATKE (ime, ikona, barva, razred, mejne vrednosti)
-     */
     getBadgeInfo: function(hours) {
         if (hours >= 1000) {
         return {
@@ -57,12 +53,6 @@ const BadgeSystem = {
         }
     },
 
-    /**
-     * HTML ZA ZNACKO
-     * @param {number} hours - URE
-     * @param {string} style - STILI
-     * @return {string} - HTML
-     */
     createBadgeHTML: function(hours, style = 'pill') {
         const badge = this.getBadgeInfo(hours);
         
