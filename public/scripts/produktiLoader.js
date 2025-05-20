@@ -45,6 +45,8 @@ function loadProjects(apiUrl = '/api/projekti', containerId = 'projectsContainer
                 difficultyBadge.classList.add(getTezavnost(project.tezavnost));
 
                 clone.querySelector('.donate-btn').setAttribute('data-project-id', project.idProjekt);
+                clone.querySelector('.donate-btn').setAttribute('onclick', `window.location.href='project-detail.html?id=${project.idProjekt}'`);
+                
                 container.appendChild(clone);
             });
 

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ManusMano - Ime projekta</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="stylesheets/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="scripts/loader.js" defer></script>
+    <script src="scripts/projectDetail.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <header id="header"></header>
+        <main class="main-content">
+            <section class="hero-podstran"
+                style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url(img/projectDetailHero.jpg) center/cover no-repeat;">
+                <div class="position-absolute rounded-circle bg-warning"
+                    style="width: 15px; height: 15px; top: 20%; left: 10%;"></div>
+                <div class="position-absolute rounded-circle bg-danger"
+                    style="width: 15px; height: 15px; bottom: 20%; right: 15%;"></div>
+                <div class="container py-5 mt-4">
+                    <div class="row justify-content-center text-center">
+                        <div class="col-lg-8">
+                            <h1 class="hero-title fw-bold mb-3" id="project-title">Ime projekta</h1>
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb justify-content-center mb-0">
+                                    <li class="breadcrumb-item">
+                                        <a href="index.html"
+                                            class="text-white text-decoration-none hover-link">ManusMano</a>
+                                    </li>
+                                    <li class="breadcrumb-item">
+                                        <a href="projekti.html"
+                                            class="text-white text-decoration-none hover-link">Projekti</a>
+                                    </li>
+                                    <li class="breadcrumb-item">
+                                        <span class="redText" id="breadcrumb-title">Ime projekta</span>
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Overview -->
+            <section class="bg-white">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-8 pe-lg-5">
+                            <!-- Slika, ure, tezavnost -->
+                            <div class="position-relative mb-4">
+                                <img src="img/ProjectDetailImg.jpg" alt="Project Image"
+                                    class="img-fluid w-100 diagonalCorner"
+                                    style="max-height: 500px; object-fit: cover;">
+                                <div class="position-absolute top-0 end-0 m-4">
+                                    <span class="badge px-3 py-2 fs-6" id="project-difficulty">
+                                        <i class="fas fa-person-hiking me-2"></i>
+                                        <span class="project-difficulty-text">Loading...</span>
+                                    </span>
+                                </div>
+                                <div class="position-absolute bottom-0 end-0 m-4">
+                                    <div class="hours-badge">
+                                        <span class="hours-value" id="project-hours">8</span>
+                                        <span class="hours-label">ur</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- status/info projektov (lokacija, datum izv, rok prijave) -->
+                            <div class="row mb-4">
+                                <div class="col-md-4 mb-3 mb-md-0">
+                                    <div class="p-3 bg-light diagonalCorner h-100">
+                                        <h6 class="mb-1 text-uppercase small fw-bold text-muted">Lokacija</h6>
+                                        <p class="mb-0 fs-5" id="project-location">Loading...</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3 mb-md-0">
+                                    <div class="p-3 bg-light diagonalCorner h-100">
+                                        <h6 class="mb-1 text-uppercase small fw-bold text-muted">Datum izvajanja</h6>
+                                        <p class="mb-0 fs-5" id="project-date">Loading...</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="p-3 bg-light diagonalCorner h-100">
+                                        <h6 class="mb-1 text-uppercase small fw-bold text-muted">Rok prijave</h6>
+                                        <p class="mb-0 fs-5" id="project-deadline">Loading...</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2 taba, opis in zahteve, opis dinamicen, zahtevnost partially dinamicno (ure) -->
+                            <ul class="nav nav-tabs mb-4" id="projectTab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active text-dark" id="description-tab" data-bs-toggle="tab"
+                                        data-bs-target="#description" type="button" role="tab"
+                                        aria-controls="description" aria-selected="true">Opis</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link text-dark" id="requirements-tab" data-bs-toggle="tab"
+                                        data-bs-target="#requirements" type="button" role="tab"
+                                        aria-controls="requirements" aria-selected="false">Zahteve</button>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content" id="projectTabContent">
+                                <div class="tab-pane fade show active" id="description" role="tabpanel"
+                                    aria-labelledby="description-tab">
+                                    <h3 class="mb-4" id="project-title-tab">Loading...</h3>
+                                    <p class="mb-4" id="project-description">Loading...</p>
+
+                                    <div class="p-4 bg-light diagonalCorner mb-4">
+                                        <h4 class="mb-3">Cilj projekta</h4>
+                                        <p class="mb-0" id="project-goal">Loading...</p>
+                                    </div>
+
+                                    <!-- naš "quote" -->
+                                    <div class="p-4 bg-light diagonalCorner mb-4 position-relative">
+                                        <div class="position-absolute start-0 top-0 ms-4 mt-3 text-danger opacity-25">
+                                            <i class="fas fa-quote-left fa-3x"></i>
+                                        </div>
+                                        <div class="ps-5 py-2">
+                                            <p class="fst-italic mb-2 fs-5">
+                                                "Ko pomagamo drugim, resnično pomagamo tudi sebi. Vse, kar damo v svet,
+                                                se nam vrne."
+                                            </p>
+                                            <p class="mb-0 text-end fw-bold">- ManusMano team</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- potrebne spretnosti -->
+                                <div class="tab-pane fade" id="requirements" role="tabpanel"
+                                    aria-labelledby="requirements-tab">
+                                    <h3 class="mb-4">Zahteve za prostovoljce</h3>
+
+                                    <div class="mb-4">
+                                        <h5 class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Potrebne
+                                            spretnosti</h5>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item border-0 ps-0">
+                                                <i class="fas fa-circle text-danger me-2"
+                                                    style="font-size: 0.5rem;"></i> Komunikacijske sposobnosti
+                                            </li>
+                                            <li class="list-group-item border-0 ps-0">
+                                                <i class="fas fa-circle text-danger me-2"
+                                                    style="font-size: 0.5rem;"></i> Timsko delo
+                                            </li>
+                                            <li class="list-group-item border-0 ps-0">
+                                                <i class="fas fa-circle text-danger me-2"
+                                                    style="font-size: 0.5rem;"></i> Zanesljivost
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <h5 class="mb-3"><i class="fas fa-clock text-primary me-2"></i> Časovna
+                                            zahtevnost</h5>
+                                        <p>Projekt zahteva <span id="project-time-commitment">8 ur</span> prisotnosti.
+                                            Pomembno je, da ste prisotni do konca.</p>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <h5 class="mb-3"><i class="fas fa-map-marker-alt text-danger me-2"></i>
+                                            Lokacijske zahteve</h5>
+                                        <p>Prostovoljci morajo biti zmožni priti na lokacijo projekta: <span
+                                                id="req-location">Ljubljana, Slovenija</span>.</p>
+                                    </div>
+
+                                    <div class="alert alert-warning diagonalCorner" role="alert">
+                                        <div class="d-flex">
+                                            <div class="me-3">
+                                                <i class="fas fa-exclamation-triangle fa-2x"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="alert-heading">Pomembno opozorilo!</h5>
+                                                <p class="mb-0">Prosimo, da se prijavite le, če ste prepričani, da lahko
+                                                    izpolnite zgoraj navedene zahteve. Če imate kakršnakoli vprašanja,
+                                                    nas kontaktirajte pred prijavo.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 mt-5 mt-lg-0">
+                            <!-- info o organizacije -->
+                            <div class="card mb-4 border-0 shadow-sm diagonalCorner">
+                                <div class="card-body">
+                                    <h4 class="card-title mb-4">Organizator projekta</h4>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="rounded-circle bg-light me-3 d-flex align-items-center justify-content-center"
+                                            style="width: 48px; height: 48px;">
+                                            <i class="fas fa-building text-danger"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-0" id="project-organization">Loading...</h5>
+                                            <small class="text-muted">Organizator</small>
+                                        </div>
+                                    </div>
+                                    <div class="campaignGreyLineH mb-3"></div>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="rounded-circle bg-light me-3 d-flex align-items-center justify-content-center"
+                                            style="width: 48px; height: 48px;">
+                                            <i class="fas fa-envelope text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <a href="#" id="drustvo-email-link" class="text-decoration-none">
+                                                <p class="mb-0 text-muted" id="drustvo-email">Loading...</p>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="rounded-circle bg-light me-3 d-flex align-items-center justify-content-center"
+                                            style="width: 48px; height: 48px;">
+                                            <i class="fas fa-phone text-success"></i>
+                                        </div>
+                                        <div>
+                                            <a href="#" id="drustvo-tel-link" class="text-decoration-none">
+                                                <p class="mb-0 text-muted" id="drustvo-tel">Loading...</p>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- progres, stevilo prostovoljcev vpisanih/dovoljenih -->
+                            <div class="project-status-section">
+                                <h5 class="mb-3">Status projekta</h5>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span>Prostovoljci:</span>
+                                    <span id="volunteer-count">Loading...</span>
+                                </div>
+                                <div class="progress" style="height: 10px;">
+                                    <div id="volunteer-progress" class="progress-bar" role="progressbar"
+                                        style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                    </div>
+                                </div>
+                                <div class="text-end mt-2">
+                                    <span id="project-status" class="badge bg-success">Odprto</span>
+                                </div>
+                            </div>
+
+                            <!-- deli projekt -->
+                            <div class="card border-0 shadow-sm diagonalCorner">
+                                <div class="card-body">
+                                    <h4 class="card-title mb-3">Deli projekt</h4>
+                                    <p class="text-muted small mb-3">Pomagaj širiti dober glas in deli ta projekt s
+                                        prijatelji.</p>
+                                    <div class="d-flex justify-content-center gap-3">
+                                        <a href="#" class="social-icon bg-dark rounded-circle">
+                                            <i class="fab fa-facebook-f"></i>
+                                        </a>
+                                        <a href="#" class="social-icon bg-dark rounded-circle">
+                                            <i class="fab fa-twitter"></i>
+                                        </a>
+                                        <a href="#" class="social-icon bg-dark rounded-circle">
+                                            <i class="fab fa-instagram"></i>
+                                        </a>
+                                        <a href="#" class="social-icon bg-dark rounded-circle">
+                                            <i class="fab fa-linkedin-in"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SPocialna omrezja -->
+            <section class="section-alternate">
+                <div class="container">
+                    <div class="row justify-content-center text-center">
+                        <div class="col-lg-8">
+                            <h3 class="mb-4">Postani del spremembe</h3>
+                            <p class="mb-4">Vsak prostovoljec šteje. Z vašo pomočjo lahko skupaj dosežemo
+                                velike stvari za našo skupnost.</p>
+                            <div class="d-flex gap-3 justify-content-center">
+                                <a href="#" class="btn diagonalCorner" id="volunteer-btn-bottom">
+                                    <i class="fas fa-hand-holding-heart me-2"></i> Prijavi se kot prostovoljec
+                                </a>
+                                <a href="projekti.html" class="btn diagonalCorner bg-dark text-white">
+                                    <i class="fas fa-search me-2"></i> Razišči druge projekte
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer id="footer"></footer>
+    </div>
+    <script src="scripts/projectDetail.js"></script>
+</body>
+
+</html>

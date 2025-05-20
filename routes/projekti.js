@@ -111,4 +111,68 @@ router.get('/latest', (req, res) => {
     });
 });
 
+// project-detail;
+router.get('/:id', (req, res) => {
+    const projectId = parseInt(req.params.id, 10);
+    
+    const query = `
+        SELECT 
+            p.*,
+            d.naziv as drustvo_naziv,
+            d.telStevilka as drustvo_tel,
+            d.email as drustvo_email,
+            d.naslov as drustvo_naslov,
+            (SELECT COUNT(*) FROM Prostovoljec_Projekt WHERE TK_Projekt = p.idProjekt AND potrejno = 1) as stevilo_prijavljenih
+        FROM Projekt p
+        LEFT JOIN Drustvo d ON p.TK_Drustvo = d.idDrustvo
+        WHERE p.idProjekt = ?
+    `;
+
+    connection.query(query, [projectId], (err, results) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ error: "Database error" });
+        }
+        if (results.length === 0) {
+            return res.status(404).json({ error: "Project not found" });
+        }
+        res.json(results[0]);
+    });
+});
+
+// Kateri prostovoljci so vpisani v projekt
+router.get('/:id/volunteers', (req, res) => {
+    const projectId = parseInt(req.params.id, 10);
+    
+    if (isNaN(projectId)) {
+        return res.status(400).json({ error: 'Invalid project ID' });
+    }
+
+    const query = `
+        SELECT 
+            p.ime,
+            p.primek,
+            p.spretnost,
+            p.znacka,
+            p.opravljeneUre as skupne_ure,
+            pp.ure,
+            pp.ocena,
+            pp.komentar,
+            pp.potrejno
+        FROM Prostovoljec_Projekt pp
+        JOIN Prostovoljec p ON pp.TK_Prostovoljec = p.idProstovoljec
+        WHERE pp.TK_Projekt = ? AND pp.potrejno = 1
+        ORDER BY pp.ocena DESC
+    `;
+
+    connection.query(query, [projectId], (err, results) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ error: "Database error" });
+        }
+        res.json(results || []);
+    });
+});
+
+
 module.exports = router;
