@@ -8,6 +8,8 @@ const prijavaRouter = require('./routes/prijava');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var projektiRouter = require('./routes/projekti');
+var profilRouter = require('./routes/profil');
+var registracijaRouter = require('./routes/registracija');
 var dodajanjeRouter = require('./routes/dodajanjeProjekta');
 console.log('Sve rute uspešno učitane');
 
@@ -20,6 +22,8 @@ app.use('/prijava', prijavaRouter);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/api/projekti', projektiRouter);
+app.use('/api/profil', profilRouter);
+app.use('/registracija', registracijaRouter);
 app.use('/api/dodajanjeProjekta', dodajanjeRouter);
 
 
