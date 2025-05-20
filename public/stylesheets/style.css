@@ -689,7 +689,10 @@ nav {
     color: var(--bs-dark);
 }
 .tab-content label{
-    color: var(--bs-dark);
+    color: var(--bs-white);
+}
+.tab-content {
+    color: var(--bs-white);
 }
 
 

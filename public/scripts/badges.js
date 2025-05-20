@@ -58,7 +58,7 @@ const BadgeSystem = {
         
         // Tu se slede lejko doda se vec stilov za znacko glede na to kaj bomo rabili, te se uporabi samo switch-case type shit za vsake stil znacke
         return `
-        <div class="badge text-white py-2 px-3 diagonalCorner" style="background-color: ${badge.color}">
+        <div class="badge text-white py-2 px-3" style="background-color: ${badge.color}">
             <i class="fas ${badge.icon} me-2"></i>
             <span>${badge.name}</span>
         </div>
