@@ -67,7 +67,7 @@ function loadTopVolunteers() {
                                             <i class="fas fa-calendar-alt" style="color: ${badgeInfo.color}"></i>
                                         </div>
                                         <div>
-                                            <h5 class="mb-0 fw-bold">${Math.ceil(hours/8)} dni</h5>
+                                            <h5 class="mb-0 fw-bold">${Math.ceil(hours/8)} delovnih dni</h5>
                                         </div>
                                     </div>
                                     
