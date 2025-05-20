@@ -10,8 +10,13 @@ var usersRouter = require('./routes/users');
 var projektiRouter = require('./routes/projekti');
 var profilRouter = require('./routes/profil');
 var registracijaRouter = require('./routes/registracija');
+<<<<<<< HEAD
 var dodajanjeRouter = require('./routes/dodajanjeProjekta');
 console.log('Sve rute uspešno učitane');
+=======
+var naseZvezdeRouter = require('./routes/naseZvezde'); 
+
+>>>>>>> 4ccfbfad58b0a327bcd4ca495e93d1b6beb46160
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -24,8 +29,12 @@ app.use('/users', usersRouter);
 app.use('/api/projekti', projektiRouter);
 app.use('/api/profil', profilRouter);
 app.use('/registracija', registracijaRouter);
+<<<<<<< HEAD
 app.use('/api/dodajanjeProjekta', dodajanjeRouter);
 
+=======
+app.use('/api/naseZvezde', naseZvezdeRouter);
+>>>>>>> 4ccfbfad58b0a327bcd4ca495e93d1b6beb46160
 
 
 if (require.main === module) {

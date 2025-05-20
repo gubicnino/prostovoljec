@@ -1,74 +1,82 @@
-// Validacija obrazca i pošiljanje podatkov
-(function () {
-    'use strict';
-    console.log('dodajProjekt.js učitan'); // Debug: Provera učitavanja skripte
+document.addEventListener("DOMContentLoaded", () => {
+    const projectForm = document.forms["addProject"];
 
-    const forms = document.querySelectorAll('.needs-validation');
-    console.log('Pronađene forme:', forms.length); // Debug: Provera broja formi
+    projectForm?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
 
-    Array.from(forms).forEach(function (form) {
-        console.log('Registracija submit događaja na formi'); // Debug
-        form.addEventListener('submit', async function (event) {
-            console.log('Submit događaj aktiviran'); // Debug: Provera da li submit radi
-            event.preventDefault(); // Sprečava podrazumevano ponašanje forme
-            event.stopPropagation();
+        projectForm.classList.add("was-validated");
 
-            if (!form.checkValidity()) {
-                console.log('Forma nije validna'); // Debug
-                form.classList.add('was-validated');
-                return;
+        if (!projectForm.checkValidity()) {
+            console.log("Forma nije validna");
+            return;
+        }
+
+        // Collect form data with server-expected field names
+        const data = {
+            naziv: projectForm.naziv.value,
+            cilj: projectForm.cilj.value,
+            datumIzvajanja: projectForm.datumIzvajanja.value,
+            trajanje: projectForm.trajanje.value,
+            tezavnost: projectForm.tezavnost.value,
+            datumRokaPrijave: projectForm.datumRokaPrijave.value,
+            lokacija: projectForm.Lokacija.value, // Changed to lowercase
+            kratekOpis: projectForm.kratekOpis.value,
+            opis: projectForm.opis.value // Changed to match server
+        };
+
+        try {
+            console.log("Slanje POST zahteva na /api/dodajanjeProjekta", data);
+            const response = await fetch("/api/dodajanjeProjekta", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                console.log("Uspešno dodat projekat", result);
+                alert("Projekt je uspešno dodat!");
+                window.location.href = "projekti.html";
+            } else {
+                console.log("Greška od servera:", response.status, result);
+                alert(`Greška pri dodavanju projekta: ${result.error || result.message || "Neznana napaka"}`);
             }
-
-            try {
-                console.log('Slanje POST zahteva na /dodajanjeProjekta'); // Debug
-                const formData = new FormData(form);
-                const response = await fetch('/api/dodajanjeProjekta', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (response.ok) {
-                    console.log('Uspešno dodat projekat'); // Debug
-                    alert('Projekt je uspešno dodat!');
-                    window.location.href = 'projekti.html'; // Preusmerava na stranu sa projektima
-                } else {
-                    console.log('Greška od servera:', response.status); // Debug
-                    alert('Greška pri dodavanju projekta. Pokušajte ponovo.');
-                }
-            } catch (error) {
-                console.error('Greška pri slanju zahteva:', error); // Debug
-                alert('Greška pri povezivanju sa serverom.');
-            }
-
-            form.classList.add('was-validated');
-        }, false);
+        } catch (error) {
+            console.error("Greška pri slanju zahteva:", error);
+            alert("Greška pri povezivanju sa serverom.");
+        }
     });
-})();
 
-// Nastavi minimalni datum za datume
-const today = new Date().toISOString().split('T')[0];
-document.getElementById('datumIzvajanja')?.setAttribute('min', today);
-document.getElementById('datumRokaPrijave')?.setAttribute('min', today);
+    // Set minimum date for date inputs
+    const today = new Date().toISOString().split("T")[0];
+    const datumIzvajanja = document.getElementById("datumIzvajanja");
+    const datumRokaPrijave = document.getElementById("datumRokaPrijave");
 
-// Proveri da je rok prijave pre datuma izvršenja
-document.getElementById('datumIzvajanja')?.addEventListener('change', function() {
-    const izvajanje = this.value;
-    const rokPrijave = document.getElementById('datumRokaPrijave')?.value;
-    
-    if (rokPrijave && new Date(rokPrijave) >= new Date(izvajanje)) {
-        document.getElementById('datumRokaPrijave')?.setCustomValidity('Rok prijave mora biti pred datumom izvajanja');
-    } else {
-        document.getElementById('datumRokaPrijave')?.setCustomValidity('');
-    }
-});
+    if (datumIzvajanja) datumIzvajanja.setAttribute("min", today);
+    if (datumRokaPrijave) datumRokaPrijave.setAttribute("min", today);
 
-document.getElementById('datumRokaPrijave')?.addEventListener('change', function() {
-    const rokPrijave = this.value;
-    const izvajanje = document.getElementById('datumIzvajanja')?.value;
-    
-    if (izvajanje && new Date(rokPrijave) >= new Date(izvajanje)) {
-        this.setCustomValidity('Rok prijave mora biti pred datumom izvajanja');
-    } else {
-        this.setCustomValidity('');
-    }
+    // Validate that rokPrijave is before datumIzvajanja
+    datumIzvajanja?.addEventListener("change", function () {
+        const izvajanje = this.value;
+        const rokPrijave = datumRokaPrijave?.value;
+
+        if (rokPrijave && new Date(rokPrijave) >= new Date(izvajanje)) {
+            datumRokaPrijave?.setCustomValidity("Rok prijave mora biti pred datumom izvajanja");
+        } else {
+            datumRokaPrijave?.setCustomValidity("");
+        }
+    });
+
+    datumRokaPrijave?.addEventListener("change", function () {
+        const rokPrijave = this.value;
+        const izvajanje = datumIzvajanja?.value;
+
+        if (izvajanje && new Date(rokPrijave) >= new Date(izvajanje)) {
+            this.setCustomValidity("Rok prijave mora biti pred datumom izvajanja");
+        } else {
+            this.setCustomValidity("");
+        }
+    });
 });

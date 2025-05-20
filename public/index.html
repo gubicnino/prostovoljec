@@ -11,14 +11,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="scripts/loader.js" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-
+    <script src="/scripts/produktiLoader.js" defer></script>
 </head>
 
 <body>
     <div class="page-wrapper">
-        <header id="header"></header>
+        <header id="header" class="white-page"></header>
 
         <main class="main-content">
             <section class="hero-section">
@@ -26,7 +27,7 @@
                     <div class="row align-items-center justify-content-center">
                         <div class="col-lg-6">
                             <div class="orange-dot"></div>
-                            <h1 class="hero-title">Podaj roko.<br><span class="redText">Spremeni
+                            <h1 class="home-hero-title">Podaj roko.<br><span class="redText">Spremeni
                                     življenje.</span><br>Začni danes.</h1>
                             <p class="hero-description">Vsak korak šteje. Tvoja prisotnost lahko komu pomeni vse.</p>
                             <button class="btn">Preglej projekte</button>
@@ -34,7 +35,7 @@
                         <div class="col-lg-6">
                             <div class="image-container">
                                 <div class="image-overlay">
-                                    <img src="img/heroImg.png" alt="Children in need" class="hero-image">
+                                    <img src="img/hero img 2.png" alt="Children in need" class="hero-image">
                                 </div>
                             </div>
                             <div class="green-dot"></div>
@@ -53,7 +54,6 @@
                         everything that is not essential to makihave to get bad.</p>
 
                     <div class="row g-4">
-                        <!-- Feature Card 1 -->
                         <div class="col-lg-3 col-md-6">
                             <div class="feature-card diagonalCorner">
                                 <img src="img/free-access.svg" alt="Free Access Icon" class="feature-icon">
@@ -63,7 +63,6 @@
                             </div>
                         </div>
 
-                        <!-- Feature Card 2 -->
                         <div class="col-lg-3 col-md-6">
                             <div class="feature-card diagonalCorner">
                                 <img src="img/locals-for-locals.svg" alt="Locals For Locals Icon" class="feature-icon">
@@ -73,7 +72,6 @@
                             </div>
                         </div>
 
-                        <!-- Feature Card 3 -->
                         <div class="col-lg-3 col-md-6">
                             <div class="feature-card diagonalCorner">
                                 <img src="img/real-impact.svg" alt="Real Impact Icon" class="feature-icon">
@@ -83,7 +81,6 @@
                             </div>
                         </div>
 
-                        <!-- Feature Card 4 -->
                         <div class="col-lg-3 col-md-6">
                             <div class="feature-card diagonalCorner">
                                 <img src="img/safety-net.svg" alt="Safety Net Icon" class="feature-icon">
@@ -100,145 +97,95 @@
                 <div class="container">
                     <div class="row align-items-center">
                         <div class="col-lg-6">
-                            <img src="img/o-nas.png" style="max-width: 100%;">
+                            <img src="img/O-nas2.png" style="max-width: 100%;">
                         </div>
                         <div class="col-lg-6">
                             <h5 class="section-subtitle">O NAS</h5>
                             <h2 class="section-title">Changing Lives with Knowledge</h2>
-                            <p class="povdrajenParagraph">Our promise that your giving is doing what it’s supposed to
+                            <p class="povdrajenParagraph">Our promise that your giving is doing what it's supposed to
                                 changing lives.</p>
                             <p>Today, we will work to deliver life-saving aid to millions of people living on the edge
-                                of survival.
-                                Tomorrow, when the crisis subsides, we will work alongside community members to restore
-                                job opportunities.</p>
+                                of survival. Tomorrow, when the crisis subsides, we will work alongside community
+                                members to restore job opportunities.</p>
                             <button class="btn mt-3">Izvedi več</button>
-
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section class="features-section section-alternate ">
+            <section class="features-section section-alternate">
                 <div class="container">
                     <h5 class="section-subtitle">POTREBUJEMO VAŠO POMOČ</h5>
                     <h2 class="section-title">Naredi spremembo</h2>
                     <p class="section-description">Tukaj bodo prikazani naši projekti ko bomo imeli bazo</p>
-                    <div class="row g-4">
-                        <!-- Campaign Card 1 -->
-                        <div class="col-lg-4 col-md-6">
-                            <div class="campaign-card diagonalCorner">
-                                <div class="campaign-image">
-                                    <img src="img/campaing-3.jpg" alt="Youth in Action Against Poverty"
-                                        class="diagonalCorner">
-                                </div>
-                                <div class="progress-container">
-                                    <div class="progress-info">
-                                        <div>
-                                            <div class="progress-label">Current</div>
-                                            <div class="progress-value">$725</div>
-                                        </div>
-                                        <div class="campainGreyLine"></div>
-                                        <div class="percentage">
-                                            18<span class="percentage-symbol">%</span>
-                                        </div>
-                                        <div class="campainGreyLine"></div>
-                                        <div>
-                                            <div class="progress-label">Target</div>
-                                            <div class="progress-value">$4,000</div>
-                                        </div>
+
+                    <template id="projectTemplate">
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="campaign-card diagonalCorner h-100 d-flex flex-column position-relative">
+                                <div class="campaign-image position-relative">
+                                    <img src="" alt="" class="diagonalCorner project-image w-100">
+                                    <span
+                                        class="badge project-difficulty position-absolute top-0 end-0 m-3 py-2 px-3 d-flex align-items-center">
+                                        <i class="fas fa-person-hiking me-1" title="Težavnost projekta"></i>
+                                        <span>Težavnost</span>
+                                    </span>
+                                    <div class="position-absolute rounded-pill bg-danger text-white shadow-sm d-flex align-items-center py-1 px-3"
+                                        style="bottom: 15px; right: 20px; z-index: 10;">
+                                        <span class="project-duration-hours fs-1 fw-bold lh-1">6</span>
+                                        <span class="small fw-medium ms-1">ur</span>
                                     </div>
                                 </div>
-                                <div class="campaignGreyLineH"></div>
-                                <div class="campaign-details">
-                                    <h3 class="campaign-title">Youth In Action Against Poverty</h3>
-                                    <p class="campaign-description">We the People nurtures the leaders of tomorrow by
-                                        cultivating
-                                        civic engagement and an appreciation for our diversity!</p>
-                                    <div class="orange-line"></div>
-                                    <button class="btn donate-btn">
-                                        <i class="fas fa-arrow-right"></i>
-                                    </button>
 
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Campaign Card 2 -->
-                        <div class="col-lg-4 col-md-6">
-                            <div class="campaign-card diagonalCorner">
-                                <div class="campaign-image">
-                                    <img src="img/campaing-4.jpg" alt="Mountain Bikes Campaign" class="diagonalCorner">
-                                </div>
-                                <div class="progress-container">
-                                    <div class="progress-info">
-                                        <div>
-                                            <div class="progress-label">Current</div>
-                                            <div class="progress-value">$960</div>
+                                <div class="p-4 flex-column flex-grow-1 d-flex justify-content-between gap-3">
+                                    <div class="">
+                                        <h3 class="campaign-title project-title fs-4 mb-1 overflow-hidden text-start"
+                                            style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.3;">
+                                            Project Title</h3>
+                                        <p class="text-muted mb-2 project-organization small text-start">
+                                            <i class="fas fa-building me-1"></i> <span>Organizacija</span>
+                                        </p>
+                                    </div>
+                                    <div class="campaignGreyLineH"></div>
+                                    <div class="d-flex flex-column">
+                                        <div class="d-flex mb-2 small">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-location-dot text-danger me-2"></i>
+                                                <span class="project-location">Lokacija</span>
+                                            </div>
                                         </div>
-                                        <div class="campainGreyLine"></div>
-                                        <div class="percentage">
-                                            12<span class="percentage-symbol">%</span>
-                                        </div>
-                                        <div class="campainGreyLine"></div>
-                                        <div>
-                                            <div class="progress-label">Target</div>
-                                            <div class="progress-value">$8,000</div>
+                                        <div class="d-flex flex-column small">
+                                            <div class="d-flex align-items-center mb-1">
+                                                <i class="fas fa-calendar-days text-primary me-2"></i>
+                                                <strong>Izvaja se:</strong> <span class="project-date ms-1">Datum</span>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-calendar-xmark text-info me-2"></i>
+                                                <strong>Prijave do:</strong> <span class="project-deadline ms-1">Rok
+                                                    prijave</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="campaignGreyLineH"></div>
-                                <div class="campaign-details">
-                                    <h3 class="campaign-title">Mountain Bikes Campaign For NWA Children's Shelter</h3>
-                                    <p class="campaign-description">The Northwest Arkansas Children's Shelter (NWACS) is
-                                        a private,
-                                        non-profit organization that provides 24-hour residential, emergency triage...
-                                    </p>
-                                    <div class="orange-line"></div>
-                                    <button class="btn donate-btn">
-                                        <i class="fas fa-arrow-right"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Campaign Card 3 -->
-                        <div class="col-lg-4 col-md-6">
-                            <div class="campaign-card diagonalCorner">
-                                <div class="campaign-image">
-                                    <img src="img/campaing-5.jpg" alt="Minivan Build Match" class="diagonalCorner">
-                                </div>
-                                <div class="progress-container">
-                                    <div class="progress-info">
-                                        <div>
-                                            <div class="progress-label">Current</div>
-                                            <div class="progress-value">$675</div>
-                                        </div>
-                                        <div class="campainGreyLine"></div>
-                                        <div class="percentage">
-                                            7<span class="percentage-symbol">%</span>
-                                        </div>
-                                        <div class="campainGreyLine"></div>
-                                        <div>
-                                            <div class="progress-label">Target</div>
-                                            <div class="progress-value">$9,500</div>
-                                        </div>
+                                    <div class="campaignGreyLineH" style="width: 100%;"></div>
+                                    <div class="">
+                                        <p class="campaign-description project-description mb-3 text-dark fw-medium overflow-hidden text-uppercase text-start"
+                                            style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; font-size: 1.1rem;">
+                                            Tu bo description projekta</p>
+                                        <p class="project-goal mb-0 text-muted small text-start">
+                                            <i class="fas fa-clipboard-check text-success me-1"
+                                                title="Cilj projekta"></i>
+                                            <span class="project-goal-text fst-italic text-start">Cilj projekta</span>
+                                        </p>
                                     </div>
                                 </div>
-                                <div class="campaignGreyLineH"></div>
-                                <div class="campaign-details">
-                                    <h3 class="campaign-title">Minivan Build Match, Double Your Gift, Double Your Fund
-                                    </h3>
-                                    <p class="campaign-description">Contribute to October's Minivan Build in Pahrump,
-                                        and toward
-                                        another build in 2020. An anonymous donor will match your gift, dollar for
-                                        dollar...</p>
-                                    <div class="orange-line"></div>
-                                    <button class="btn donate-btn">
-                                        <i class="fas fa-arrow-right"></i>
-                                    </button>
-                                </div>
+                                <button class="btn donate-btn" data-project-id="" title="Podrobnosti projekta">
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
                             </div>
                         </div>
+                    </template>
+
+                    <div id="projectsContainer" class="row g-4">
+                        <!-- Projects will be loaded here -->
                     </div>
                 </div>
             </section>

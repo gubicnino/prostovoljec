@@ -1,6 +1,6 @@
 :root {
     --bs-main: #D32F2F;
-    --bs-secondary: #212121;
+    --bs-secondary: #ffffff;
     --bs-white: rgba(250, 250, 250, 1);  
     --bs-white8: rgba(250, 250, 250, 0.8);  
     --bs-white6: rgba(250, 250, 250, 0.6);  
@@ -10,6 +10,9 @@
     --bs-dark6: rgba(33, 33, 33, 0.6);
     --bs-dark5: rgba(33, 33, 33, 0.5);
     --bs-dark2: rgba(33, 33, 33, 0.2);
+    --bs-dark05: rgba(33, 33, 33, 0.05);
+    --bs-grey: #BDBDBD;
+    --bs-lightGrey: #E0E0E0;
     --font-heading: 'Montserrat', sans-serif;
     --font-body: 'Roboto', sans-serif;
 }
@@ -23,13 +26,13 @@
 body {
     font-family: var(--font-body);
     background-color: var(--bs-secondary);
-    color: var(--bs-white);
+    color: var(--bs-dark);
     font-size: 1.2rem;
     line-height: 1.6;
 }
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
-    color: var(--bs-white);
+    color: var(--bs-dark);
 }
 h1 {
     font-size: 2.5rem;
@@ -59,7 +62,7 @@ h6 {
 p {
     font-size: 1.2rem;
     line-height: 1.6;
-    color: var(--bs-white8);
+    color: var(--bs-dark8);
 }
 a {
     text-decoration: none;
@@ -82,13 +85,17 @@ section {
     transition: all 0.5s ease;
     border: 2px solid var(--bs-main);
     font-weight: 500;
+    border-radius: 0 1.5rem 0 1.5rem ;
 }
 .btn:hover {
-    background-color: var(--bs-white);
-    color: var(--bs-main);
-    border: 2px solid var(--bs-main);
+    background-color: #a62828; /* Temnejši odtenek rdeče */
+    box-shadow: 0 2px 8px 4px rgba(33,33,33,0.18);
+    color: var(--bs-white);
 }
 /* Footer */
+footer {
+    background-color: var(--bs-dark);
+}
 .footer-title::after {
     content: '';
     position: absolute;
@@ -104,6 +111,7 @@ section {
     padding-left: 5px;
     transition: all 0.3s ease;
 }
+
 /* Logo */
 .logoWrapper {
     font-size: 1.5rem;
@@ -133,6 +141,13 @@ section {
 }
 
 .hero-title {
+    color: var(--bs-white);
+    font-size: 4rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+.home-hero-title {
+    color: var(--bs-dark);
     font-size: 4rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
@@ -194,6 +209,9 @@ section {
 }
 
 /* Navigation */
+header {
+    background-color: var(--bs-dark);
+}
 nav {
     padding: 2rem 0;
 }
@@ -222,6 +240,7 @@ nav {
 .nav-link {
     color: var(--bs-white);
     font-family: var(--font-heading);
+    font-weight: 500;
 }
 .navbar-nav{
     margin-right: 2rem;
@@ -238,7 +257,7 @@ nav {
     display: flex;
     justify-content: center;
     align-items: center;
-    color: var(--bs-white); /* Bela barva ikone */
+    color: var(--bs-white);
     font-size: 1.5rem; /* Velikost ikone */
     transition: color 0.3s ease; /* Gladek prehod barve */
 }
@@ -250,13 +269,17 @@ nav {
 .redText {
     color: var(--bs-main);
 }
+
+/* TODO: */
 .diagonalCorner{
     border-radius: 0 30px 0 30px ;
 }
 .povdrajenParagraph {
+    color: var(--bs-dark);
+}
+.white-text {
     color: var(--bs-white);
 }
-
 /*Index*/
 .features-section {
     text-align: center;
@@ -444,8 +467,7 @@ nav {
 .section-alternate {
     position: relative;
     z-index: 1;
-
-    background-color: rgba(255, 255, 255, 0.05) !important;
+    background-color: var(--bs-dark05);
 }
 
 .section-alternate::before {
@@ -456,7 +478,7 @@ nav {
     width: 100%;
     height: 100%;
     background: url(../img/MapBackground.png) center/contain repeat;
-    opacity: 0.5; /* Adjust the opacity as needed */
+    opacity: 0.08; /* Adjust the opacity as needed */
     z-index: 0; /* Ensure it stays behind the content */
 }
 .section-alternate .container {
@@ -485,76 +507,59 @@ nav {
     transform: scale(1);
 }
 
-.card-item h3,
-.card-item p {
-    padding: 0 2.5rem;
-}
-
-.card-item h3 {
-    padding-top: 2rem;
-    margin-bottom: 1rem;
-}
-
-.card-item p {
-    margin-bottom: 2rem;
-    padding-bottom: 2rem;
-}
-
 
 .card-item:hover .image-wrapper img {
     transform: scale(1.1);
 }
 
 /* STAtistika kartice */
-.section-alternate .card-item {
+.card-item {
     padding: 1.75rem 1rem 1.75rem 1.5rem;
     transition: all 0.3s ease;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 2rem;
     text-align: left;
     position: relative;
     cursor: default;
     z-index: 5;
-    background-color: rgba(105, 105, 105, 0.671);
+    background-color: var(--bs-dark2);
 }
 
 
 
-.section-alternate .card-item:hover {
+.card-item:hover, .card-item-vertical:hover {
     transform: translateY(-5px);
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
 }
 
-.section-alternate .card-item i {
+.card-item i {
     font-size: 2rem;
-    color: var(--bs-warning);
+    color: var(--bs-main);
     padding-left: 0.5rem;
     position: relative;
 }
 
-.section-alternate .card-item .stat-content {
+.card-item .stat-content {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 0.5rem;
+}
+.card-item-vertical {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    padding: 1.5rem 1rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    background-color: var(--bs-lightGrey);
+    transition: all 0.3s ease;
+    z-index: 22;
 }
 
-.section-alternate .card-item h3 {
-    font-size: 1.75rem;
-    margin-bottom: 0;
-    padding: 0;
-    line-height: 1.2;
-}
-
-.section-alternate .card-item p {
-    font-size: 0.9rem;
-    margin: 0;
-    padding: 0;
-    line-height: 1.4;
-}
 #higherH2{
     position: relative;
     z-index: 9999;
@@ -666,6 +671,67 @@ nav {
 }
 
 .pagination .fa-chevron-left,
-.pagination .fa-chevron-right {
+.pagination .fa-chevron-right { 
     font-size: 0.875rem;
+}
+
+
+.hero-podstran {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-height: 60vh;
+}
+
+/* Profile */
+.profile-page .nav-item button{
+    color: var(--bs-dark);
+}
+.tab-content label{
+    color: var(--bs-dark);
+}
+
+
+
+
+/* header (black tekst on white pages, white tekst on dark pages */
+header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: transparent !important;
+}
+
+header .navbar {
+    background-color: transparent !important;
+}
+
+.white-page .nav-link,
+.white-page .navbar-nav .iconNav a,
+.white-page .logoText {
+    color: var(--bs-dark) !important;
+}
+
+.logoTextRed {
+    color: var(--bs-main) !important;
+}
+
+.white-page .nav-item:hover .nav-link {
+    color: var(--bs-main) !important;
+}
+
+.white-page .navbar-toggler-icon {
+    filter: brightness(0) !important;
+}
+
+.hero-section {
+    padding-top: 100px;
+    margin-top: 0;
+}
+
+.hero-podstran {
+    padding-top: 100px;
 }
