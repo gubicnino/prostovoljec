@@ -16,19 +16,20 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <script src="scripts/urejanjeProfilov.js" defer></script>
     <script src="scripts/produktiLoader.js" defer></script>
+    <script src="scripts/badges.js" defer></script>
 </head>
 
 <body>
     <header id="header" class="white-page"></header>
     <main class="main-content py-5">
         <!-- DRUŠTVO -->
-        <section>
-            <div class="container profile-page role-drustvo py-5">
+        <div class="container profile-page role-drustvo py-5">
+            <section>
                 <h2 class="mb-4 text-center">Moj profil (Društvo)</h2>
                 <ul class="nav nav-tabs justify-content-center mb-4" id="profileTabsDrustvo" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="projekti-tab" data-bs-toggle="tab" data-bs-target="#projekti"
-                            type="button" role="tab">Naši projekti</button>
+                        <button class="nav-link active" id="projekti-tab" data-bs-toggle="tab"
+                            data-bs-target="#projekti" type="button" role="tab">Naši projekti</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link " id="osnovni-tab" data-bs-toggle="tab" data-bs-target="#osnovni"
@@ -45,7 +46,8 @@
                         <div class="row g-3 " id="projectsContainer">
                             <template id="projectTemplate">
                                 <div class="col-lg-4 col-md-6 mb-4">
-                                    <div class="campaign-card diagonalCorner h-100 d-flex flex-column position-relative">
+                                    <div
+                                        class="campaign-card diagonalCorner h-100 d-flex flex-column position-relative">
                                         <!-- Slika -->
                                         <div class="campaign-image position-relative">
                                             <img src="" alt="" class="diagonalCorner project-image w-100">
@@ -88,7 +90,8 @@
                                                     </div>
                                                     <div class="d-flex align-items-center">
                                                         <i class="fas fa-calendar-xmark text-info me-2"></i>
-                                                        <strong>Prijave do:</strong> <span class="project-deadline ms-1">Rok
+                                                        <strong>Prijave do:</strong> <span
+                                                            class="project-deadline ms-1">Rok
                                                             prijave</span>
                                                     </div>
                                                 </div>
@@ -209,21 +212,20 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
-
+            </section>
+        </div>
         <!-- PROSTOVOLJEC -->
-        <section>
-            <div class="container profile-page role-prostovoljec">
+        <div class="container profile-page role-prostovoljec">
+            <section>
                 <h2 class="mb-4 text-center">Moj profil (Prostovoljec)</h2>
                 <ul class="nav nav-tabs justify-content-center mb-4" id="profileTabsProstovoljec" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="mojprofil-tab" data-bs-toggle="tab" data-bs-target="#mojprofil"
-                            type="button" role="tab">Moj profil</button>
+                        <button class="nav-link active" id="mojprofil-tab" data-bs-toggle="tab"
+                            data-bs-target="#mojprofil" type="button" role="tab">Moj profil</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="mojiprojekti-tab" data-bs-toggle="tab" data-bs-target="#mojiprojekti"
-                            type="button" role="tab">Moji projekti</button>
+                        <button class="nav-link" id="mojiprojekti-tab" data-bs-toggle="tab"
+                            data-bs-target="#mojiprojekti" type="button" role="tab">Moji projekti</button>
                     </li>
                 </ul>
                 <div class="tab-content bg-dark rounded-4 p-4 shadow" id="profileTabsContentProstovoljec">
@@ -270,14 +272,14 @@
                                     <option value="Komunikacijeske spretnosti">Komunikacijske spretnosti</option>
                                 </select>
                             </div>
-                            <div class="col-12 d-flex align-items-end gap-3">
-                                <div>
+                            <div class="col-12 d-flex align-items-center gap-3">
+                                <div class="d-flex gap-2  align-items-center">
                                     <span class="fw-bold">Opravljene ure:</span>
-                                    <span class="badge bg-primary fs-5" id="opravljeneUre"></span>
+                                    <div class id="opravljeneUre"></div>
                                 </div>
-                                <div>
+                                <div class="d-flex gap-2  align-items-center">
                                     <span class="fw-bold">Značka:</span>
-                                    <span class="badge bg-warning text-dark fs-6" id="znacka"></span>
+                                    <div id="znacka"></div>
                                 </div>
                             </div>
                             <div class="col-12">
@@ -294,7 +296,8 @@
                         <div class="row g-3 " id="projectsContainerProstovoljec">
                             <template id="projectTemplateProstovoljec">
                                 <div class="col-lg-4 col-md-6 mb-4">
-                                    <div class="campaign-card diagonalCorner h-100 d-flex flex-column position-relative">
+                                    <div
+                                        class="campaign-card diagonalCorner h-100 d-flex flex-column position-relative">
                                         <!-- Slika -->
                                         <div class="campaign-image position-relative">
                                             <img src="" alt="" class="diagonalCorner project-image w-100">
@@ -337,7 +340,8 @@
                                                     </div>
                                                     <div class="d-flex align-items-center">
                                                         <i class="fas fa-calendar-xmark text-info me-2"></i>
-                                                        <strong>Prijave do:</strong> <span class="project-deadline ms-1">Rok
+                                                        <strong>Prijave do:</strong> <span
+                                                            class="project-deadline ms-1">Rok
                                                             prijave</span>
                                                     </div>
                                                 </div>
@@ -368,8 +372,8 @@
                         </nav>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
     </main>
     <footer id="footer"></footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>

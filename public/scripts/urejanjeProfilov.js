@@ -35,8 +35,18 @@ function loadCorrectProfiles() {
                 document.getElementById('email').value = data.email || '';
                 document.getElementById('naslov').value = data.naslov || '';
                 document.getElementById('spretnost').value = data.spretnost || '';
-                document.getElementById('opravljeneUre').textContent = data.opravljeneUre || '0';
-                document.getElementById('znacka').textContent = data.znacka || 'Brez značke';
+                const badge = BadgeSystem.getBadgeInfo(data.opravljeneUre || 0);
+                document.getElementById('opravljeneUre').innerHTML = `
+                                    <div class="d-flex align-items-center p-2 rounded">
+                                        <div class="me-3">
+                                            <i class="fas fa-clock" style="color: ${badge.color}"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-0 fw-bold" style="color: var(--bs-white)">${data.opravljeneUre} ur</h5>
+                                        </div>
+                                    </div>
+                                    `;
+                document.getElementById('znacka').innerHTML = BadgeSystem.createBadgeHTML(data.opravljeneUre || 0);
             });
     }
 }
