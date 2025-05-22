@@ -64,7 +64,7 @@ function naložiPrijavnice(drustvoId) {
             if (data.length === 0) {
                 tabelaBody.innerHTML = `
                     <tr>
-                        <td colspan="4" class="text-center text-muted">
+                        <td colspan="4" class="text-left text-white">
                             Trenutno ni novih prijavnic.
                         </td>
                     </tr>
@@ -77,8 +77,8 @@ function naložiPrijavnice(drustvoId) {
                     <td>
                         <div>
                             <strong>${prijava.ime} ${prijava.primek}</strong><br>
-                            <small class="text-muted">${prijava.email}</small><br>
-                            <small class="text-muted">${prijava.telStevilka}</small>
+                            <small class="text-white">${prijava.email}</small><br>
+                            <small class="text-white">${prijava.telStevilka}</small>
                         </div>
                     </td>
                     <td>${prijava.projekt_naziv}</td>
@@ -132,7 +132,7 @@ async function potrdiPrijavo(prijavId, odobreno) {
             if (tabelaBody && tabelaBody.children.length === 0) {
                 tabelaBody.innerHTML = `
                     <tr>
-                        <td colspan="4" class="text-center text-muted">
+                        <td colspan="4" class="text-center text-white">
                             Trenutno ni novih prijavnic.
                         </td>
                     </tr>
