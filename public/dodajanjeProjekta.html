@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,76 +12,96 @@
     <script src="scripts/loader.js" defer></script>
     <script src="scripts/dodajProjekt.js" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 </head>
+
 <body>
     <header id="header" class="white-page"></header>
 
-    <section class="add-project" style="min-height: 800px;">
+    <section class="add-project">
         <div class="container">
             <div class="projectFormWrapper">
-                <h2 class="mb-4">Dodaj Projekt</h2>
-                <form class="project-form needs-validation" name="addProject" action="/dodajanjeProjekta" method="post" novalidate>
+                <h2 class="mb-4" id="naslov">Dodaj Projekt</h2>
+                <form class="project-form needs-validation" name="addProject" action="/dodajanjeProjekta" method="post"
+                    novalidate>
                     <div class="mb-3">
                         <label for="naziv" class="form-label">Naziv projekta</label>
-                        <input type="text" id="naziv" name="naziv" class="form-control" placeholder="Naziv projekta" required maxlength="45">
+                        <input type="text" id="naziv" name="naziv" class="form-control" placeholder="Naziv projekta"
+                            required maxlength="45">
                         <div class="invalid-feedback">Prosimo, vnesite naziv projekta.</div>
                     </div>
                     <div class="mb-3">
                         <label for="cilj" class="form-label">Cilj projekta</label>
-                        <input type="text" id="cilj" name="cilj" class="form-control" placeholder="Cilj projekta" required maxlength="45">
+                        <input type="text" id="cilj" name="cilj" class="form-control" placeholder="Cilj projekta"
+                            required maxlength="45">
                         <div class="invalid-feedback">Prosimo, vnesite cilj projekta.</div>
                     </div>
-                    <div class="mb-3">
-                        <label for="datumIzvajanja" class="form-label">Datum izvajanja</label>
-                        <input type="date" id="datumIzvajanja" name="datumIzvajanja" class="form-control" required>
-                        <div class="invalid-feedback">Prosimo, vnesite datum izvajanja.</div>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="datumIzvajanja" class="form-label">Datum izvajanja</label>
+                            <input type="date" id="datumIzvajanja" name="datumIzvajanja" class="form-control" required>
+                            <div class="invalid-feedback">Prosimo, vnesite datum izvajanja.</div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="kapaciteta" class="form-label">Kapaciteta</label>
+                            <input type="number" id="kapaciteta" name="kapaciteta" class="form-control" placeholder="Največje št. prostovoljcev" min="1" required>
+                            <div class="invalid-feedback">Prosimo, vnesite kapaciteto.</div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="trajanje" class="form-label">Trajanje (v urah)</label>
+                            <input type="text" id="trajanje" name="trajanje" class="form-control" placeholder="Trajanje"
+                                required>
+                            <div class="invalid-feedback">Prosimo, vnesite trajanje projekta.</div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="tezavnost" class="form-label">Težavnost</label>
+                            <select id="tezavnost" name="tezavnost" class="form-select" required>
+                                <option value="">Izberite težavnost</option>
+                                <option value="Nizka">Nizka</option>
+                                <option value="Srednja">Srednja</option>
+                                <option value="Visoka">Visoka</option>
+                            </select>
+                            <div class="invalid-feedback">Prosimo, izberite težavnost projekta.</div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="trajanje" class="form-label">Trajanje (hh:mm)</label>
-                        <input type="time" id="trajanje" name="trajanje" class="form-control" required>
-                        <div class="invalid-feedback">Prosimo, vnesite trajanje projekta.</div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="tezavnost" class="form-label">Težavnost</label>
-                        <select id="tezavnost" name="tezavnost" class="form-select" required>
-                            <option value="">Izberite težavnost</option>
-                            <option value="Začetnik">Začetnik</option>
-                            <option value="Srednje zahtevno">Srednje zahtevno</option>
-                            <option value="Zahtevno">Zahtevno</option>
-                            <option value="Zelo zahtevno">Zelo zahtevno</option>
-                        </select>
-                        <div class="invalid-feedback">Prosimo, izberite težavnost projekta.</div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="datumRokaPrijave" class="form-label">Rok prijave</label>
-                        <input type="date" id="datumRokaPrijave" name="datumRokaPrijave" class="form-control" required>
-                        <div class="invalid-feedback">Prosimo, vnesite rok prijave.</div>                        <div class="mb-3">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="datumRokaPrijave" class="form-label">Rok prijave</label>
+                            <input type="date" id="datumRokaPrijave" name="datumRokaPrijave" class="form-control"
+                                required>
+                            <div class="invalid-feedback">Prosimo, vnesite rok prijave.</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
                             <label for="Lokacija" class="form-label">Lokacija</label>
-                            <input type="text" id="Lokacija" name="Lokacija" class="form-control" placeholder="Lokacija projekta" required maxlength="45">
+                            <input type="text" id="Lokacija" name="Lokacija" class="form-control"
+                                placeholder="Lokacija projekta" required maxlength="45">
                             <div class="invalid-feedback">Prosimo, vnesite lokacijo projekta.</div>
                         </div>
-                        <div class="mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="kratekOpis" class="form-label">Kratek opis</label>
-                            <input type="text" id="kratekOpis" name="kratekOpis" class="form-control" placeholder="Kratek opis projekta" required maxlength="45">
+                            <input type="text" id="kratekOpis" name="kratekOpis" class="form-control"
+                                placeholder="Kratek opis projekta" required maxlength="45">
                             <div class="invalid-feedback">Prosimo, vnesite kratek opis projekta.</div>
                         </div>
-                        <div class="mb-4">
-                            <label for="opis" class="form-label">Podroben opis</label>
-                            <textarea id="opis" name="opis" class="form-control" placeholder="Podroben opis projekta" required maxlength="100" rows="4"></textarea>
-                            <div class="invalid-feedback">Prosimo, vnesite podroben opis projekta.</div>
-                        </div>
-                        <div class="d-flex">
-                            <button type="submit" class="btn btn-primary">Dodaj projekt</button>
-                            <button type="reset" class="btn mx-3">Ponastavi</button>
-                        </div>
-                    </form>
-                    <a href="projekti.html" class="d-block mt-3">Nazaj na projekte</a>
-                </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="opis" class="form-label">Podroben opis</label>
+                        <textarea id="opis" name="opis" class="form-control" placeholder="Podroben opis projekta"
+                            required maxlength="100" rows="4"></textarea>
+                        <div class="invalid-feedback">Prosimo, vnesite podroben opis projekta.</div>
+                    </div>
+                    <div class="d-flex">
+                        <button type="submit" class="btn btn-primary" id="dodajBtn">Dodaj projekt</button>
+                        <button type="reset" class="btn mx-3">Ponastavi</button>
+                    </div>
+                </form>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <footer id="footer"></footer>
-    </body>
+    <footer id="footer"></footer>
+</body>
+
 </html>

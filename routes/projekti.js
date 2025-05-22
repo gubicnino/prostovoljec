@@ -173,6 +173,68 @@ router.get('/:id/volunteers', (req, res) => {
         res.json(results || []);
     });
 });
+// Vsi tudi ce niso potrjeni
+router.get('/:id/volunteers/vsi', (req, res) => {
+    const projectId = parseInt(req.params.id, 10);
+    
+    if (isNaN(projectId)) {
+        return res.status(400).json({ error: 'Invalid project ID' });
+    }
 
+    const query = `
+        SELECT 
+            p.idProstovoljec,
+            p.ime,
+            p.primek,
+            p.spretnost,
+            p.znacka,
+            p.opravljeneUre as skupne_ure,
+            pp.ure,
+            pp.ocena,
+            pp.komentar,
+            pp.potrejno
+        FROM Prostovoljec_Projekt pp
+        JOIN Prostovoljec p ON pp.TK_Prostovoljec = p.idProstovoljec
+        WHERE pp.TK_Projekt = ?
+    `;
+
+    connection.query(query, [projectId], (err, results) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ error: "Database error" });
+        }
+        res.json(results || []);
+    });
+});
+
+router.post('/:id/volunteers/feedback', (req, res) => {
+    const projectId = parseInt(req.params.id, 10);
+    const feedbacks = req.body.feedbacks; // array: [{prostovoljecId, ocena, komentar, potrejno}, ...]
+
+    if (!Array.isArray(feedbacks)) {
+        return res.status(400).json({ error: "Podatki niso pravilni" });
+    }
+
+    const updatePromises = feedbacks.map(fb => {
+        return new Promise((resolve, reject) => {
+            const sql = `
+                UPDATE Prostovoljec_Projekt
+                SET ocena = ?, komentar = ?, potrejno = ?
+                WHERE TK_Projekt = ? AND TK_Prostovoljec = ?
+            `;
+            connection.query(sql, [fb.ocena, fb.komentar, fb.potrditev, projectId, fb.id], (err, result) => {
+                if (err) reject(err);
+                else resolve(result);
+            });
+        });
+    });
+
+    Promise.all(updatePromises)
+        .then(() => res.json({ success: true }))
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({ error: "Napaka pri shranjevanju povratnih informacij" });
+        });
+});
 
 module.exports = router;

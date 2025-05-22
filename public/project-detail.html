@@ -193,6 +193,18 @@
                         </div>
 
                         <div class="col-lg-4 mt-5 mt-lg-0">
+                            <!-- Urejanje projekta -->
+                            <div class="upravljanjeProjektov" id="upravljanjeProjektov" style="display: none;">
+                                <h4 class="mb-3">Organizator</h3>
+                                 <div class="mb-4">
+                                    <a href="" id="editBtn" class="btn diagonalCorner mb-4">
+                                        <i class="fas fa-edit me-2" ></i> Upravljanje projekta
+                                    </a>
+                                    <a href="" id="infoBtn" class="btn diagonalCorner mb-4">
+                                        <i class="fas fa-comments"></i> Povratne informacije o prostovoljcih
+                                    </a>
+                                 </div>
+                            </div>
                             <!-- info o organizacije -->
                             <div class="card mb-4 border-0 shadow-sm diagonalCorner">
                                 <div class="card-body">
@@ -249,7 +261,12 @@
                                     <span id="project-status" class="badge bg-success">Odprto</span>
                                 </div>
                             </div>
-
+                            <div class="mb-4">
+                                <a href="#" class="btn diagonalCorner" id="volunteer-btn-bottom">
+                                    <i class="fas fa-hand-holding-heart me-2"></i> Prijavi se kot prostovoljec
+                                </a>
+                            </div>
+                            <div class="mb-4" id="volunteers-list"> </div>
                             <!-- deli projekt -->
                             <div class="card border-0 shadow-sm diagonalCorner">
                                 <div class="card-body">
@@ -286,7 +303,7 @@
                             <p class="mb-4">Vsak prostovoljec šteje. Z vašo pomočjo lahko skupaj dosežemo
                                 velike stvari za našo skupnost.</p>
                             <div class="d-flex gap-3 justify-content-center">
-                                <button class="btn diagonalCorner" id="volunteer-btn-bottom" onclick="prijaviSeNaProjekt()">
+                                <button class="btn diagonalCorner" id="volunteer-btn" onclick="prijaviSeNaProjekt()">
                                     <i class="fas fa-hand-holding-heart me-2"></i> Prijavi se kot prostovoljec
                                 </button>
                                 <a href="projekti.html" class="btn diagonalCorner bg-dark text-white">
