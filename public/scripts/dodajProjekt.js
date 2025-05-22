@@ -1,5 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
     const projectForm = document.forms["addProject"];
+    const TK_Drustvo = localStorage.getItem("drustvoId");
+    const params = new URLSearchParams(window.location.search);
+    const projectId = params.get('id');
+    if (projectId) {
+        nastaviProjekt(projectId);
+    }
 
     projectForm?.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -12,7 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Collect form data with server-expected field names
         const data = {
             naziv: projectForm.naziv.value,
             cilj: projectForm.cilj.value,
@@ -20,14 +25,21 @@ document.addEventListener("DOMContentLoaded", () => {
             trajanje: projectForm.trajanje.value,
             tezavnost: projectForm.tezavnost.value,
             datumRokaPrijave: projectForm.datumRokaPrijave.value,
-            lokacija: projectForm.Lokacija.value, // Changed to lowercase
+            lokacija: projectForm.Lokacija.value,
             kratekOpis: projectForm.kratekOpis.value,
-            opis: projectForm.opis.value // Changed to match server
+            opis: projectForm.opis.value,
+            kapaciteta: projectForm.kapaciteta.value,
+            TK_Drustvo: TK_Drustvo,
         };
 
+        let url = "/api/dodajanjeProjekta";
+        if (projectId) {
+            url += "/urejanje";
+            data.idProjekt = projectId;
+        }
+
         try {
-            console.log("Slanje POST zahteva na /api/dodajanjeProjekta", data);
-            const response = await fetch("/api/dodajanjeProjekta", {
+            const response = await fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
@@ -36,19 +48,15 @@ document.addEventListener("DOMContentLoaded", () => {
             const result = await response.json();
 
             if (response.ok) {
-                console.log("Uspešno dodat projekat", result);
-                alert("Projekt je uspešno dodat!");
-                window.location.href = "projekti.html";
+                alert("Projekt je uspešno dodan!");
+                window.location.href = "profil.html";
             } else {
-                console.log("Greška od servera:", response.status, result);
-                alert(`Greška pri dodavanju projekta: ${result.error || result.message || "Neznana napaka"}`);
+                alert(`Napaka pri dodajanju projekta: ${result.error || result.message || "Neznana napaka"}`);
             }
         } catch (error) {
-            console.error("Greška pri slanju zahteva:", error);
-            alert("Greška pri povezivanju sa serverom.");
+            alert("Napaka pri povezovanju s serverjem.");
         }
     });
-
     // Set minimum date for date inputs
     const today = new Date().toISOString().split("T")[0];
     const datumIzvajanja = document.getElementById("datumIzvajanja");
@@ -80,3 +88,34 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+
+function nastaviProjekt(projectId) {
+    const naslov = document.getElementById("naslov");
+    naslov.innerHTML = "Spreminjanje projekta";
+    const dodajBtn = document.getElementById("dodajBtn");
+    dodajBtn.innerHTML = "Spremeni projekt";
+    fetch(`/api/projekti/${projectId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Napaka pri nalaganju projekta');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const form = document.forms["addProject"];
+            form.naziv.value = data.naziv;
+            form.cilj.value = data.cilj;
+            form.datumIzvajanja.value = data.datumIzvajanja.split("T")[0];
+            form.trajanje.value = data.trajanje;
+            form.tezavnost.value = data.tezavnost;
+            form.datumRokaPrijave.value = data.datumRokaPrijave.split("T")[0];
+            form.Lokacija.value = data.Lokacija;
+            form.kratekOpis.value = data.kratekOpis;
+            form.opis.value = data.opis;
+            form.kapaciteta.value = data.kapaciteta;
+        })
+        .catch(error => {
+            console.error('Napaka pri nalaganju projekta:', error);
+        });
+}

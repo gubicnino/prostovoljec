@@ -21,6 +21,7 @@ async function loadProjectVolunteers(projectId) {
 }
 
 function updateProjectDetails(data) {
+    console.log(data);
     document.title = `ManusMano - ${data.naziv}`;
     updateElementContent('project-title', data.naziv);
     updateElementContent('breadcrumb-title', data.naziv);
@@ -106,9 +107,10 @@ function updateProjectDetails(data) {
     updateElementContent('project-date', izvajanje);
     updateElementContent('project-deadline', rokPrijave);
 
-    const duration = parseInt(data.trajanje.split(':')[0], 10).toString();
+    const duration = data.trajanje || 0;
     updateElementContent('project-hours', duration);
     updateElementContent('project-time-commitment', `${duration} ur`);
+    loadProjectEdit(data);
 }
 
 function displayVolunteers(volunteers) {
@@ -145,7 +147,7 @@ function displayVolunteers(volunteers) {
                 </div>
                 ${volunteer.ocena ? `
                 <div class="mt-1">
-                    <small class="text-muted">Ocena: ${volunteer.ocena.toFixed(1)}/5.0</small>
+                    <small class="text-muted">Ocena: ${volunteer.ocena}/5</small>
                 </div>
                 ` : ''}
             </div>
@@ -157,6 +159,7 @@ function displayVolunteers(volunteers) {
             ${volunteersHTML}
         </ul>
     `;
+
 }
 
 function getBadgeClass(znacka) {
@@ -175,7 +178,29 @@ function updateElementContent(elementId, content) {
         element.textContent = content;
     }
 }
+function loadProjectEdit(data) {
+    const editDiv = document.getElementById('upravljanjeProjektov');
+    if(localStorage.getItem("drustvoId") == data.TK_Drustvo){
+        editDiv.style.display = 'block';
+        const editButton = document.getElementById('editBtn');
+        if (editButton) {
 
+            editButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = `dodajanjeProjekta.html?id=${data.idProjekt}`;
+            });
+        const infoBtn = document.getElementById('infoBtn');
+        if (infoBtn) {
+            infoBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = `povratneInformacije.html?projektId=${data.idProjekt}`;
+            });
+        }
+        
+}
+    }
+    else{return}
+}
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('#volunteer-btn, #volunteer-btn-bottom').forEach(button => {
         button.addEventListener('click', function(e) {

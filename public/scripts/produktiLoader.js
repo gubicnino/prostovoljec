@@ -32,7 +32,7 @@ function loadProjects(apiUrl = '/api/projekti', containerId = 'projectsContainer
                 clone.querySelector('.project-title').textContent = project.naziv;
                 clone.querySelector('.project-organization').textContent = project.drustvo_naziv;
                 clone.querySelector('.project-location').textContent = project.Lokacija;
-                clone.querySelector('.project-duration-hours').textContent = parseUre(project.trajanje);
+                clone.querySelector('.project-duration-hours').textContent = project.trajanje;
                 clone.querySelector('.project-date').textContent = new Date(project.datumIzvajanja).toLocaleDateString('sl');
                 clone.querySelector('.project-deadline').textContent = new Date(project.datumRokaPrijave).toLocaleDateString('sl');
                 clone.querySelector('.project-description').textContent = project.kratekOpis || (project.opis?.substring(0, 100) + '...');
