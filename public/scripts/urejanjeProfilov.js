@@ -18,7 +18,9 @@ function loadCorrectProfiles() {
                 const emailDrustva = document.getElementById('emailDrustva').value = data.email || '';
                 const tipDrustva = document.getElementById('tipDrustva').value = data.tipDrustva || '';
                 const steviloClanov = document.getElementById('steviloClanov').value = data.steviloClanov || '';
-                // Dodaj še druga polja po potrebi
+                
+                // Naložimo prijavnice
+                naložiPrijavnice(drustvoId);
             });
 
     } else if (prostovoljecId) {
@@ -51,6 +53,100 @@ function loadCorrectProfiles() {
     }
 }
 
+// Funkcija za nalaganje prijavnic
+function naložiPrijavnice(drustvoId) {
+    fetch(`/api/profil/prijavnice?drustvoId=${drustvoId}`)
+        .then(response => response.json())
+        .then(data => {
+            const tabelaBody = document.querySelector('#prijavnice tbody');
+            if (!tabelaBody) return;
+            
+            if (data.length === 0) {
+                tabelaBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">
+                            Trenutno ni novih prijavnic.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            const prijavniceHTML = data.map(prijava => `
+                <tr data-prijava-id="${prijava.idProstovoljec_Projekt}">
+                    <td>
+                        <div>
+                            <strong>${prijava.ime} ${prijava.primek}</strong><br>
+                            <small class="text-muted">${prijava.email}</small><br>
+                            <small class="text-muted">${prijava.telStevilka}</small>
+                        </div>
+                    </td>
+                    <td>${prijava.projekt_naziv}</td>
+                    <td>${prijava.datum_prijave}</td>
+                    <td>
+                        <button class="btn btn-success btn-sm me-2" onclick="potrdiPrijavo(${prijava.idProstovoljec_Projekt}, true)">
+                            <i class="fas fa-check me-1"></i> Sprejmi
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="potrdiPrijavo(${prijava.idProstovoljec_Projekt}, false)">
+                            <i class="fas fa-times me-1"></i> Zavrni
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            tabelaBody.innerHTML = prijavniceHTML;
+        })
+        .catch(error => {
+            console.error('Napaka pri nalaganju prijavnic:', error);
+        });
+}
+
+// Funkcija za potrditev/zavrnitev prijave
+async function potrdiPrijavo(prijavId, odobreno) {
+    try {
+        const response = await fetch('/api/profil/potrditev-prijave', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                prijavId: prijavId,
+                odobreno: odobreno
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            const status = odobreno ? 'sprejeta' : 'zavrnjena';
+            alert(`Prijava je bila ${status}.`);
+            
+            // Odstranimo vrstico iz tabele
+            const vrstica = document.querySelector(`tr[data-prijava-id="${prijavId}"]`);
+            if (vrstica) {
+                vrstica.remove();
+            }
+            
+            // Če ni več vrstic, prikažemo sporočilo
+            const tabelaBody = document.querySelector('#prijavnice tbody');
+            if (tabelaBody && tabelaBody.children.length === 0) {
+                tabelaBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">
+                            Trenutno ni novih prijavnic.
+                        </td>
+                    </tr>
+                `;
+            }
+        } else {
+            alert(result.error || 'Napaka pri obdelavi prijave.');
+        }
+    } catch (error) {
+        console.error('Napaka:', error);
+        alert('Prišlo je do napake. Poskusite znova.');
+    }
+}
+
 function omogociUredi() {
     // Za društvo
     document.querySelector('#formDrustvo .shraniSpremembe').style.display = 'inline-block';
@@ -67,6 +163,7 @@ function omogociUredi() {
     document.querySelectorAll('#formProstovoljec input, #formProstovoljec select').forEach(el => el.disabled = false);
 
 }
+
 function narediOdjavo() {
     if(localStorage.getItem('drustvoId')) {
         localStorage.removeItem('drustvoId');
@@ -157,12 +254,25 @@ document.addEventListener('DOMContentLoaded', () => {
     //localStorage.setItem('drustvoId', 1);
     //localStorage.setItem('prostovoljecId', 1);
     loadCorrectProfiles();
+    
     document.getElementById('formDrustvo').addEventListener('submit', (e) => {
         e.preventDefault();
         shraniSpremembe();
     });
+    
     document.getElementById('formProstovoljec').addEventListener('submit', (e) => {
         e.preventDefault();
         shraniSpremembe();
     });
+    
+    // Dodamo listener za tab prijavnic
+    const prijavniceTab = document.getElementById('prijavnice-tab');
+    if (prijavniceTab) {
+        prijavniceTab.addEventListener('click', function() {
+            const drustvoId = localStorage.getItem('drustvoId');
+            if (drustvoId) {
+                setTimeout(() => naložiPrijavnice(drustvoId), 100);
+            }
+        });
+    }
 });

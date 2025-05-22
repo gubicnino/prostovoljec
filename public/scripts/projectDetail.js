@@ -176,14 +176,63 @@ function updateElementContent(elementId, content) {
     }
 }
 
+// Posodobimo obstoječo DOMContentLoaded funkcijo
 document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('#volunteer-btn, #volunteer-btn-bottom').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            const projectId = new URLSearchParams(window.location.search).get('id');
-            if (projectId) {
-                // TODO: tu treba implementirat prijavo na projekt
-            }
-        });
-    });
+    const urlParams = new URLSearchParams(window.location.search);
+    const projectId = urlParams.get('id');
+
+    if (projectId) {
+        loadProjectDetails(projectId);
+        loadProjectVolunteers(projectId);
+    }
+    
+    // Dodamo event listener za gumb prijave
+    const volunteerBtn = document.getElementById('volunteer-btn-bottom');
+    if (volunteerBtn) {
+        volunteerBtn.addEventListener('click', prijaviSeNaProjekt);
+    }
 });
+
+// Funkcija za prijavo na projekt
+async function prijaviSeNaProjekt() {
+    const prostovoljecId = localStorage.getItem('prostovoljecId');
+    const projectId = new URLSearchParams(window.location.search).get('id');
+    
+    // Preverimo, če je prostovoljec prijavljen
+    if (!prostovoljecId) {
+        alert('Za prijavo na projekt se morate najprej prijaviti kot prostovoljec.');
+        window.location.href = 'prijava.html';
+        return;
+    }
+    
+    if (!projectId) {
+        alert('Napaka: ID projekta ni najden.');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/prijavaProjekt/projekt', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                prostovoljecId: prostovoljecId,
+                projektId: projectId
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            alert('Uspešno ste se prijavili na projekt! Organizator bo preveril vašo prijavo.');
+            // Ponovno naložimo podatke o prostovoljcih
+            loadProjectVolunteers(projectId);
+        } else {
+            alert(result.error || 'Napaka pri prijavi na projekt.');
+        }
+    } catch (error) {
+        console.error('Napaka:', error);
+        alert('Prišlo je do napake pri prijavi. Poskusite znova.');
+    }
+}

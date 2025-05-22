@@ -12,6 +12,7 @@ var profilRouter = require('./routes/profil');
 var registracijaRouter = require('./routes/registracija');
 var dodajanjeRouter = require('./routes/dodajanjeProjekta');
 var naseZvezdeRouter = require('./routes/naseZvezde'); 
+var prijavaProjektRouter = require('./routes/prijavaProjekt');
 
 
 app.use(express.json());
@@ -26,6 +27,7 @@ app.use('/api/projekti', projektiRouter);
 app.use('/api/profil', profilRouter);
 app.use('/registracija', registracijaRouter);
 app.use('/api/dodajanjeProjekta', dodajanjeRouter);
+app.use('/api/prijavaProjekt', prijavaProjektRouter);
 
 app.use('/api/naseZvezde', naseZvezdeRouter);
 
