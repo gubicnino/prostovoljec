@@ -738,3 +738,23 @@ header .navbar {
 .hero-podstran {
     padding-top: 100px;
 }
+
+#loginPopup {
+    z-index: 200;
+    position: fixed;
+    top:0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+.login-popup {
+    background-color: rgb(196, 196, 196);
+    margin-top: 10rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
