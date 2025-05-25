@@ -1,0 +1,36 @@
+<div class="login-modal" id="loginModal">
+    <div class="login-modal-content">
+        <span class="login-modal-close" id="closeLoginModal">&times;</span>
+        <div class="logo-login">
+            <div class="d-flex align-items-center logoWrapper">
+                <img src="img/hand-in-hand.png" width="32px" alt="">
+                <div class="logoText text-dark">Manus<span class="logoTextRed">Mano</span></div>
+            </div>
+        </div>
+        
+        <form id="loginForm">
+            <div class="login-form-group">
+                <input type="text" id="loginUsername" placeholder="Uporabniško ime*" required class="input-shadow">
+            </div>
+            <div class="login-form-group">
+                <div class="password-field">
+                    <input type="password" id="loginPassword" placeholder="Geslo*" required class="input-shadow">
+                    <span class="password-toggle" id="togglePassword">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+            </div>
+            
+            <div class="forgot-password text-start">
+                <a href="#">Pozabljeno geslo?</a>
+            </div>
+            
+            <button type="submit" class="btn">PRIJAVA</button>
+            <div id="loginError" class="text-danger mt-3" style="display: none;"></div>
+        </form>
+        
+        <div class="register-link">
+            Nimate računa? <a href="registracija.html">Registrirajte se</a>
+        </div>
+    </div>
+</div>
