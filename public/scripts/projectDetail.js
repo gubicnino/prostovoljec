@@ -6,6 +6,11 @@ document.addEventListener('DOMContentLoaded', function() {
         loadProjectDetails(projectId);
         loadProjectVolunteers(projectId);
     }
+    
+    const volunteerBtn = document.getElementById('volunteer-btn-bottom');
+    if (volunteerBtn) {
+        volunteerBtn.addEventListener('click', prijaviSeNaProjekt);
+    }
 });
 
 async function loadProjectDetails(projectId) {
@@ -17,6 +22,7 @@ async function loadProjectDetails(projectId) {
 async function loadProjectVolunteers(projectId) {
     const response = await fetch(`/api/projekti/${projectId}/volunteers`);
     const volunteers = await response.json();
+    console.log('Volunteers data:', volunteers); // Debagovanje
     displayVolunteers(volunteers);
 }
 
@@ -126,7 +132,9 @@ function displayVolunteers(volunteers) {
         return;
     }
 
-    const volunteersHTML = volunteers.map(volunteer => `
+    const volunteersHTML = volunteers.map(volunteer => {
+        console.log('Volunteer object:', volunteer); // Dodatno debagovanje
+        return `
         <li class="list-group-item px-0 border-bottom d-flex align-items-center py-3">
             <div class="rounded-circle bg-light p-2 me-3">
                 <i class="fas fa-user text-primary"></i>
@@ -150,16 +158,18 @@ function displayVolunteers(volunteers) {
                     <small class="text-muted">Ocena: ${volunteer.ocena}/5</small>
                 </div>
                 ` : ''}
+                <div class="mt-2">
+                    <button class="btn btn-sm btn-outline-danger" onclick="logoutVolunteer(${volunteer.idProstovoljec}, ${volunteer.projectId})">Odjava</button>
+                </div>
             </div>
         </li>
-    `).join('');
+    `}).join('');
 
     volunteersContainer.innerHTML = `
         <ul class="list-group list-group-flush">
             ${volunteersHTML}
         </ul>
     `;
-
 }
 
 function getBadgeClass(znacka) {
@@ -178,17 +188,18 @@ function updateElementContent(elementId, content) {
         element.textContent = content;
     }
 }
+
 function loadProjectEdit(data) {
     const editDiv = document.getElementById('upravljanjeProjektov');
     if(localStorage.getItem("drustvoId") == data.TK_Drustvo){
         editDiv.style.display = 'block';
         const editButton = document.getElementById('editBtn');
         if (editButton) {
-
             editButton.addEventListener('click', function(e) {
                 e.preventDefault();
                 window.location.href = `dodajanjeProjekta.html?id=${data.idProjekt}`;
             });
+        }
         const infoBtn = document.getElementById('infoBtn');
         if (infoBtn) {
             infoBtn.addEventListener('click', function(e) {
@@ -196,34 +207,72 @@ function loadProjectEdit(data) {
                 window.location.href = `povratneInformacije.html?projektId=${data.idProjekt}`;
             });
         }
-        
-}
     }
-    else{return}
 }
-// Posodobimo obstoječo DOMContentLoaded funkcijo
-document.addEventListener('DOMContentLoaded', function() {
+
+async function logoutVolunteer(prostovoljecId) {
+
     const urlParams = new URLSearchParams(window.location.search);
-    const projectId = urlParams.get('id');
-
-    if (projectId) {
-        loadProjectDetails(projectId);
-        loadProjectVolunteers(projectId);
+    const projektId = urlParams.get('id');
+        // Debug: ispisujemo šta stiže u funkciju
+    console.log('logoutVolunteer pozvan sa:');
+    console.log('prostovoljecId:', prostovoljecId);
+    console.log('projektId:', projektId);
+    console.log('typeof prostovoljecId:', typeof prostovoljecId);
+    console.log('typeof projektId:', typeof projektId);
+    // Provera da li su parametri validni
+    if (!prostovoljecId || !projektId || prostovoljecId === 'undefined' || projektId === 'undefined') {
+        console.error('Nevalidni parametri - prekidamo izvršavanje');
+        alert('Napaka: Manjkajoči podatci za odjavo.');
+        return;
     }
-    
-    // Dodamo event listener za gumb prijave
-    const volunteerBtn = document.getElementById('volunteer-btn-bottom');
-    if (volunteerBtn) {
-        volunteerBtn.addEventListener('click', prijaviSeNaProjekt);
-    }
-});
 
-// Funkcija za prijavo na projekt
+    // Potvrda pre brisanja
+    if (!confirm('Ali ste prepričani, da želite odjaviti tega prostovoljca s projekta?')) {
+        return;
+    }
+
+    try {
+        console.log('Šaljemo DELETE zahtev sa podacima:', {
+            prostovoljecId: prostovoljecId,
+            projektId: projektId
+        });
+
+        // Poziv za brisanje prostovoljca sa projekta
+        const response = await fetch('/api/prijavaProjekt/projekt', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                prostovoljecId: prostovoljecId,
+                projektId: projektId
+            })
+        });
+
+        const result = await response.json();
+        console.log('Odgovor servera:', result);
+
+        if (response.ok && result.success) {
+            alert('Prostovoljec uspešno odjavljen s projekta.');
+            // Ponovno učitavanje liste prostovoljaca i detalja projekta
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentProjectId = urlParams.get('id');
+            await loadProjectVolunteers(currentProjectId);
+            await loadProjectDetails(currentProjectId);
+        } else {
+            alert(result.message || 'Napaka pri odjavi prostovoljca.');
+        }
+    } catch (error) {
+        console.error('Napaka pri odjavi:', error);
+        alert('Prišlo je do napake pri odjavi. Poskusite znova.');
+    }
+}
+
 async function prijaviSeNaProjekt() {
     const prostovoljecId = localStorage.getItem('prostovoljecId');
     const projectId = new URLSearchParams(window.location.search).get('id');
     
-    // Preverimo, če je prostovoljec prijavljen
     if (!prostovoljecId) {
         alert('Za prijavo na projekt se morate najprej prijaviti kot prostovoljec.');
         window.location.href = 'prijava.html';
@@ -236,7 +285,7 @@ async function prijaviSeNaProjekt() {
     }
     
     try {
-        const response = await fetch('/api/prijavaProjekt/projekt', {
+        const response = await fetch('http://localhost:3000/api/prijavaProjekt/projekt', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -251,10 +300,9 @@ async function prijaviSeNaProjekt() {
         
         if (response.ok) {
             alert('Uspešno ste se prijavili na projekt! Organizator bo preveril vašo prijavo.');
-            // Ponovno naložimo podatke o prostovoljcih
             loadProjectVolunteers(projectId);
         } else {
-            alert(result.error || 'Napaka pri prijavi na projekt.');
+            alert(result.message || 'Napaka pri prijavi na projekt.');
         }
     } catch (error) {
         console.error('Napaka:', error);
