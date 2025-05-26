@@ -860,3 +860,15 @@ header .navbar {
     stroke: var(--bs-main);
     stroke-width: 3px;
 }
+.filterWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0px;
+    color: var(--bs-white);
+}
+
+#projectsContainer {
+    padding: 0 ;
+}

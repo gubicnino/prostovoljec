@@ -3,20 +3,52 @@ var router = express.Router();
 var connection = require("../db/database");
 
 router.get("/", function (req, res, next) {
-    console.log("Fetching all projects");
-    const query = `
-    SELECT p.idProjekt, p.naziv, p.cilj, p.datumIzvajanja, p.trajanje, p.tezavnost, p.datumRokaPrijave, p.Lokacija, p.kratekOpis, p.opis, d.naziv as drustvo_naziv
-    FROM Projekt p
-    LEFT JOIN Drustvo d ON p.TK_Drustvo = d.idDrustvo
-    `;
+    const { search, tezavnost, lokacija, sort } = req.query;
 
-    connection.query(query, function (err, results) {
-    if (err) {
-        console.error("Error fetching projects:", err);
-        return res.status(500).json({ error: "Database error" });
+    let query = `
+        SELECT p.idProjekt, p.naziv, p.cilj, p.datumIzvajanja, p.trajanje, p.tezavnost, 
+               p.datumRokaPrijave, p.Lokacija, p.kratekOpis, p.opis, d.naziv as drustvo_naziv
+        FROM Projekt p
+        LEFT JOIN Drustvo d ON p.TK_Drustvo = d.idDrustvo
+        WHERE 1=1
+    `;
+    const params = [];
+
+    // Search po nazivu
+    if (search) {
+        query += " AND p.naziv LIKE ?";
+        params.push(`%${search}%`);
     }
-    res.json(results);
-    console.log("Fetched all projects");
+    // Filter po tezavnosti
+    if (tezavnost) {
+        query += " AND p.tezavnost = ?";
+        params.push(tezavnost);
+    }
+    // Filter po lokaciji
+    if (lokacija) {
+        query += " AND p.Lokacija LIKE ?";
+        params.push(`%${lokacija}%`);
+    }
+
+    // Sortiranje
+    if (sort) {
+        // Primer: datumIzvajanja_desc ali datumIzvajanja_asc
+        const [field, direction] = sort.split('_');
+        const allowedFields = ['datumIzvajanja', 'datumRokaPrijave', 'naziv', 'tezavnost'];
+        const allowedDirections = ['asc', 'desc'];
+        if (allowedFields.includes(field) && allowedDirections.includes(direction)) {
+            query += ` ORDER BY p.${field} ${direction.toUpperCase()}`;
+        }
+    } else {
+        query += " ORDER BY p.datumIzvajanja DESC";
+    }
+
+    connection.query(query, params, function (err, results) {
+        if (err) {
+            console.error("Error fetching projects:", err);
+            return res.status(500).json({ error: "Database error" });
+        }
+        res.json(results);
     });
 });
 

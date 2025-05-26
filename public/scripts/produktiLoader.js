@@ -4,7 +4,22 @@ function loadProjects(apiUrl = '/api/projekti', containerId = 'projectsContainer
     const urlParams = new URLSearchParams(window.location.search);
     const currentPage = parseInt(urlParams.get('page')) || 1;
 
-    fetch(apiUrl)
+    
+    // Preberi parametre za filtriranje in sortiranje
+    const search = urlParams.get('search');
+    const tezavnost = urlParams.get('tezavnost');
+    const lokacija = urlParams.get('lokacija');
+    const sort = urlParams.get('sort');
+    const page = parseInt(urlParams.get('page')) || 1;
+
+    // Sestavi query string za backend
+    const queryParams = new URLSearchParams();
+    if (search) queryParams.append('search', search);
+    if (tezavnost) queryParams.append('tezavnost', tezavnost);
+    if (lokacija) queryParams.append('lokacija', lokacija);
+    if (sort) queryParams.append('sort', sort);
+
+    fetch(`${apiUrl}?${queryParams.toString()}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -123,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function () {
         loadProjects('/api/projekti/latest', 'projectsContainer', 'projectTemplate');
     } else if (page === 'projekti.html') {
         // Vsi projekti
-        loadProjects('/api/projekti');
+        loadProjects('/api/projekti', 'projectsContainer', 'projectTemplate');
     } else if (page === 'profil.html') {
         // Projekti za prijavljeno društvo
         const drustvoId = localStorage.getItem('drustvoId');
@@ -141,3 +156,5 @@ document.addEventListener('DOMContentLoaded', function () {
         loadProjects();
     }
 });
+
+
