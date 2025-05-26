@@ -1,71 +1,70 @@
-var express = require("express");
-var router = express.Router();
-var connection = require("../db/database");
+const express = require('express');
+const router = express.Router();
+const db = require('../db/database');
 
 // Prijava prostovoljca na projekt
-router.post("/projekt", function (req, res, next) {
+router.post('/projekt', (req, res) => {
     const { prostovoljecId, projektId } = req.body;
-    
-    console.log(`Prijava prostovoljca ${prostovoljecId} na projekt ${projektId}`);
-    
+
     if (!prostovoljecId || !projektId) {
-        return res.status(400).json({ error: 'Manjkajo podatki za prijavo' });
+        return res.status(400).json({ success: false, message: 'Manjkajoči podatci: prostovoljecId i projektId su obavezni.' });
     }
-    
-    // Najprej preverimo, če se prostovoljec že ni prijavil na ta projekt
-    const checkQuery = `
-        SELECT pp.idProstovoljec_Projekt 
-        FROM Prostovoljec_Projekt pp 
-        WHERE pp.TK_Prostovoljec = ? AND pp.TK_Projekt = ?
+
+    const query = `
+        INSERT INTO Prostovoljec_Projekt (TK_Prostovoljec, TK_Projekt, potrejno)
+        VALUES (?, ?, 1)
     `;
-    
-    connection.query(checkQuery, [prostovoljecId, projektId], function (err, existingResults) {
+
+    db.query(query, [prostovoljecId, projektId], (err, result) => {
         if (err) {
-            console.error("Napaka pri preverjanju obstoječe prijave:", err);
-            return res.status(500).json({ error: "Napaka pri preverjanju prijave" });
+            console.error('Napaka pri prijavi na projekt:', err);
+            return res.status(500).json({ success: false, message: 'Napaka pri prijavi na projekt.' });
         }
-        
-        if (existingResults.length > 0) {
-            return res.status(400).json({ error: "Že ste prijavljeni na ta projekt" });
-        }
-        
-        // Preverimo kapaciteto projekta
-        const capacityQuery = `
-            SELECT 
-                p.naziv,
-                COUNT(pp.TK_Prostovoljec) as trenutno_prijavljenih
-            FROM Projekt p
-            LEFT JOIN Prostovoljec_Projekt pp ON p.idProjekt = pp.TK_Projekt
-            WHERE p.idProjekt = ?
-            GROUP BY p.idProjekt, p.naziv
-        `;
-        
-        connection.query(capacityQuery, [projektId], function (err, capacityResults) {
-            if (err) {
-                console.error("Napaka pri preverjanju kapacitete:", err);
-                return res.status(500).json({ error: "Napaka pri preverjanju kapacitete" });
-            }
-            
-            // Vstavimo prijavo
-            const insertQuery = `
-                INSERT INTO Prostovoljec_Projekt (TK_Projekt, TK_Prostovoljec, ocena, ure, komentar, potrejno) 
-                VALUES (?, ?, NULL, 0, NULL, 0)
-            `;
-            
-            connection.query(insertQuery, [projektId, prostovoljecId], function (err, insertResults) {
-                if (err) {
-                    console.error("Napaka pri vstavitvi prijave:", err);
-                    return res.status(500).json({ error: "Napaka pri prijavi na projekt" });
-                }
-                
-                console.log(`Prostovoljec ${prostovoljecId} uspešno prijavljen na projekt ${projektId}`);
-                res.json({ 
-                    message: "Uspešno prijavljen na projekt",
-                    prijavId: insertResults.insertId
-                });
-            });
-        });
+        res.status(201).json({ success: true, message: 'Uspešno ste se prijavili na projekt.' });
     });
 });
 
+// Odjava prostovoljca sa projekta
+// U prijavaProjekt.js fajlu dodati ovu rutu:
+
+router.delete('/projekt', (req, res) => {
+    const { prostovoljecId, projektId } = req.body;
+
+    // Validacija podataka
+    if (!prostovoljecId || !projektId) {
+        return res.status(400).json({ 
+            success: false, 
+            message: 'Manjkajo potrebni podatki (prostovoljecId in projektId).' 
+        });
+    }
+
+    // SQL upit za brisanje veze između prostovoljca i projekta
+    const deleteQuery = `
+        DELETE FROM Prostovoljec_Projekt 
+        WHERE TK_Prostovoljec = ? AND TK_Projekt = ?
+    `;
+
+    db.query(deleteQuery, [prostovoljecId, projektId], (err, result) => {
+        if (err) {
+            console.error('Napaka pri brisanju prostovoljca s projekta:', err);
+            return res.status(500).json({ 
+                success: false, 
+                message: 'Napaka pri odjavi prostovoljca s projekta.' 
+            });
+        }
+
+        // Provera da li je nešto obrisano
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Prostovoljec ni bil najden na tem projektu.' 
+            });
+        }
+
+        res.json({ 
+            success: true, 
+            message: 'Prostovoljec uspešno odjavljen s projekta.' 
+        });
+    });
+});
 module.exports = router;

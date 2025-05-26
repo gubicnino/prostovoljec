@@ -41,6 +41,7 @@ router.get('/drustvo', (req, res) => {
         console.log("Fetched projects for drustvo z id: " + drustvoId);
     });
 });
+
 router.get('/prostovoljec', (req, res) => {
     const prostovoljecId = req.query.id;
     console.log("Fetching projects for prostovoljec z id: " + prostovoljecId);
@@ -111,7 +112,7 @@ router.get('/latest', (req, res) => {
     });
 });
 
-// project-detail;
+// project-detail
 router.get('/:id', (req, res) => {
     const projectId = parseInt(req.params.id, 10);
     
@@ -150,15 +151,17 @@ router.get('/:id/volunteers', (req, res) => {
 
     const query = `
         SELECT 
+            p.idProstovoljec,
             p.ime,
             p.primek,
             p.spretnost,
             p.znacka,
-            p.opravljeneUre as skupne_ure,
+            p.opravljeneUre AS skupne_ure,
             pp.ure,
             pp.ocena,
             pp.komentar,
-            pp.potrejno
+            pp.potrejno,
+            pp.TK_Projekt
         FROM Prostovoljec_Projekt pp
         JOIN Prostovoljec p ON pp.TK_Prostovoljec = p.idProstovoljec
         WHERE pp.TK_Projekt = ? AND pp.potrejno = 1
@@ -170,9 +173,11 @@ router.get('/:id/volunteers', (req, res) => {
             console.error("Database error:", err);
             return res.status(500).json({ error: "Database error" });
         }
+        console.log(res)
         res.json(results || []);
     });
 });
+
 // Vsi tudi ce niso potrjeni
 router.get('/:id/volunteers/vsi', (req, res) => {
     const projectId = parseInt(req.params.id, 10);
@@ -185,14 +190,15 @@ router.get('/:id/volunteers/vsi', (req, res) => {
         SELECT 
             p.idProstovoljec,
             p.ime,
-            p.primek,
+            p.priimek AS primek,
             p.spretnost,
             p.znacka,
-            p.opravljeneUre as skupne_ure,
+            p.opravljeneUre AS skupne_ure,
             pp.ure,
             pp.ocena,
             pp.komentar,
-            pp.potrejno
+            pp.potrejno,
+            pp.TK_Projekt
         FROM Prostovoljec_Projekt pp
         JOIN Prostovoljec p ON pp.TK_Prostovoljec = p.idProstovoljec
         WHERE pp.TK_Projekt = ?

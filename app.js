@@ -14,7 +14,6 @@ var dodajanjeRouter = require('./routes/dodajanjeProjekta');
 var naseZvezdeRouter = require('./routes/naseZvezde'); 
 var prijavaProjektRouter = require('./routes/prijavaProjekt');
 
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -28,9 +27,12 @@ app.use('/api/profil', profilRouter);
 app.use('/registracija', registracijaRouter);
 app.use('/api/dodajanjeProjekta', dodajanjeRouter);
 app.use('/api/prijavaProjekt', prijavaProjektRouter);
-
 app.use('/api/naseZvezde', naseZvezdeRouter);
 
+// Middleware za 404 greške
+app.use((req, res) => {
+    res.status(404).json({ success: false, message: 'Ruta nije pronađena.' });
+});
 
 if (require.main === module) {
     const PORT = process.env.PORT || 3000;
