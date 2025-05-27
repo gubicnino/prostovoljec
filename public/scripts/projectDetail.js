@@ -159,7 +159,7 @@ function displayVolunteers(volunteers) {
                 </div>
                 ` : ''}
                 <div class="mt-2">
-                    <button class="btn btn-sm btn-outline-danger" onclick="logoutVolunteer(${volunteer.idProstovoljec}, ${volunteer.projectId})">Odjava</button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="logoutVolunteer(${volunteer.idProstovoljec}, ${volunteer.TK_Projekt})">Odjava</button>
                 </div>
             </div>
         </li>
@@ -210,56 +210,63 @@ function loadProjectEdit(data) {
     }
 }
 
-async function logoutVolunteer(prostovoljecId) {
+async function logoutVolunteer(prostovoljecId, projektId) {
+    console.log('logoutVolunteer pozvan sa:', { prostovoljecId, projektId });
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const projektId = urlParams.get('id');
-        // Debug: ispisujemo šta stiže u funkciju
-    console.log('logoutVolunteer pozvan sa:');
-    console.log('prostovoljecId:', prostovoljecId);
-    console.log('projektId:', projektId);
-    console.log('typeof prostovoljecId:', typeof prostovoljecId);
-    console.log('typeof projektId:', typeof projektId);
-    // Provera da li su parametri validni
-    if (!prostovoljecId || !projektId || prostovoljecId === 'undefined' || projektId === 'undefined') {
-        console.error('Nevalidni parametri - prekidamo izvršavanje');
-        alert('Napaka: Manjkajoči podatci za odjavo.');
+    if (!prostovoljecId || !projektId) {
+        console.error('Nevalidni parametri:', { prostovoljecId, projektId });
+        alert('Napaka: Manjkajoči podatci za odjavu.');
         return;
     }
 
-    // Potvrda pre brisanja
+    const drustvoId = localStorage.getItem('drustvoId');
+    if (!drustvoId) {
+        console.error('Nije pronađen drustvoId u localStorage.');
+        alert('Napaka: Niste prijavljeni kao društvo.');
+        return;
+    }
+
+    // Provera da li projekat pripada prijavljenom društvu
+    try {
+        const response = await fetch(`/api/projekti/drustvo?id=${drustvoId}`);
+        const projects = await response.json();
+        const isAuthorized = projects.some(project => project.idProjekt === parseInt(projektId));
+
+        if (!isAuthorized) {
+            console.error('Neovlašćeni pokušaj odjave prostovoljca za projekat:', projektId);
+            alert('Napaka: Nemate ovlašćenje za uklanjanje prostovoljaca sa ovog projekta.');
+            return;
+        }
+    } catch (error) {
+        console.error('Napaka pri proveri projekata društva:', error);
+        alert('Napaka pri proveri ovlašćenja. Pokušajte ponovo.');
+        return;
+    }
+
     if (!confirm('Ali ste prepričani, da želite odjaviti tega prostovoljca s projekta?')) {
         return;
     }
 
     try {
-        console.log('Šaljemo DELETE zahtev sa podacima:', {
-            prostovoljecId: prostovoljecId,
-            projektId: projektId
-        });
-
-        // Poziv za brisanje prostovoljca sa projekta
         const response = await fetch('/api/prijavaProjekt/projekt', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                prostovoljecId: prostovoljecId,
-                projektId: projektId
+                prostovoljecId: parseInt(prostovoljecId),
+                projektId: parseInt(projektId)
             })
         });
 
         const result = await response.json();
-        console.log('Odgovor servera:', result);
 
         if (response.ok && result.success) {
             alert('Prostovoljec uspešno odjavljen s projekta.');
-            // Ponovno učitavanje liste prostovoljaca i detalja projekta
-            const urlParams = new URLSearchParams(window.location.search);
-            const currentProjectId = urlParams.get('id');
-            await loadProjectVolunteers(currentProjectId);
-            await loadProjectDetails(currentProjectId);
+            await Promise.all([
+                loadProjectVolunteers(projektId),
+                loadProjectDetails(projektId)
+            ]);
         } else {
             alert(result.message || 'Napaka pri odjavi prostovoljca.');
         }
@@ -285,7 +292,7 @@ async function prijaviSeNaProjekt() {
     }
     
     try {
-        const response = await fetch('http://localhost:3000/api/prijavaProjekt/projekt', {
+        const response = await fetch('/api/prijavaProjekt/projekt', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
