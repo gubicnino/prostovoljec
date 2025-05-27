@@ -10,6 +10,7 @@ function loadProjects(apiUrl = '/api/projekti', containerId = 'projectsContainer
     const tezavnost = urlParams.get('tezavnost');
     const lokacija = urlParams.get('lokacija');
     const sort = urlParams.get('sort');
+    const spretnost = urlParams.get('spretnost');
     const page = parseInt(urlParams.get('page')) || 1;
 
     // Sestavi query string za backend
@@ -18,6 +19,7 @@ function loadProjects(apiUrl = '/api/projekti', containerId = 'projectsContainer
     if (tezavnost) queryParams.append('tezavnost', tezavnost);
     if (lokacija) queryParams.append('lokacija', lokacija);
     if (sort) queryParams.append('sort', sort);
+    if (spretnost) queryParams.append('spretnost', spretnost);
 
     fetch(`${apiUrl}?${queryParams.toString()}`)
         .then(response => {

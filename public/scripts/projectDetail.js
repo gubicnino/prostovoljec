@@ -116,6 +116,13 @@ function updateProjectDetails(data) {
     const duration = data.trajanje || 0;
     updateElementContent('project-hours', duration);
     updateElementContent('project-time-commitment', `${duration} ur`);
+
+    const zahteve = data.zahteve || '';
+    const reqElement = document.getElementById('zahteve-list');
+    const zahteveList = zahteve.split(',').map(req => req.trim()).filter(req => req).map(req => `<li class="list-group-item border-0 ps-0 d-flex align-items-center "><i class="fas fa-circle text-danger me-2"style="font-size: 0.5rem;"></i>${req}</li>`).join('');
+    if (reqElement) {
+        reqElement.innerHTML = zahteveList;
+    }
     loadProjectEdit(data);
 }
 

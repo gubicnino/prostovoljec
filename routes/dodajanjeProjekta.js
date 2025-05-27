@@ -7,7 +7,7 @@ const connection = require('../db/database');
 router.post('/', (req, res) => {
     console.log('POST zahtev primljen na /dodajanjeProjekta:', req.body);
 
-    const { naziv, cilj, datumIzvajanja, trajanje, tezavnost, datumRokaPrijave, lokacija, kratekOpis, opis, TK_Drustvo, kapaciteta } = req.body;
+    const { naziv, cilj, datumIzvajanja, trajanje, tezavnost, datumRokaPrijave, lokacija, kratekOpis, opis, TK_Drustvo, kapaciteta, zahteve } = req.body;
 
 
     // Validacija obaveznih polja
@@ -26,14 +26,14 @@ router.post('/', (req, res) => {
     const sql = `
         INSERT INTO Projekt (
             naziv, cilj, datumIzvajanja, trajanje, tezavnost, 
-            datumRokaPrijave, lokacija, kratekOpis, opis, TK_Drustvo, kapaciteta
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            datumRokaPrijave, lokacija, kratekOpis, opis, TK_Drustvo, kapaciteta, zahteve
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     // Podaci za vstavljanje
     const values = [
         naziv, cilj, datumIzvajanja, trajanje, tezavnost,
-        datumRokaPrijave, lokacija, kratekOpis, opis, TK_Drustvo, kapaciteta
+        datumRokaPrijave, lokacija, kratekOpis, opis, TK_Drustvo, kapaciteta, zahteve
     ];
 
     // Izvedi SQL ukaz
@@ -63,6 +63,7 @@ router.post('/urejanje', (req, res) => {
         TK_Drustvo,
         idProjekt,
         kapaciteta,
+        zahteve
     } = req.body;
 
     // Validacija obaveznih polja
@@ -90,7 +91,8 @@ router.post('/urejanje', (req, res) => {
             kratekOpis = ?,
             opis = ?,
             kapaciteta = ?,
-            TK_Drustvo = ?
+            TK_Drustvo = ?,
+            zahteve = ?
         WHERE idProjekt = ?
     `;
 
@@ -107,7 +109,8 @@ router.post('/urejanje', (req, res) => {
         opis,
         kapaciteta,
         TK_Drustvo,
-        idProjekt
+        zahteve,
+        idProjekt,
     ];
 
     // Izvedi SQL ukaz

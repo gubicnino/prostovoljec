@@ -3,7 +3,7 @@ var router = express.Router();
 var connection = require("../db/database");
 
 router.get("/", function (req, res, next) {
-    const { search, tezavnost, lokacija, sort } = req.query;
+    const { search, tezavnost, lokacija, sort, spretnost } = req.query;
 
     let query = `
         SELECT p.idProjekt, p.naziv, p.cilj, p.datumIzvajanja, p.trajanje, p.tezavnost, 
@@ -28,6 +28,11 @@ router.get("/", function (req, res, next) {
     if (lokacija) {
         query += " AND p.Lokacija LIKE ?";
         params.push(`%${lokacija}%`);
+    }
+    // Filter po spretnosti
+    if (spretnost) {
+        query += " AND (p.zahteve LIKE ?)";
+        params.push(`%${spretnost}%`);
     }
 
     // Sortiranje
@@ -155,7 +160,7 @@ router.get('/:id', (req, res) => {
             d.telStevilka as drustvo_tel,
             d.email as drustvo_email,
             d.naslov as drustvo_naslov,
-            (SELECT COUNT(*) FROM Prostovoljec_Projekt WHERE TK_Projekt = p.idProjekt AND potrejno = 1) as stevilo_prijavljenih
+            (SELECT COUNT(*) FROM Prostovoljec_Projekt WHERE TK_Projekt = p.idProjekt) as stevilo_prijavljenih
         FROM Projekt p
         LEFT JOIN Drustvo d ON p.TK_Drustvo = d.idDrustvo
         WHERE p.idProjekt = ?
@@ -205,7 +210,6 @@ router.get('/:id/volunteers', (req, res) => {
             console.error("Database error:", err);
             return res.status(500).json({ error: "Database error" });
         }
-        console.log(res)
         res.json(results || []);
     });
 });
@@ -222,7 +226,7 @@ router.get('/:id/volunteers/vsi', (req, res) => {
         SELECT 
             p.idProstovoljec,
             p.ime,
-            p.priimek AS primek,
+            p.primek AS primek,
             p.spretnost,
             p.znacka,
             p.opravljeneUre AS skupne_ure,
