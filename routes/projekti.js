@@ -249,34 +249,115 @@ router.get('/:id/volunteers/vsi', (req, res) => {
     });
 });
 
-router.post('/:id/volunteers/feedback', (req, res) => {
+function getIO() {
+    return require('../app').io || global.io;
+}
+
+router.post('/:id/volunteers/feedback', async (req, res) => {
     const projectId = parseInt(req.params.id, 10);
-    const feedbacks = req.body.feedbacks; // array: [{prostovoljecId, ocena, komentar, potrejno}, ...]
+    const feedbacks = req.body.feedbacks;
 
     if (!Array.isArray(feedbacks)) {
         return res.status(400).json({ error: "Podatki niso pravilni" });
     }
 
-    const updatePromises = feedbacks.map(fb => {
-        return new Promise((resolve, reject) => {
-            const sql = `
-                UPDATE Prostovoljec_Projekt
-                SET ocena = ?, komentar = ?, potrejno = ?
-                WHERE TK_Projekt = ? AND TK_Prostovoljec = ?
-            `;
-            connection.query(sql, [fb.ocena, fb.komentar, fb.potrditev, projectId, fb.id], (err, result) => {
+    try {
+        // Pridobi podatke o projektu in društvu za obvestila
+        const projektQuery = `
+            SELECT p.naziv, p.TK_Drustvo, d.naziv as drustvo_naziv
+            FROM Projekt p 
+            JOIN Drustvo d ON p.TK_Drustvo = d.idDrustvo 
+            WHERE p.idProjekt = ?
+        `;
+        
+        const projektData = await new Promise((resolve, reject) => {
+            connection.query(projektQuery, [projectId], (err, results) => {
                 if (err) reject(err);
-                else resolve(result);
+                else resolve(results[0]);
             });
         });
-    });
 
-    Promise.all(updatePromises)
-        .then(() => res.json({ success: true }))
-        .catch(err => {
-            console.error(err);
-            res.status(500).json({ error: "Napaka pri shranjevanju povratnih informacij" });
+        // Posodobi podatke in pošlji obvestila
+        const updatePromises = feedbacks.map(fb => {
+            return new Promise(async (resolve, reject) => {
+                const sql = `
+                    UPDATE Prostovoljec_Projekt
+                    SET ocena = ?, komentar = ?, potrejno = ?
+                    WHERE TK_Projekt = ? AND TK_Prostovoljec = ?
+                `;
+                
+                connection.query(sql, [fb.ocena, fb.komentar, fb.potrditev, projectId, fb.id], async (err, result) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+
+                    // Pošlji obvestila če se potrejno spremeni (bodisi 1 ALI 0)
+                    if (fb.potrditev == 1 || fb.potrditev == 0) {
+                        try {
+                            const { saveNotificationToDB } = require('../websocket/socketHandler');
+                            
+                            // Pridobi podatke o prostovoljcu
+                            const prostovoljcQuery = 'SELECT ime, primek FROM Prostovoljec WHERE idProstovoljec = ?';
+                            const prostovoljcData = await new Promise((resolve, reject) => {
+                                connection.query(prostovoljcQuery, [fb.id], (err, results) => {
+                                    if (err) reject(err);
+                                    else resolve(results[0]);
+                                });
+                            });
+
+                            if (prostovoljcData && projektData) {
+                                let prostovoljcMessage, drustvoMessage;
+                                
+                                if (fb.potrditev == 1) {
+                                    // POTRJENA UDELEŽBA
+                                    prostovoljcMessage = `Vaša udeležba na projektu "${projektData.naziv}" je bila potrjena. Oglejte si svojo oceno in povratne informacije.`;
+                                    drustvoMessage = `Uspešno ste potrdili udeležbo prostovoljca ${prostovoljcData.ime} ${prostovoljcData.primek} na projektu "${projektData.naziv}".`;
+                                } else {
+                                    // ZAVRNJENA UDELEŽBA
+                                    prostovoljcMessage = `Vaša udeležba na projektu "${projektData.naziv}" je bila zavrnjena.`;
+                                    drustvoMessage = `Uspešno ste zavrnili udeležbo prostovoljca ${prostovoljcData.ime} ${prostovoljcData.primek} na projektu "${projektData.naziv}".`;
+                                }
+
+                                // Shrani obvestili v bazo
+                                await saveNotificationToDB(fb.id, 'prostovoljec', prostovoljcMessage);
+                                await saveNotificationToDB(projektData.TK_Drustvo, 'drustvo', drustvoMessage);
+
+                                // Pošlji real-time obvestila
+                                const io = global.io;
+                                if (io) {
+                                    // Za prostovoljca
+                                    io.to(`prostovoljec_${fb.id}`).emit('newNotification', {
+                                        message: prostovoljcMessage,
+                                        timestamp: new Date(),
+                                        type: fb.potrditev == 1 ? 'participation_confirmed' : 'participation_rejected'
+                                    });
+
+                                    // Za društvo
+                                    io.to(`drustvo_${projektData.TK_Drustvo}`).emit('newNotification', {
+                                        message: drustvoMessage,
+                                        timestamp: new Date(),
+                                        type: fb.potrditev == 1 ? 'participation_confirmation' : 'participation_rejection'
+                                    });
+                                }
+                            }
+                        } catch (notificationError) {
+                            console.error('Napaka pri pošiljanju obvestil za potrditev/zavrnitev udeležbe:', notificationError);
+                        }
+                    }
+
+                    resolve(result);
+                });
+            });
         });
+
+        await Promise.all(updatePromises);
+        res.json({ success: true });
+        
+    } catch (err) {
+        console.error('Napaka pri shranjevanju povratnih informacij:', err);
+        res.status(500).json({ error: "Napaka pri shranjevanju" });
+    }
 });
 
 module.exports = router;

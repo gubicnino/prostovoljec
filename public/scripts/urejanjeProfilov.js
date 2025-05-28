@@ -117,9 +117,11 @@ async function potrdiPrijavo(prijavId, odobreno) {
         
         const result = await response.json();
         
-        if (response.ok) {
+        if (response.ok && result.success) {
             const status = odobreno ? 'sprejeta' : 'zavrnjena';
-            alert(`Prijava je bila ${status}.`);
+            
+            // Prikaži uspešno sporočilo
+            alert(`Prijava je bila ${status}. Obvestili ste bili oba.`);
             
             // Odstranimo vrstico iz tabele
             const vrstica = document.querySelector(`tr[data-prijava-id="${prijavId}"]`);
@@ -138,6 +140,15 @@ async function potrdiPrijavo(prijavId, odobreno) {
                     </tr>
                 `;
             }
+            
+            // Posodobi obvestila
+            if (window.notificationManager) {
+                setTimeout(() => {
+                    window.notificationManager.loadNotifications();
+                    window.notificationManager.updateNotificationBadge();
+                }, 500);
+            }
+            
         } else {
             alert(result.error || 'Napaka pri obdelavi prijave.');
         }
