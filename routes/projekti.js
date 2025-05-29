@@ -53,6 +53,10 @@ router.get("/", function (req, res, next) {
             console.error("Error fetching projects:", err);
             return res.status(500).json({ error: "Database error" });
         }
+        if (results.length === 0) {
+            console.log("Ni bilo najdenih projektov");
+            return res.status(404).json({ message: "Ni bilo najdenih projektov" });
+        }
         res.json(results);
     });
 });

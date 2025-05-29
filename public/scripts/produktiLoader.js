@@ -24,7 +24,12 @@ function loadProjects(apiUrl = '/api/projekti', containerId = 'projectsContainer
     fetch(`${apiUrl}?${queryParams.toString()}`)
         .then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                const niProjektov = document.getElementById('niProjektov');
+                if (niProjektov) {
+                    niProjektov.style.display = 'block';
+                } else {
+                    console.error('Element z id "niProjektov" ni najden.');
+                }
             }
             return response.json();
         })
@@ -32,7 +37,6 @@ function loadProjects(apiUrl = '/api/projekti', containerId = 'projectsContainer
             console.log(projects);
             const container = document.getElementById(containerId);
             const template = document.getElementById(templateId);
-
             container.innerHTML = '';
 
             // Paginaccija

@@ -119,12 +119,12 @@
                     </div>
                     <div class="row">
                         <!-- Search in Filter gumbi -->
-                        <div class="d-flex justify-content-between align-items-center mb-4 p-0">
+                        <div class="d-flex justify-content-between align-items-center p-0">
                             <!-- Search bar -->
-                            <div class="search-wrapper d-flex align-items-center">
-                                <div id="searchContainer" class="search-input-container ">
+                            <div class="search-wrapper d-flex align-items-center" style="margin-left: 12px;">
+                                <div id="searchContainer" class="search-input-container">
                                     <div class="input-group">
-                                        <input type="text" class="form-control  diagonalCorner ps-4" id="searchInput"
+                                        <input type="text" class="form-control  ps-4 diagonalCorner" id="searchInput"
                                             placeholder="Iskanje...">
                                         <button class="btn btn-primary" type="button" id="searchBtn">
                                             <i class="fas fa-search"></i>
@@ -134,13 +134,18 @@
                             </div>
 
                             <!-- Filter gumb -->
-                            <button class="btn btn-outline-light d-flex align-items-center me-3" type="button"
-                                data-bs-toggle="offcanvas" data-bs-target="#filterSidebar">
+                            <button class="btn btn-outline-light d-flex align-items-center" type="button"
+                                style="margin-right: 12px;" data-bs-toggle="offcanvas" data-bs-target="#filterSidebar">
                                 <i class="fas fa-filter me-2"></i>
                                 Filtriraj
                             </button>
                         </div>
-                        <div class="row p-0 g-4" id="projectsContainer">
+                        <div id="niProjektov" class="text-center py-5 my-4" style="display: none;">
+                            <i class="fas fa-search fs-3 mb-3 d-block"></i>
+                            <h6 class="fw-normal">Ni bilo najdenih projektov</h6>
+                            <small>Poskusite z drugačnimi filtri</small>
+                        </div>
+                        <div class="row p-0 m-0 g-4" id="projectsContainer">
                             <!-- Trenuten templatee za psamezno kartico -->
                             <template id="projectTemplate">
                                 <div class="col-lg-4 col-md-6">
