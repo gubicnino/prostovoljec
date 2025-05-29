@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const db = require('../db/database');
+var connection = require("../db/database");
 
 // pridobij vse obvestila glede na uporabnika
 router.get('/:userType/:userId', (req, res) => {
@@ -18,7 +18,7 @@ router.get('/:userType/:userId', (req, res) => {
         LIMIT 20
     `;
     
-    db.query(query, [userType, userId], (err, results) => {
+    connection.query(query, [userType, userId], (err, results) => {
         if (err) {
             console.error('Napaka pri pridobivanju obvestil:', err);
             return res.status(500).json({ success: false, message: 'Napaka pri pridobivanju obvestil' });
@@ -42,7 +42,7 @@ router.put('/mark-read/:userType/:userId', (req, res) => {
         WHERE tip_uporabnika = ? AND ${userType === 'prostovoljec' ? 'TK_Prostovoljec' : 'TK_Drustvo'} = ?
     `;
     
-    db.query(query, [userType, userId], (err, result) => {
+    connection.query(query, [userType, userId], (err, result) => {
         if (err) {
             console.error('Napaka pri označevanju obvestil:', err);
             return res.status(500).json({ success: false, message: 'Napaka pri označevanju obvestil' });
@@ -65,7 +65,7 @@ router.delete('/delete-all/:userType/:userId', (req, res) => {
         WHERE tip_uporabnika = ? AND ${userType === 'prostovoljec' ? 'TK_Prostovoljec' : 'TK_Drustvo'} = ?
     `;
     
-    db.query(query, [userType, userId], (err, result) => {
+    connection.query(query, [userType, userId], (err, result) => {
         if (err) {
             console.error('Napaka pri brisanju obvestil:', err);
             return res.status(500).json({ success: false, message: 'Napaka pri brisanju obvestil' });
@@ -90,7 +90,7 @@ router.get('/unread-count/:userType/:userId', (req, res) => {
             AND prebrano = FALSE
     `;
     
-    db.query(query, [userType, userId], (err, results) => {
+    connection.query(query, [userType, userId], (err, results) => {
         if (err) {
             console.error('Napaka pri štetju obvestil:', err);
             return res.status(500).json({ success: false, message: 'Napaka pri štetju obvestil' });

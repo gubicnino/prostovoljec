@@ -49,13 +49,37 @@ document.addEventListener("DOMContentLoaded", () => {
             const result = await response.json();
 
             if (response.ok) {
-                alert("Projekt je uspešno dodan!");
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Uspeh',
+                    text: 'Projekt je uspešno dodan!',
+                    confirmButtonColor: 'var(--bs-main)',
+                    background: '#1a1a1a',
+                    color: '#fff',
+                    iconColor: 'var(--bs-main)'
+                });
                 window.location.href = "profil.html";
             } else {
-                alert(`Napaka pri dodajanju projekta: ${result.error || result.message || "Neznana napaka"}`);
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Napaka',
+                    text: `Napaka pri dodajanju projekta: ${result.error || result.message || "Neznana napaka"}`,
+                    confirmButtonColor: 'var(--bs-main)',
+                    background: '#1a1a1a',
+                    color: '#fff',
+                    iconColor: 'var(--bs-main)'
+                });
             }
         } catch (error) {
-            alert("Napaka pri povezovanju s serverjem.");
+            await Swal.fire({
+                icon: 'error',
+                title: 'Napaka',
+                text: 'Napaka pri povezovanju s serverjem.',
+                confirmButtonColor: 'var(--bs-main)',
+                background: '#1a1a1a',
+                color: '#fff',
+                iconColor: 'var(--bs-main)'
+            });
         }
     });
     // Set minimum date for date inputs

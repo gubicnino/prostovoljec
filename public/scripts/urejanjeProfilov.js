@@ -64,7 +64,7 @@ function naložiPrijavnice(drustvoId) {
             if (data.length === 0) {
                 tabelaBody.innerHTML = `
                     <tr>
-                        <td colspan="4" class="text-left text-white">
+                        <td colspan="4" class="text-center text-white">
                             Trenutno ni novih prijavnic.
                         </td>
                     </tr>
@@ -73,7 +73,7 @@ function naložiPrijavnice(drustvoId) {
             }
             
             const prijavniceHTML = data.map(prijava => `
-                <tr data-prijava-id="${prijava.idProstovoljec_Projekt}">
+                <tr>
                     <td>
                         <div>
                             <strong>${prijava.ime} ${prijava.primek}</strong><br>
@@ -82,12 +82,12 @@ function naložiPrijavnice(drustvoId) {
                         </div>
                     </td>
                     <td>${prijava.projekt_naziv}</td>
-                    <td>${prijava.datum_prijave}</td>
+                    <td>${prijava.datumPrijave}</td>
                     <td>
-                        <button class="btn btn-success btn-sm me-2" onclick="potrdiPrijavo(${prijava.idProstovoljec_Projekt}, true)">
+                        <button class="btn btn-success btn-sm me-2" onclick="potrdiPrijavo('${prijava.prijavId}', true)">
                             <i class="fas fa-check me-1"></i> Sprejmi
                         </button>
-                        <button class="btn btn-danger btn-sm" onclick="potrdiPrijavo(${prijava.idProstovoljec_Projekt}, false)">
+                        <button class="btn btn-danger btn-sm" onclick="potrdiPrijavo('${prijava.prijavId}', false)">
                             <i class="fas fa-times me-1"></i> Zavrni
                         </button>
                     </td>
@@ -103,6 +103,7 @@ function naložiPrijavnice(drustvoId) {
 
 // Funkcija za potrditev/zavrnitev prijave
 async function potrdiPrijavo(prijavId, odobreno) {
+
     try {
         const response = await fetch('/api/profil/potrditev-prijave', {
             method: 'POST',
@@ -114,47 +115,51 @@ async function potrdiPrijavo(prijavId, odobreno) {
                 odobreno: odobreno
             })
         });
-        
-        const result = await response.json();
-        
-        if (response.ok && result.success) {
-            const status = odobreno ? 'sprejeta' : 'zavrnjena';
-            
-            // Prikaži uspešno sporočilo
-            alert(`Prijava je bila ${status}. Obvestili ste bili oba.`);
-            
-            // Odstranimo vrstico iz tabele
-            const vrstica = document.querySelector(`tr[data-prijava-id="${prijavId}"]`);
-            if (vrstica) {
-                vrstica.remove();
-            }
-            
-            // Če ni več vrstic, prikažemo sporočilo
-            const tabelaBody = document.querySelector('#prijavnice tbody');
-            if (tabelaBody && tabelaBody.children.length === 0) {
-                tabelaBody.innerHTML = `
-                    <tr>
-                        <td colspan="4" class="text-center text-white">
-                            Trenutno ni novih prijavnic.
-                        </td>
-                    </tr>
-                `;
-            }
-            
-            // Posodobi obvestila
-            if (window.notificationManager) {
-                setTimeout(() => {
-                    window.notificationManager.loadNotifications();
-                    window.notificationManager.updateNotificationBadge();
-                }, 500);
-            }
-            
+
+        const data = await response.json();
+
+        if (response.ok) {
+             Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: data.message,
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: '#1a1a1a',
+                color: '#fff',
+                iconColor: 'var(--bs-main)'
+            });
+            naložiPrijavnice(localStorage.getItem('drustvoId')); // Refresh prijavnice
         } else {
-            alert(result.error || 'Napaka pri obdelavi prijave.');
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'error',
+                title: data.error || 'Napaka pri obdelavi prijave',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: '#1a1a1a',
+                color: '#fff',
+                iconColor: 'var(--bs-main)'
+            });
         }
     } catch (error) {
         console.error('Napaka:', error);
-        alert('Prišlo je do napake. Poskusite znova.');
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'error',
+            title: 'Prišlo je do napake pri obdelavi prijave',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            background: '#1a1a1a',
+            color: '#fff',
+            iconColor: 'var(--bs-main)'
+        });
     }
 }
 
@@ -210,7 +215,18 @@ function shraniSpremembe() {
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                alert('Spremembe so bile shranjene.');
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Spremembe so bile shranjene.',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    background: '#1a1a1a',
+                    color: '#fff',
+                    iconColor: 'var(--bs-main)'
+                });
             });
     } else if (prostovoljecId) {
         const ime = document.getElementById('ime').value;
@@ -244,8 +260,23 @@ function shraniSpremembe() {
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                alert('Spremembe so bile shranjene.');
-                window.location.reload();
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Spremembe so bile shranjene.',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    background: '#1a1a1a',
+                    color: '#fff',
+                    iconColor: 'var(--bs-main)'
+                });
+
+                // počakaj, da se toast zapre, nato reload
+                setTimeout(() => {
+                    window.location.reload();
+                }, 3100);
             });
     }
     document.querySelector('#formDrustvo .urediBtn').style.display = 'inline-block';

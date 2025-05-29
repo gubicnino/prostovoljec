@@ -24,9 +24,35 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify(data)
             });
             const result = await response.json();
-            alert(result.message);
+
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: result.message || 'Registracija uspešna!',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: '#1a1a1a',
+                color: '#fff',
+                iconColor: 'var(--bs-main)'
+            });
+
+            prostovoljecForm.reset(); // Po uspehu resetiramo form
+
         } catch (err) {
-            alert("Napaka pri registraciji prostovoljca.");
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'error',
+                title: 'Napaka pri registraciji prostovoljca.',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: '#1a1a1a',
+                color: '#fff',
+                iconColor: 'var(--bs-main)'
+            });
         }
     });
 
@@ -53,9 +79,35 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify(data)
             });
             const result = await response.json();
-            alert(result.message);
+
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: result.message || 'Registracija društva uspešna!',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: '#1a1a1a',
+                color: '#fff',
+                iconColor: 'var(--bs-main)'
+            });
+
+            drustvoForm.reset(); // Resetiramo form
+
         } catch (err) {
-            alert("Napaka pri registraciji društva.");
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'error',
+                title: 'Napaka pri registraciji društva.',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: '#1a1a1a',
+                color: '#fff',
+                iconColor: 'var(--bs-main)'
+            });
         }
     });
 });

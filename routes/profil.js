@@ -114,37 +114,24 @@ router.get("/prijavnice", function (req, res, next) {
         return res.status(400).json({ error: 'Manjka id društva' });
     }
 
-    // DODAJ TESTNI QUERY
-    const testQuery = `
-        SELECT COUNT(*) as total_prijav, 
-               COUNT(CASE WHEN pp.potrejno = 0 THEN 1 END) as cakajocih,
-               COUNT(CASE WHEN pp.potrejno IS NULL THEN 1 END) as null_vrednosti
-        FROM Prostovoljec_Projekt pp
-        JOIN Projekt p ON pp.TK_Projekt = p.idProjekt
-        WHERE p.TK_Drustvo = ?
-    `;
-    
-    connection.query(testQuery, [drustvoId], function (err, testResults) {
-        if (!err) {
-            console.log("STATISTIKE:", testResults[0]);
-        }
-    });
-
     const query = `
         SELECT 
-            pp.idProstovoljec_Projekt,
+            pp.idProsnja_Prostovoljec as prijavId,
             pr.ime,
             pr.primek,
             pr.email,
             pr.telStevilka,
+            pr.spretnost,
             p.naziv as projekt_naziv,
-            pp.potrejno,
-            DATE_FORMAT(NOW(), '%d. %m. %Y') as datum_prijave
-        FROM Prostovoljec_Projekt pp
+            proj.idProjekt,
+            pros.datumPrijave
+        FROM Prosnja_Prostovoljec pp
         JOIN Prostovoljec pr ON pp.TK_Prostovoljec = pr.idProstovoljec
-        JOIN Projekt p ON pp.TK_Projekt = p.idProjekt
-        WHERE p.TK_Drustvo = ? AND (pp.potrejno = 0 OR pp.potrejno IS NULL)
-        ORDER BY pp.idProstovoljec_Projekt DESC
+        JOIN Prosnja pros ON pp.TK_Prosnja = pros.idProsnja
+        JOIN Projekt proj ON pros.projekt = proj.idProjekt
+        JOIN Projekt p ON pros.projekt = p.idProjekt
+        WHERE pros.TK_Drustvo = ?
+        ORDER BY pros.datumPrijave DESC
     `;
 
     connection.query(query, [drustvoId], function (err, results) {
@@ -161,94 +148,106 @@ router.get("/prijavnice", function (req, res, next) {
 
 // Sprejmi/zavrni prijavo
 router.post("/potrditev-prijave", async function (req, res, next) {
-    const { prijavId, odobreno } = req.body;
-    
-    if (!prijavId || typeof odobreno !== 'boolean') {
-        return res.status(400).json({ error: 'Manjkajo podatki' });
+    console.log("Received request body:", req.body);
+
+    const prijavId = req.body.prijavId;
+    const odobreno = req.body.odobreno;
+
+    if (!prijavId) {
+        console.log("Missing prijavId in request body:", req.body);
+        return res.status(400).json({ error: 'Manjka ID prijave' });
     }
-    
+
     try {
-        // 1. Najprej pridobi podatke o prijavi za obvestila
+        // Pridobi podatke o prijavi
         const getPrijavaQuery = `
-            SELECT pp.*, p.naziv as projekt_naziv, 
-                   pr.ime, pr.primek, pr.email, pr.idProstovoljec,
-                   d.idDrustvo, d.naziv as drustvo_naziv
-            FROM Prostovoljec_Projekt pp
-            JOIN Projekt p ON pp.TK_Projekt = p.idProjekt
+            SELECT 
+                pp.idProsnja_Prostovoljec,
+                pp.TK_Prostovoljec,
+                pp.TK_Prosnja,
+                pr.ime, pr.primek,
+                p.projekt as projektId,
+                proj.naziv as projekt_naziv,
+                proj.TK_Drustvo
+            FROM Prosnja_Prostovoljec pp
+            JOIN Prosnja p ON pp.TK_Prosnja = p.idProsnja
             JOIN Prostovoljec pr ON pp.TK_Prostovoljec = pr.idProstovoljec
-            JOIN Drustvo d ON p.TK_Drustvo = d.idDrustvo
-            WHERE pp.idProstovoljec_Projekt = ?
+            JOIN Projekt proj ON p.projekt = proj.idProjekt
+            WHERE pp.idProsnja_Prostovoljec = ?
         `;
-        
+
         const prijavaData = await new Promise((resolve, reject) => {
             connection.query(getPrijavaQuery, [prijavId], (err, results) => {
                 if (err) reject(err);
                 else resolve(results[0]);
             });
         });
-        
+
         if (!prijavaData) {
             return res.status(404).json({ error: 'Prijava ni bila najdena' });
         }
-        
-        const potrejno = odobreno ? 1 : -1; // 1 = odobreno, -1 = zavrnjeno, 0 = čaka
-        
-        const updateQuery = `
-            UPDATE Prostovoljec_Projekt 
-            SET potrejno = ? 
-            WHERE idProstovoljec_Projekt = ?
+
+        // Če je prijava odobrena, dodaj v Prostovoljec_Projekt
+        if (odobreno) {
+            const insertQuery = `
+                INSERT INTO Prostovoljec_Projekt 
+                (TK_Prostovoljec, TK_Projekt, potrejno, ure)
+                VALUES (?, ?, 1, 0)
+            `;
+
+            await new Promise((resolve, reject) => {
+                connection.query(insertQuery, [
+                    prijavaData.TK_Prostovoljec,
+                    prijavaData.projektId
+                ], (err, result) => {
+                    if (err) reject(err);
+                    else resolve(result);
+                });
+            });
+        }
+
+        // V vsakem primeru (sprejem ali zavrnitev) izbriši prijavo
+        const deleteProsnjaQuery = `
+            DELETE FROM Prosnja 
+            WHERE idProsnja = ?
         `;
-        
+
         await new Promise((resolve, reject) => {
-            connection.query(updateQuery, [potrejno, prijavId], (err, result) => {
+            connection.query(deleteProsnjaQuery, [prijavaData.TK_Prosnja], (err, result) => {
                 if (err) reject(err);
                 else resolve(result);
             });
         });
-        
+
+        // Pošlji ustrezna obvestila
         const statusText = odobreno ? 'sprejeta' : 'zavrnjena';
-        const statusTextDrustvo = odobreno ? 'odobrili' : 'zavrnili';
-        
         const prostovoljcMessage = `Vaša prijava na projekt "${prijavaData.projekt_naziv}" je bila ${statusText}.`;
-        
-        const drustvoMessage = `Uspešno ste ${statusTextDrustvo} prijavo prostovoljca ${prijavaData.ime} ${prijavaData.primek} na projekt "${prijavaData.projekt_naziv}".`;
-        
-        await saveNotificationToDB(
-            prijavaData.idProstovoljec,
-            'prostovoljec',
-            prostovoljcMessage
-        );
-        
-        await saveNotificationToDB(
-            prijavaData.idDrustvo,
-            'drustvo',
-            drustvoMessage
-        );
-        
+        const drustvoMessage = `${odobreno ? 'Sprejeli' : 'Zavrnili'} ste prijavo prostovoljca ${prijavaData.ime} ${prijavaData.primek} na projekt "${prijavaData.projekt_naziv}".`;
+
+        await saveNotificationToDB(prijavaData.TK_Prostovoljec, 'prostovoljec', prostovoljcMessage);
+        await saveNotificationToDB(prijavaData.TK_Drustvo, 'drustvo', drustvoMessage);
+
         const io = req.app.get('io');
         if (io) {
-            io.to(`prostovoljec_${prijavaData.idProstovoljec}`).emit('newNotification', {
+            io.to(`prostovoljec_${prijavaData.TK_Prostovoljec}`).emit('newNotification', {
                 message: prostovoljcMessage,
                 timestamp: new Date(),
                 type: 'application_response'
             });
             
-            io.to(`drustvo_${prijavaData.idDrustvo}`).emit('newNotification', {
+            io.to(`drustvo_${prijavaData.TK_Drustvo}`).emit('newNotification', {
                 message: drustvoMessage,
                 timestamp: new Date(),
-                type: 'application_confirmation'
+                type: 'application_processed'
             });
         }
-        
-        const status = odobreno ? 'odobrena' : 'zavrnjena';
-        console.log(`Prijava ${prijavId} je bila ${status}`);
-        
+
         res.json({ 
-            success: true,
-            message: `Prijava uspešno ${status}`,
+            success: true, 
+            message: `Prijava uspešno ${statusText}`,
             notificationsSent: true
         });
-        
+
     } catch (error) {
         console.error('Napaka pri obdelavi prijave:', error);
         res.status(500).json({ error: 'Napaka pri obdelavi prijave' });
