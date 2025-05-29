@@ -25,7 +25,6 @@ router.post('/projekt', (req, res) => {
 });
 
 // Odjava prostovoljca sa projekta
-// U prijavaProjekt.js fajlu dodati ovu rutu:
 
 router.delete('/projekt', (req, res) => {
     const { prostovoljecId, projektId } = req.body;
@@ -38,7 +37,7 @@ router.delete('/projekt', (req, res) => {
         });
     }
 
-    // SQL upit za brisanje veze između prostovoljca i projekta
+    
     const deleteQuery = `
         DELETE FROM Prostovoljec_Projekt 
         WHERE TK_Prostovoljec = ? AND TK_Projekt = ?

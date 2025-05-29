@@ -132,8 +132,14 @@ function displayVolunteers(volunteers) {
         return;
     }
 
+    // Dodaj proveru - da li je trenutno ulogovano društvo vlasnik ovog projekta
+    const drustvoId = localStorage.getItem('drustvoId');
+    const urlParams = new URLSearchParams(window.location.search);
+    const projectId = urlParams.get('id');
+    
+    // Promeniti logiku da se dugme prikazuje samo ako je društvo vlasnik
     const volunteersHTML = volunteers.map(volunteer => {
-        console.log('Volunteer object:', volunteer); // Dodatno debagovanje
+        console.log('Volunteer object:', volunteer);
         return `
         <li class="list-group-item px-0 border-bottom d-flex align-items-center py-3">
             <div class="rounded-circle bg-light p-2 me-3">
@@ -158,9 +164,11 @@ function displayVolunteers(volunteers) {
                     <small class="text-muted">Ocena: ${volunteer.ocena}/5</small>
                 </div>
                 ` : ''}
+                ${shouldShowLogoutButton() ? `
                 <div class="mt-2">
                     <button class="btn btn-sm btn-outline-danger" onclick="logoutVolunteer(${volunteer.idProstovoljec}, ${volunteer.TK_Projekt})">Odjava</button>
                 </div>
+                ` : ''}
             </div>
         </li>
     `}).join('');
@@ -170,6 +178,16 @@ function displayVolunteers(volunteers) {
             ${volunteersHTML}
         </ul>
     `;
+}
+
+function shouldShowLogoutButton() {
+    const drustvoId = localStorage.getItem('drustvoId');
+    const editDiv = document.getElementById('upravljanjeProjektov');
+    
+    // Dugme se prikazuje samo ako:
+    // 1. Postoji drustvoId u localStorage (ulogovano je društvo)
+    // 2. editDiv je vidljiv (što znači da je društvo vlasnik projekta)
+    return drustvoId && editDiv && editDiv.style.display === 'block';
 }
 
 function getBadgeClass(znacka) {
