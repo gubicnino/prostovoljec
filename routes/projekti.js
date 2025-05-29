@@ -14,10 +14,10 @@ router.get("/", function (req, res, next) {
     `;
     const params = [];
 
-    // Search po nazivu
+    // Search po nazivu, lokaciji, nazivu društva, opisu in kratkem opisu
     if (search) {
-        query += " AND p.naziv LIKE ?";
-        params.push(`%${search}%`);
+        query += " AND (p.naziv LIKE ? OR d.naziv LIKE ? OR p.opis LIKE ? OR p.kratekOpis LIKE ?)";
+        params.push(`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`);
     }
     // Filter po tezavnosti
     if (tezavnost) {
@@ -52,6 +52,10 @@ router.get("/", function (req, res, next) {
         if (err) {
             console.error("Error fetching projects:", err);
             return res.status(500).json({ error: "Database error" });
+        }
+        if (results.length === 0) {
+            console.log("Ni bilo najdenih projektov");
+            return res.status(404).json({ message: "Ni bilo najdenih projektov" });
         }
         res.json(results);
     });
@@ -129,22 +133,6 @@ router.get('/latest', (req, res) => {
             console.error("Error pri iskanje latest projektov:", err);
             return res.status(500).json({ error: "Database error" });
         }
-        
-        results.forEach(project => {
-            console.log(`{
-                idProjekt: ${project.idProjekt},
-                naziv: '${project.naziv}',
-                cilj: '${project.cilj}',
-                datumIzvajanja: ${project.datumIzvajanja.toISOString()},
-                trajanje: '${project.trajanje}',
-                tezavnost: '${project.tezavnost}',
-                datumRokaPrijave: ${project.datumRokaPrijave.toISOString()},
-                Lokacija: '${project.Lokacija}',
-                kratekOpis: '${project.kratekOpis}',
-                opis: '${project.opis}',
-                drustvo_naziv: '${project.drustvo_naziv}'
-                },`);
-        });
         res.json(results);
     });
 });

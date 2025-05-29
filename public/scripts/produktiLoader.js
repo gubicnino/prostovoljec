@@ -24,7 +24,12 @@ function loadProjects(apiUrl = '/api/projekti', containerId = 'projectsContainer
     fetch(`${apiUrl}?${queryParams.toString()}`)
         .then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                const niProjektov = document.getElementById('niProjektov');
+                if (niProjektov) {
+                    niProjektov.style.display = 'block';
+                } else {
+                    console.error('Element z id "niProjektov" ni najden.');
+                }
             }
             return response.json();
         })
@@ -32,7 +37,6 @@ function loadProjects(apiUrl = '/api/projekti', containerId = 'projectsContainer
             console.log(projects);
             const container = document.getElementById(containerId);
             const template = document.getElementById(templateId);
-
             container.innerHTML = '';
 
             // Paginaccija
@@ -82,12 +86,18 @@ function updatePagination(currentPage, totalPages) {
 
     // Dinamično pridobi ime trenutne strani
     const pageName = window.location.pathname.split('/').pop();
-
+    
+    // Ohrani vse obstoječe URL parametre razen 'page'
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.delete('page');
+    const baseQuery = urlParams.toString();
+    const queryPrefix = baseQuery ? '&' : '';
+ 
     // nazaj -> stran -1
     if (currentPage > 1) {
         paginationContainer.innerHTML += `
             <li class="page-item">
-                <a class="page-link" href="${pageName}?page=${currentPage - 1}" aria-label="Previous">
+                <a class="page-link" href="${pageName}?page=${currentPage - 1}${queryPrefix}${baseQuery}" aria-label="Previous">
                     <i class="fas fa-chevron-left"></i>
                 </a>
             </li>
@@ -98,7 +108,7 @@ function updatePagination(currentPage, totalPages) {
     for (let i = 1; i <= totalPages; i++) {
         paginationContainer.innerHTML += `
             <li class="page-item ${i === currentPage ? 'active' : ''}">
-                <a class="page-link" href="${pageName}?page=${i}">${i}</a>
+                <a class="page-link" href="${pageName}?page=${i}${queryPrefix}${baseQuery}">${i}</a>
             </li>
         `;
     }
@@ -107,7 +117,7 @@ function updatePagination(currentPage, totalPages) {
     if (currentPage < totalPages) {
         paginationContainer.innerHTML += `
             <li class="page-item">
-                <a class="page-link" href="${pageName}?page=${currentPage + 1}" aria-label="Next">
+                <a class="page-link" href="${pageName}?page=${currentPage + 1}${queryPrefix}${baseQuery}" aria-label="Next">
                     <i class="fas fa-chevron-right"></i>
                 </a>
             </li>
