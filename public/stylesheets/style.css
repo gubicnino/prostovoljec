@@ -935,3 +935,9 @@ header .navbar {
 #projectsContainer {
     padding: 0 ;
 }
+#niProjektov {
+    color: var(--bs-white) !important;
+}
+#niProjektov h6{
+    color: var(--bs-white) !important;
+}
