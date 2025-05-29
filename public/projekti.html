@@ -133,12 +133,25 @@
                                 </div>
                             </div>
 
-                            <!-- Filter gumb -->
-                            <button class="btn btn-outline-light d-flex align-items-center" type="button"
-                                style="margin-right: 12px;" data-bs-toggle="offcanvas" data-bs-target="#filterSidebar">
-                                <i class="fas fa-filter me-2"></i>
-                                Filtriraj
-                            </button>
+                            <!-- View Toggle in Filter gumbi -->
+                            <div class="d-flex align-items-center gap-3" style="margin-right: 12px;">
+                                <!-- ZEMLJEVID / PROJEKTI -->
+                                <div class="view-toggle-container d-flex align-items-center bg-light rounded-pill p-1">
+                                    <button type="button" class="view-toggle-btn active" data-view="projects">
+                                        <i class="fas fa-th-large me-2"></i>
+                                    </button>
+                                    <button type="button" class="view-toggle-btn" data-view="map">
+                                        <i class="fas fa-map-marked-alt me-2"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Filter gumb -->
+                                <button class="btn btn-outline-light d-flex align-items-center" type="button"
+                                    data-bs-toggle="offcanvas" data-bs-target="#filterSidebar">
+                                    <i class="fas fa-filter me-2"></i>
+                                    Filtriraj
+                                </button>
+                            </div>
                         </div>
                         <div id="niProjektov" class="text-center py-5 my-4" style="display: none;">
                             <i class="fas fa-search fs-3 mb-3 d-block"></i>
@@ -309,6 +322,32 @@
             // Ponastavi filtre
             document.getElementById('resetFilters').addEventListener('click', function () {
                 window.location.search = '';
+            });
+            const viewToggleBtns = document.querySelectorAll('.view-toggle-btn');
+            const viewToggleContainer = document.querySelector('.view-toggle-container');
+
+            viewToggleBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    viewToggleBtns.forEach(b => b.classList.remove('active'));
+
+                    this.classList.add('active');
+
+                    const view = this.getAttribute('data-view');
+
+                    if (view === 'map') {
+                        viewToggleContainer.classList.add('map-active');
+                    } else {
+                        viewToggleContainer.classList.remove('map-active');
+                    }
+
+                    if (view === 'projects') {
+                        // LIST PROJEKTOV
+                        // TODO: PRIKAZE LIST MAPE, SKRIJE MAPOO
+                    } else if (view === 'map') {
+                        // MAPA
+                        // TODO: SKKKRIJE LIST PROJEKTOV, PRIKAZE MAPO
+                    }
+                });
             });
         });
     </script>
