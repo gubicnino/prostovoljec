@@ -137,12 +137,14 @@ function updateProjectDetails(data) {
 
     // Update volunteer buttons logic
     const volunteerBtnContainer = document.getElementById('volunteer-btn-bottom');
+    const volunteerBtnContainer2 = document.getElementById('volunteer-btn');
     if (volunteerBtnContainer) {
         const drustvoId = localStorage.getItem('drustvoId');
         
         // Če je prijavljen kot društvo, skrij cel container
         if (drustvoId) {
             volunteerBtnContainer.style.display = 'none';
+            volunteerBtnContainer2.style.display = 'none';
             return;
         }
 
@@ -152,6 +154,7 @@ function updateProjectDetails(data) {
             checkExistingApplication(prostovoljecId, data.idProjekt).then(hasApplication => {
                 if (hasApplication) {
                     volunteerBtnContainer.style.display = 'none';
+                    volunteerBtnContainer2.style.display = 'none';
                     return;
                 }
                 
@@ -163,20 +166,22 @@ function updateProjectDetails(data) {
                         let buttonHtml = '';
                         if (isRegistered) {
                             buttonHtml = `
-                                <button class="btn btn-danger" onclick="odjavaIzProjekta(${prostovoljecId}, ${data.idProjekt})">
+                                <button class="btn" onclick="odjavaIzProjekta(${prostovoljecId}, ${data.idProjekt})">
                                     <i class="fas fa-times me-2"></i>Odjava s projekta
                                 </button>
                             `;
                         } else {
                             buttonHtml = `
-                                <button class="btn btn-primary" onclick="prijaviSeNaProjekt()">
+                                <a class="btn" onclick="prijaviSeNaProjekt()">
                                     <i class="fas fa-hand-holding-heart me-2"></i>Prijava na projekt
-                                </button>
+                                </a>
                             `;
                         }
                         
                         volunteerBtnContainer.innerHTML = buttonHtml;
+                        volunteerBtnContainer2.innerHTML = buttonHtml;
                         volunteerBtnContainer.style.display = 'block';
+                        volunteerBtnContainer2.style.display = 'block';
                     });
             });
         } else {
@@ -485,18 +490,21 @@ async function prijaviSeNaProjekt() {
                 timer: 3000,
                 showConfirmButton: false
             });
-            
             const volunteerBtnContainer = document.getElementById('volunteer-btn-bottom');
-            if (volunteerBtnContainer) {
+            const volunteerBtnContainer2 = document.getElementById('volunteer-btn');
+            if (volunteerBtnContainer || volunteerBtnContainer2) {
                 volunteerBtnContainer.style.display = 'none';
+                volunteerBtnContainer2.style.display = 'none';
             }
             
             loadProjectVolunteers(projectId);
         } else if (result.message && result.message.includes('že poslali prijavo')) {
             // Hide button if user already applied
             const volunteerBtnContainer = document.getElementById('volunteer-btn-bottom');
-            if (volunteerBtnContainer) {
+            const volunteerBtnContainer2 = document.getElementById('volunteer-btn');
+            if (volunteerBtnContainer || volunteerBtnContainer2) {
                 volunteerBtnContainer.style.display = 'none';
+                volunteerBtnContainer2.style.display = 'none';
             }
             
             Swal.fire({
