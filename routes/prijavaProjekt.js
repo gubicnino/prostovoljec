@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db/database');
+var connection = require("../db/database");
 const { saveNotificationToDB } = require('../websocket/socketHandler');
 
 // Prijava prostovoljca na projekt
@@ -8,16 +8,18 @@ router.post('/projekt', async (req, res) => {
     const { prostovoljecId, projektId } = req.body;
 
     if (!prostovoljecId || !projektId) {
-        return res.status(400).json({ success: false, message: 'Manjkajoči podatci: prostovoljecId i projektId su obavezni.' });
+        return res.status(400).json({ success: false, message: 'Manjkajoči podatci: prostovoljecId in projektId sta obvezna.' });
     }
 
+    // First check if application already exists
     const checkQuery = `
         SELECT COUNT(*) as count 
-        FROM Prostovoljec_Projekt 
-        WHERE TK_Prostovoljec = ? AND TK_Projekt = ?
+        FROM Prosnja_Prostovoljec pp
+        JOIN Prosnja p ON pp.TK_Prosnja = p.idProsnja
+        WHERE pp.TK_Prostovoljec = ? AND p.projekt = ?
     `;
 
-    db.query(checkQuery, [prostovoljecId, projektId], (err, checkResult) => {
+    connection.query(checkQuery, [prostovoljecId, projektId], (err, checkResult) => {
         if (err) {
             console.error('Napaka pri preverjanju prijave:', err);
             return res.status(500).json({ success: false, message: 'Napaka pri preverjanju prijave.' });
@@ -26,83 +28,87 @@ router.post('/projekt', async (req, res) => {
         if (checkResult[0].count > 0) {
             return res.status(409).json({ 
                 success: false, 
-                message: 'Že ste prijavljeni na ta projekt.' 
+                message: 'Že ste poslali prijavo za ta projekt.' 
             });
         }
 
-        const insertQuery = `
-            INSERT INTO Prostovoljec_Projekt (TK_Prostovoljec, TK_Projekt, potrejno) VALUES (?, ?, 0)
+        // Create Prosnja entry first
+        const prosnjaQuery = `
+            INSERT INTO Prosnja (prostovoljec, projekt, datumPrijave, TK_Drustvo)
+            SELECT ?, ?, NOW(), p.TK_Drustvo
+            FROM Projekt p
+            WHERE p.idProjekt = ?
         `;
 
-        db.query(insertQuery, [prostovoljecId, projektId], async (err, result) => {
+        connection.query(prosnjaQuery, [prostovoljecId, projektId, projektId], (err, prosnjaResult) => {
             if (err) {
-                console.error('Napaka pri prijavi na projekt:', err);
+                console.error('Napaka pri ustvarjanju prosnje:', err);
                 return res.status(500).json({ success: false, message: 'Napaka pri prijavi na projekt.' });
             }
 
-            try {
-                // Pridobi podatke o prostovoljcu
-                const prostovoljcQuery = 'SELECT ime, primek FROM Prostovoljec WHERE idProstovoljec = ?';
-                db.query(prostovoljcQuery, [prostovoljecId], async (err, prostovoljcResult) => {
-                    if (err) {
-                        console.error('Napaka pri pridobivanju podatkov prostovoljca:', err);
-                        return res.status(201).json({ success: true, message: 'Uspešno ste se prijavili na projekt.' });
-                    }
+            const prosnjaId = prosnjaResult.insertId;
 
-                    // Pridobi podatke o projektu in društvu
-                    const projektQuery = `
-                        SELECT p.naziv, p.TK_Drustvo, d.naziv as drustvo_naziv 
-                        FROM Projekt p 
-                        JOIN Drustvo d ON p.TK_Drustvo = d.idDrustvo 
-                        WHERE p.idProjekt = ?
-                    `;
-                    
-                    db.query(projektQuery, [projektId], async (err, projektResult) => {
-                        if (err) {
-                            console.error('Napaka pri pridobivanju podatkov projekta:', err);
-                            return res.status(201).json({ success: true, message: 'Uspešno ste se prijavili na projekt.' });
-                        }
+            // Create Prosnja_Prostovoljec entry
+            const prosnjaProstQuery = `
+                INSERT INTO Prosnja_Prostovoljec (TK_Prosnja, TK_Prostovoljec)
+                VALUES (?, ?)
+            `;
 
-                        if (prostovoljcResult.length > 0 && projektResult.length > 0) {
-                            const prostovoljc = prostovoljcResult[0];
-                            const projekt = projektResult[0];
-                            
-                            try {
-                                // Obvestilo za prostovoljca
-                                const prostovoljcMessage = `Prijavili ste se na projekt: ${projekt.naziv}`;
-                                await saveNotificationToDB(prostovoljecId, 'prostovoljec', prostovoljcMessage);
+            connection.query(prosnjaProstQuery, [prosnjaId, prostovoljecId], async (err, result) => {
+                if (err) {
+                    console.error('Napaka pri povezovanju prosnje s prostovoljcem:', err);
+                    return res.status(500).json({ success: false, message: 'Napaka pri prijavi na projekt.' });
+                }
+
+                // Send notifications
+                try {
+                    const prostovoljcQuery = 'SELECT ime, primek FROM Prostovoljec WHERE idProstovoljec = ?';
+                    connection.query(prostovoljcQuery, [prostovoljecId], async (err, prostovoljcResult) => {
+                        const projektQuery = `
+                            SELECT p.naziv, p.TK_Drustvo, d.naziv as drustvo_naziv 
+                            FROM Projekt p 
+                            JOIN Drustvo d ON p.TK_Drustvo = d.idDrustvo 
+                            WHERE p.idProjekt = ?
+                        `;
+                        
+                        connection.query(projektQuery, [projektId], async (err, projektResult) => {
+                            if (prostovoljcResult?.length > 0 && projektResult?.length > 0) {
+                                const prostovoljc = prostovoljcResult[0];
+                                const projekt = projektResult[0];
                                 
-                                // Obvestilo za društvo
-                                const drustvMessage = `${prostovoljc.ime} ${prostovoljc.primek} se je prijavil/a na: ${projekt.naziv}`;
+                                // Notifications for both parties
+                                const prostovoljcMessage = `Vaša prijava na projekt "${projekt.naziv}" je bila poslana v pregled.`;
+                                const drustvMessage = `Nova prijava od ${prostovoljc.ime} ${prostovoljc.primek} za projekt "${projekt.naziv}"`;
+                                
+                                await saveNotificationToDB(prostovoljecId, 'prostovoljec', prostovoljcMessage);
                                 await saveNotificationToDB(projekt.TK_Drustvo, 'drustvo', drustvMessage);
                                 
-                                // poslje obvestilo prek websocketaa
                                 const io = req.app.get('io');
                                 if (io) {
                                     io.to(`prostovoljec_${prostovoljecId}`).emit('newNotification', {
                                         message: prostovoljcMessage,
                                         timestamp: new Date(),
-                                        type: 'project_application'
+                                        type: 'application_sent'
                                     });
                                     
                                     io.to(`drustvo_${projekt.TK_Drustvo}`).emit('newNotification', {
                                         message: drustvMessage,
                                         timestamp: new Date(),
-                                        type: 'project_application'
+                                        type: 'new_application'
                                     });
                                 }
-                            } catch (notificationError) {
-                                console.error('Napaka pri pošiljanju obvestil:', notificationError);
                             }
-                        }
-
-                        res.status(201).json({ success: true, message: 'Uspešno ste se prijavili na projekt.' });
+                        });
                     });
+                } catch (error) {
+                    console.error('Napaka pri obdelavi obvestil:', error);
+                }
+
+                res.status(201).json({ 
+                    success: true, 
+                    message: 'Vaša prijava je bila uspešno poslana v pregled.' 
                 });
-            } catch (error) {
-                console.error('Napaka pri obdelavi obvestil:', error);
-                res.status(201).json({ success: true, message: 'Uspešno ste se prijavili na projekt.' });
-            }
+            });
         });
     });
 });
@@ -129,18 +135,18 @@ router.delete('/projekt', async (req, res) => {
         WHERE pp.TK_Prostovoljec = ? AND pp.TK_Projekt = ?
     `;
 
-    db.query(getDataQuery, [prostovoljecId, projektId], (err, dataResult) => {
+    connection.query(getDataQuery, [prostovoljecId, projektId], (err, dataResult) => {
         if (err) {
             console.error('Napaka pri pridobivanju podatkov:', err);
         }
 
-        // SQL upit za brisanje veze između prostovoljca i projekta
+        // SQL upit za brisanje veze između prostovoljca in projekta
         const deleteQuery = `
             DELETE FROM Prostovoljec_Projekt 
             WHERE TK_Prostovoljec = ? AND TK_Projekt = ?
         `;
 
-        db.query(deleteQuery, [prostovoljecId, projektId], async (err, result) => {
+        connection.query(deleteQuery, [prostovoljecId, projektId], async (err, result) => {
             if (err) {
                 console.error('Napaka pri brisanju prostovoljca s projekta:', err);
                 return res.status(500).json({ 
@@ -194,6 +200,26 @@ router.delete('/projekt', async (req, res) => {
                 message: 'Prostovoljec uspešno odjavljen s projekta.' 
             });
         });
+    });
+});
+
+// Check if volunteer has already applied
+router.post('/check', (req, res) => {
+    const { prostovoljecId, projektId } = req.body;
+
+    const checkQuery = `
+        SELECT COUNT(*) as count 
+        FROM Prosnja_Prostovoljec pp
+        JOIN Prosnja p ON pp.TK_Prosnja = p.idProsnja
+        WHERE pp.TK_Prostovoljec = ? AND p.projekt = ?
+    `;
+
+    connection.query(checkQuery, [prostovoljecId, projektId], (err, result) => {
+        if (err) {
+            console.error('Error checking application:', err);
+            return res.status(500).json({ hasApplication: false });
+        }
+        res.json({ hasApplication: result[0].count > 0 });
     });
 });
 

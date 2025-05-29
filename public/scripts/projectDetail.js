@@ -6,11 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
         loadProjectDetails(projectId);
         loadProjectVolunteers(projectId);
     }
-    
-    const volunteerBtn = document.getElementById('volunteer-btn-bottom');
-    if (volunteerBtn) {
-        volunteerBtn.addEventListener('click', prijaviSeNaProjekt);
-    }
 });
 
 async function loadProjectDetails(projectId) {
@@ -22,12 +17,27 @@ async function loadProjectDetails(projectId) {
 async function loadProjectVolunteers(projectId) {
     const response = await fetch(`/api/projekti/${projectId}/volunteers`);
     const volunteers = await response.json();
-    console.log('Volunteers data:', volunteers); // Debagovanje
     displayVolunteers(volunteers);
 }
 
+async function checkExistingApplication(prostovoljecId, projektId) {
+    try {
+        const response = await fetch(`/api/prijavaProjekt/check`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ prostovoljecId, projektId })
+        });
+        const result = await response.json();
+        return result.hasApplication;
+    } catch (error) {
+        console.error('Error checking application:', error);
+        return false;
+    }
+}
+
 function updateProjectDetails(data) {
-    console.log(data);
     document.title = `ManusMano - ${data.naziv}`;
     updateElementContent('project-title', data.naziv);
     updateElementContent('breadcrumb-title', data.naziv);
@@ -124,10 +134,83 @@ function updateProjectDetails(data) {
         reqElement.innerHTML = zahteveList;
     }
     loadProjectEdit(data);
+
+    // Update volunteer buttons logic
+    const volunteerBtnContainer = document.getElementById('volunteer-btn-bottom');
+    if (volunteerBtnContainer) {
+        const drustvoId = localStorage.getItem('drustvoId');
+        
+        // Če je prijavljen kot društvo, skrij cel container
+        if (drustvoId) {
+            volunteerBtnContainer.style.display = 'none';
+            return;
+        }
+
+        const prostovoljecId = localStorage.getItem('prostovoljecId');
+        if (prostovoljecId) {
+            // First check for existing application
+            checkExistingApplication(prostovoljecId, data.idProjekt).then(hasApplication => {
+                if (hasApplication) {
+                    volunteerBtnContainer.style.display = 'none';
+                    return;
+                }
+                
+                fetch(`/api/projekti/${data.idProjekt}/volunteers`)
+                    .then(r => r.json())
+                    .then(volunteers => {
+                        const isRegistered = volunteers.some(v => v.idProstovoljec.toString() === prostovoljecId);
+                        
+                        let buttonHtml = '';
+                        if (isRegistered) {
+                            buttonHtml = `
+                                <button class="btn btn-danger" onclick="odjavaIzProjekta(${prostovoljecId}, ${data.idProjekt})">
+                                    <i class="fas fa-times me-2"></i>Odjava s projekta
+                                </button>
+                            `;
+                        } else {
+                            buttonHtml = `
+                                <button class="btn btn-primary" onclick="prijaviSeNaProjekt()">
+                                    <i class="fas fa-hand-holding-heart me-2"></i>Prijava na projekt
+                                </button>
+                            `;
+                        }
+                        
+                        volunteerBtnContainer.innerHTML = buttonHtml;
+                        volunteerBtnContainer.style.display = 'block';
+                    });
+            });
+        } else {
+            // If user is not logged in, show only signup button with login redirect
+            volunteerBtnContainer.innerHTML = `
+                <button class="btn btn-primary" onclick="redirectToLogin()">
+                    <i class="fas fa-hand-holding-heart me-2"></i>Prijava na projekt
+                </button>
+            `;
+        }
+    }
+}
+
+function redirectToLogin() {
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'info',
+        title: 'Za prijavo na projekt se morate najprej prijaviti kot prostovoljec.',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        background: '#1a1a1a',
+        color: '#fff',
+        iconColor: 'var(--bs-main)'
+    }).then(() => {
+        window.location.href = 'prijava.html';
+    });
 }
 
 function displayVolunteers(volunteers) {
     const volunteersContainer = document.getElementById('volunteers-list');
+    const currentProstovoljecId = localStorage.getItem('prostovoljecId');
+    const isDrustvo = localStorage.getItem('drustvoId') !== null;
     if (!volunteersContainer) return;
 
     if (!volunteers || volunteers.length === 0) {
@@ -140,7 +223,9 @@ function displayVolunteers(volunteers) {
     }
 
     const volunteersHTML = volunteers.map(volunteer => {
-        console.log('Volunteer object:', volunteer); // Dodatno debagovanje
+        // Only show unsubscribe button if user is a society admin
+        const showUnsubscribeButton = isDrustvo;
+        
         return `
         <li class="list-group-item px-0 border-bottom d-flex align-items-center py-3">
             <div class="rounded-circle bg-light p-2 me-3">
@@ -165,9 +250,14 @@ function displayVolunteers(volunteers) {
                     <small class="text-muted">Ocena: ${volunteer.ocena}/5</small>
                 </div>
                 ` : ''}
+                ${showUnsubscribeButton ? `
                 <div class="mt-2">
-                    <button class="btn btn-sm btn-outline-danger" onclick="logoutVolunteer(${volunteer.idProstovoljec}, ${volunteer.TK_Projekt})">Odjava</button>
+                    <button class="btn btn-sm btn-outline-danger" 
+                            onclick="logoutVolunteer(${volunteer.idProstovoljec}, ${volunteer.TK_Projekt})">
+                        Odstrani prostovoljca
+                    </button>
                 </div>
+                ` : ''}
             </div>
         </li>
     `}).join('');
@@ -222,14 +312,26 @@ async function logoutVolunteer(prostovoljecId, projektId) {
 
     if (!prostovoljecId || !projektId) {
         console.error('Nevalidni parametri:', { prostovoljecId, projektId });
-        alert('Napaka: Manjkajoči podatci za odjavu.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Napaka',
+            text: 'Manjkajoči podatki za odjavo.',
+            timer: 2500,
+            showConfirmButton: false
+        });
         return;
     }
 
     const drustvoId = localStorage.getItem('drustvoId');
     if (!drustvoId) {
         console.error('Nije pronađen drustvoId u localStorage.');
-        alert('Napaka: Niste prijavljeni kao društvo.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Napaka',
+            text: 'Niste prijavljeni kot društvo.',
+            timer: 2500,
+            showConfirmButton: false
+        });
         return;
     }
 
@@ -241,16 +343,49 @@ async function logoutVolunteer(prostovoljecId, projektId) {
 
         if (!isAuthorized) {
             console.error('Neovlašćeni pokušaj odjave prostovoljca za projekat:', projektId);
-            alert('Napaka: Nemate ovlašćenje za uklanjanje prostovoljaca sa ovog projekta.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Napaka',
+                text: 'Nimate dovoljenja za odstranjevanje prostovoljca s tega projekta.',
+                timer: 2500,
+                showConfirmButton: false
+            });
             return;
         }
     } catch (error) {
         console.error('Napaka pri proveri projekata društva:', error);
-        alert('Napaka pri proveri ovlašćenja. Pokušajte ponovo.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Napaka',
+            text: 'Napaka pri preverjanju pooblastil. Poskusite znova.',
+            timer: 2500,
+            showConfirmButton: false
+        });
         return;
     }
 
-    if (!confirm('Ali ste prepričani, da želite odjaviti tega prostovoljca s projekta?')) {
+    const confirmResult = await Swal.fire({
+        title: 'Ste prepričani?',
+        text: 'Ali želite odjaviti tega prostovoljca s projekta?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Da, odjavi!',
+        cancelButtonText: 'Prekliči',
+        reverseButtons: true,
+        background: '#1a1a1a',
+        color: '#fff'
+    });
+
+    const potrditev = await Swal.fire({
+        title: 'Ali ste prepričani?',
+        text: 'Ali želite odjaviti tega prostovoljca s projekta?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Da',
+        cancelButtonText: 'Ne'
+    });
+
+    if (!potrditev.isConfirmed) {
         return;
     }
 
@@ -269,17 +404,35 @@ async function logoutVolunteer(prostovoljecId, projektId) {
         const result = await response.json();
 
         if (response.ok && result.success) {
-            alert('Prostovoljec uspešno odjavljen s projekta.');
+            Swal.fire({
+                icon: 'success',
+                title: 'Uspeh',
+                text: 'Prostovoljec uspešno odjavljen s projekta.',
+                timer: 2500,
+                showConfirmButton: false
+            });
             await Promise.all([
                 loadProjectVolunteers(projektId),
                 loadProjectDetails(projektId)
             ]);
         } else {
-            alert(result.message || 'Napaka pri odjavi prostovoljca.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Napaka',
+                text: result.message || 'Napaka pri odjavi prostovoljca.',
+                timer: 2500,
+                showConfirmButton: false
+            });
         }
     } catch (error) {
         console.error('Napaka pri odjavi:', error);
-        alert('Prišlo je do napake pri odjavi. Poskusite znova.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Napaka',
+            text: 'Prišlo je do napake pri odjavi. Poskusite znova.',
+            timer: 2500,
+            showConfirmButton: false
+        });
     }
 }
 
@@ -288,13 +441,25 @@ async function prijaviSeNaProjekt() {
     const projectId = new URLSearchParams(window.location.search).get('id');
     
     if (!prostovoljecId) {
-        alert('Za prijavo na projekt se morate najprej prijaviti kot prostovoljec.');
+        await Swal.fire({
+            icon: 'warning',
+            title: 'Prijava potrebna',
+            text: 'Za prijavo na projekt se morate najprej prijaviti kot prostovoljec.',
+            confirmButtonText: 'V redu',
+            confirmButtonColor: '#3085d6'
+        });
         window.location.href = 'prijava.html';
         return;
     }
     
     if (!projectId) {
-        alert('Napaka: ID projekta ni najden.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Napaka',
+            text: 'ID projekta ni bil najden. Prosimo, poskusite znova.',
+            timer: 2500,
+            showConfirmButton: false
+        });
         return;
     }
     
@@ -313,13 +478,120 @@ async function prijaviSeNaProjekt() {
         const result = await response.json();
         
         if (response.ok) {
-            alert('Uspešno ste se prijavili na projekt! Organizator bo preveril vašo prijavo.');
+            await Swal.fire({
+                icon: 'success',
+                title: 'Prijava uspešna!',
+                text: 'Organizator bo preveril vašo prijavo.',
+                timer: 3000,
+                showConfirmButton: false
+            });
+            
+            const volunteerBtnContainer = document.getElementById('volunteer-btn-bottom');
+            if (volunteerBtnContainer) {
+                volunteerBtnContainer.style.display = 'none';
+            }
+            
             loadProjectVolunteers(projectId);
+        } else if (result.message && result.message.includes('že poslali prijavo')) {
+            // Hide button if user already applied
+            const volunteerBtnContainer = document.getElementById('volunteer-btn-bottom');
+            if (volunteerBtnContainer) {
+                volunteerBtnContainer.style.display = 'none';
+            }
+            
+            Swal.fire({
+                icon: 'error',
+                title: 'Napaka',
+                text: result.message,
+                timer: 3000,
+                showConfirmButton: false
+            });
         } else {
-            alert(result.message || 'Napaka pri prijavi na projekt.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Napaka',
+                text: result.message || 'Napaka pri prijavi na projekt.',
+                timer: 3000,
+                showConfirmButton: false
+            });
         }
     } catch (error) {
         console.error('Napaka:', error);
-        alert('Prišlo je do napake pri prijavi. Poskusite znova.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Napaka',
+            text: 'Prišlo je do napake pri prijavi. Poskusite znova.',
+            timer: 3000,
+            showConfirmButton: false
+        });
+    }
+}
+
+async function odjavaIzProjekta(prostovoljecId, projektId) {
+    const { isConfirmed } = await Swal.fire({
+        title: 'Potrditev odjave',
+        text: 'Ali ste prepričani, da se želite odjaviti s tega projekta?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Da, odjavi me',
+        cancelButtonText: 'Prekliči',
+        background: '#1a1a1a',
+        color: '#fff',
+        iconColor: 'var(--bs-main)',
+        confirmButtonColor: 'var(--bs-main)',
+        cancelButtonColor: '#888',
+        reverseButtons: true
+    });
+
+    if (!isConfirmed) {
+        return; // uporabnik je preklical
+    }
+
+    try {
+        const response = await fetch('/api/prijavaProjekt/projekt', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                prostovoljecId: parseInt(prostovoljecId),
+                projektId: parseInt(projektId)
+            })
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            await Swal.fire({
+                icon: 'success',
+                title: 'Odjava uspešna',
+                text: 'Uspešno ste se odjavili s projekta.',
+                timer: 2500,
+                showConfirmButton: false,
+                background: '#1a1a1a',
+                color: '#fff',
+                iconColor: 'var(--bs-main)',
+            });
+            window.location.href = 'projekti.html';
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Napaka',
+                text: result.message || 'Napaka pri odjavi s projekta.',
+                background: '#1a1a1a',
+                color: '#fff',
+                iconColor: 'var(--bs-main)',
+            });
+        }
+    } catch (error) {
+        console.error('Napaka pri odjavi:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Napaka',
+            text: 'Prišlo je do napake pri odjavi. Poskusite znova.',
+            background: '#1a1a1a',
+            color: '#fff',
+            iconColor: 'var(--bs-main)',
+        });
     }
 }

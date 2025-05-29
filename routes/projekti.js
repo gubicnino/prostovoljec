@@ -348,4 +348,31 @@ router.post('/:id/volunteers/feedback', async (req, res) => {
     }
 });
 
+// Check for pending applications
+router.get('/:id/pending', (req, res) => {
+    const projektId = parseInt(req.params.id, 10);
+    const prostovoljecId = req.query.prostovoljecId;
+    
+    if (!projektId || !prostovoljecId) {
+        return res.status(400).json({ error: 'Missing required parameters' });
+    }
+
+    const query = `
+        SELECT EXISTS(
+            SELECT 1 
+            FROM Prosnja_Prostovoljec pp
+            JOIN Prosnja p ON pp.TK_Prosnja = p.idProsnja
+            WHERE p.projekt = ? AND pp.TK_Prostovoljec = ?
+        ) as hasApplication
+    `;
+
+    connection.query(query, [projektId, prostovoljecId], (err, results) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ error: "Database error" });
+        }
+        res.json({ exists: results[0].hasApplication === 1 });
+    });
+});
+
 module.exports = router;
