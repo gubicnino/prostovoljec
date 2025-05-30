@@ -36,6 +36,27 @@
                         <i class="fas fa-star"></i>
                     </a>
                 </li>
+                <li class="nav-item dropdown" id="notification-li">
+                    <a class="nav-link position-relative" href="#" id="notificationsDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" title="Obvestila">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="badge bg-danger rounded-pill position-absolute notification-badge"
+                            style="top: -8px; right: -8px; font-size: 0.6em; min-width: 18px; height: 18px; display: none; line-height: 18px; text-align: center; padding: 0;">0</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-start p-0" aria-labelledby="notificationsDropdown"
+                        style="width: 320px; max-height: 400px; overflow-y: auto;">
+                        <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+                            <h6 class="dropdown-header p-0 m-0 fw-bold">Obvestila</h6>
+                            <a href="#" class="text-decoration-none small mark-read-btn">Označi vse kot prebrano</a>
+                        </div>
+                        <div class="notifications-wrapper" id="notifications-container">
+                            <div class="text-center p-4 text-muted">
+                                <i class="fas fa-bell-slash mb-3" style="font-size: 24px;"></i>
+                                <p class="mb-0">Ni novih obvestil</p>
+                            </div>
+                        </div>
+                    </div>
+                </li>
                 <li class="nav-item" id="prijavaNav">
                     <div class="iconNav">
                         <a href="#" id="prijava">
@@ -48,7 +69,6 @@
                         </a>
                     </div>
                 </li>
-
             </ul>
 
             <div class="d-none d-lg-flex align-items-center">
@@ -57,3 +77,19 @@
         </div>
     </nav>
 </div>
+
+<style>
+    .mark-read-btn {
+        color: #dc3545 !important;
+        text-decoration: none !important;
+        transition: color 0.2s ease;
+    }
+
+    .mark-read-btn:hover {
+        color: #b02a37 !important;
+        text-decoration: none !important;
+    }
+</style>
+
+<script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+<script src="/scripts/notifications.js"></script>

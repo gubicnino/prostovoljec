@@ -61,51 +61,50 @@
                         <h2 class="section-title white-text">PROJEKTI, KI <span class="redText">DELAJO SPREMEMBO</span>
                         </h2>
                     </div>
-                    <div class="row">
-                        <div class="col-12 mb-4">
-                            <div class="filterWrapper diagonalCorner">
-                                <form id="filterForm" class="d-flex gap-3 align-items-center justify-content-between w-100">
-                                    <!-- Iskanje po nazivu -->
-                                    <div class="mb-3 flex-grow-1">
-                                        <label for="search" class="form-label">Iskanje</label>
-                                        <input type="text" class="form-control" id="search" name="search"
-                                            placeholder="Naziv projekta">
-                                    </div>
-                                    <!-- Težavnost -->
-                                    <div class="mb-3 flex-grow-1">
-                                        <label for="tezavnost" class="form-label">Težavnost</label>
-                                        <select class="form-select" id="tezavnost" name="tezavnost">
-                                            <option value="">Vse</option>
-                                            <option value="Nizka">Nizka</option>
-                                            <option value="Srednja">Srednja</option>
-                                            <option value="Visoka">Visoka</option>
-                                        </select>
-                                    </div>
-                                    <!-- Lokacija -->
-                                    <div class="mb-3 flex-grow-1">
-                                        <label for="lokacija" class="form-label">Lokacija</label>
-                                        <input type="text" class="form-control" id="lokacija" name="lokacija"
-                                            placeholder="Kraj ali regija">
-                                    </div>
-                                    <!-- Sortiranje -->
-                                    <div class="mb-3 flex-grow-1">
-                                        <label for="sort" class="form-label">Sortiraj po</label>
-                                        <select class="form-select" id="sort" name="sort">
-                                            <option value="">Privzeto</option>
-                                            <option value="datumIzvajanja_desc">Datum izvajanja (novejši)</option>
-                                            <option value="datumIzvajanja_asc">Datum izvajanja (starejši)</option>
-                                            <option value="datumRokaPrijave_asc">Rok prijave (najprej zapade)
-                                            </option>
-                                            <option value="naziv_asc">Naziv (A-Z)</option>
-                                            <option value="naziv_desc">Naziv (Z-A)</option>
-                                        </select>
-                                    </div>
-                                    <button type="submit" class="btn mt-4">Filtriraj</button>
-                                    <button type="button" class="btn mt-4" id="resetFilters">Ponastavi
-                                        filtre</button>
-                                </form>
+                    <div class="filterWrapper diagonalCorner row mb-4">
+                        <form id="filterForm" class="row g-3 align-items-end w-100">
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <label for="search" class="form-label">Iskanje</label>
+                                <input type="text" class="form-control" id="search" name="search"
+                                    placeholder="Naziv projekta">
                             </div>
-                        </div>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <label for="tezavnost" class="form-label">Težavnost</label>
+                                <select class="form-select" id="tezavnost" name="tezavnost">
+                                    <option value="">Vse</option>
+                                    <option value="Nizka">Nizka</option>
+                                    <option value="Srednja">Srednja</option>
+                                    <option value="Visoka">Visoka</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <label for="lokacija" class="form-label">Lokacija</label>
+                                <input type="text" class="form-control" id="lokacija" name="lokacija"
+                                    placeholder="Kraj ali regija">
+                            </div>
+                            <div class="w-100 d-none d-xl-block"></div>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <label for="spretnost" class="form-label">Zahtevana spretnost</label>
+                                <input type="text" class="form-control" id="spretnost" name="spretnost"
+                                    placeholder="Vpiši spretnost">
+                            </div>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <label for="sort" class="form-label">Sortiraj po</label>
+                                <select class="form-select" id="sort" name="sort">
+                                    <option value="">Privzeto</option>
+                                    <option value="datumIzvajanja_desc">Datum izvajanja (novejši)</option>
+                                    <option value="datumIzvajanja_asc">Datum izvajanja (starejši)</option>
+                                    <option value="datumRokaPrijave_asc">Rok prijave (najprej zapade)</option>
+                                    <option value="naziv_asc">Naziv (A-Z)</option>
+                                    <option value="naziv_desc">Naziv (Z-A)</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-6 col-xl-4 d-flex gap-2 align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">Filtriraj</button>
+                                <button type="button" class="btn btn-secondary w-100" id="resetFilters">Ponastavi
+                                    filtre</button>
+                            </div>
+                        </form>
                     </div>
                     <div class="row">
                         <div class="row" id="projectsContainer">
@@ -198,7 +197,7 @@
         // Preberi filtre iz URL-ja in nastavi vrednosti v formi
         document.addEventListener("DOMContentLoaded", () => {
             const urlParams = new URLSearchParams(window.location.search);
-            ['search', 'tezavnost', 'lokacija', 'sort'].forEach(param => {
+            ['search', 'tezavnost', 'lokacija', 'sort', 'spretnost'].forEach(param => {
                 if (urlParams.get(param)) {
                     document.getElementById(param).value = urlParams.get(param);
                 }

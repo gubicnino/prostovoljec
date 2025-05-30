@@ -1,6 +1,8 @@
 var express = require("express");
 var router = express.Router();
 var connection = require("../db/database");
+const { saveNotificationToDB } = require('../websocket/socketHandler');
+
 
 router.get("/drustvo", function (req, res, next) {
     const drustvoId = req.query.id;
@@ -112,6 +114,22 @@ router.get("/prijavnice", function (req, res, next) {
         return res.status(400).json({ error: 'Manjka id društva' });
     }
 
+    // DODAJ TESTNI QUERY
+    const testQuery = `
+        SELECT COUNT(*) as total_prijav, 
+               COUNT(CASE WHEN pp.potrejno = 0 THEN 1 END) as cakajocih,
+               COUNT(CASE WHEN pp.potrejno IS NULL THEN 1 END) as null_vrednosti
+        FROM Prostovoljec_Projekt pp
+        JOIN Projekt p ON pp.TK_Projekt = p.idProjekt
+        WHERE p.TK_Drustvo = ?
+    `;
+    
+    connection.query(testQuery, [drustvoId], function (err, testResults) {
+        if (!err) {
+            console.log("STATISTIKE:", testResults[0]);
+        }
+    });
+
     const query = `
         SELECT 
             pp.idProstovoljec_Projekt,
@@ -125,7 +143,7 @@ router.get("/prijavnice", function (req, res, next) {
         FROM Prostovoljec_Projekt pp
         JOIN Prostovoljec pr ON pp.TK_Prostovoljec = pr.idProstovoljec
         JOIN Projekt p ON pp.TK_Projekt = p.idProjekt
-        WHERE p.TK_Drustvo = ? AND pp.potrejno = 0
+        WHERE p.TK_Drustvo = ? AND (pp.potrejno = 0 OR pp.potrejno IS NULL)
         ORDER BY pp.idProstovoljec_Projekt DESC
     `;
 
@@ -136,36 +154,105 @@ router.get("/prijavnice", function (req, res, next) {
         }
         
         console.log(`Found ${results.length} prijavnic for drustvo ${drustvoId}`);
+        console.log("Rezultati:", results);
         res.json(results);
     });
 });
 
 // Sprejmi/zavrni prijavo
-router.post("/potrditev-prijave", function (req, res, next) {
+router.post("/potrditev-prijave", async function (req, res, next) {
     const { prijavId, odobreno } = req.body;
     
     if (!prijavId || typeof odobreno !== 'boolean') {
         return res.status(400).json({ error: 'Manjkajo podatki' });
     }
     
-    const query = `
-        UPDATE Prostovoljec_Projekt 
-        SET potrejno = ? 
-        WHERE idProstovoljec_Projekt = ?
-    `;
-    
-    const potrejno = odobreno ? 1 : -1; // 1 = odobreno, -1 = zavrnjeno, 0 = čaka
-    
-    connection.query(query, [potrejno, prijavId], function (err, results) {
-        if (err) {
-            console.error("Error updating prijava:", err);
-            return res.status(500).json({ error: "Database error" });
+    try {
+        // 1. Najprej pridobi podatke o prijavi za obvestila
+        const getPrijavaQuery = `
+            SELECT pp.*, p.naziv as projekt_naziv, 
+                   pr.ime, pr.primek, pr.email, pr.idProstovoljec,
+                   d.idDrustvo, d.naziv as drustvo_naziv
+            FROM Prostovoljec_Projekt pp
+            JOIN Projekt p ON pp.TK_Projekt = p.idProjekt
+            JOIN Prostovoljec pr ON pp.TK_Prostovoljec = pr.idProstovoljec
+            JOIN Drustvo d ON p.TK_Drustvo = d.idDrustvo
+            WHERE pp.idProstovoljec_Projekt = ?
+        `;
+        
+        const prijavaData = await new Promise((resolve, reject) => {
+            connection.query(getPrijavaQuery, [prijavId], (err, results) => {
+                if (err) reject(err);
+                else resolve(results[0]);
+            });
+        });
+        
+        if (!prijavaData) {
+            return res.status(404).json({ error: 'Prijava ni bila najdena' });
+        }
+        
+        const potrejno = odobreno ? 1 : -1; // 1 = odobreno, -1 = zavrnjeno, 0 = čaka
+        
+        const updateQuery = `
+            UPDATE Prostovoljec_Projekt 
+            SET potrejno = ? 
+            WHERE idProstovoljec_Projekt = ?
+        `;
+        
+        await new Promise((resolve, reject) => {
+            connection.query(updateQuery, [potrejno, prijavId], (err, result) => {
+                if (err) reject(err);
+                else resolve(result);
+            });
+        });
+        
+        const statusText = odobreno ? 'sprejeta' : 'zavrnjena';
+        const statusTextDrustvo = odobreno ? 'odobrili' : 'zavrnili';
+        
+        const prostovoljcMessage = `Vaša prijava na projekt "${prijavaData.projekt_naziv}" je bila ${statusText}.`;
+        
+        const drustvoMessage = `Uspešno ste ${statusTextDrustvo} prijavo prostovoljca ${prijavaData.ime} ${prijavaData.primek} na projekt "${prijavaData.projekt_naziv}".`;
+        
+        await saveNotificationToDB(
+            prijavaData.idProstovoljec,
+            'prostovoljec',
+            prostovoljcMessage
+        );
+        
+        await saveNotificationToDB(
+            prijavaData.idDrustvo,
+            'drustvo',
+            drustvoMessage
+        );
+        
+        const io = req.app.get('io');
+        if (io) {
+            io.to(`prostovoljec_${prijavaData.idProstovoljec}`).emit('newNotification', {
+                message: prostovoljcMessage,
+                timestamp: new Date(),
+                type: 'application_response'
+            });
+            
+            io.to(`drustvo_${prijavaData.idDrustvo}`).emit('newNotification', {
+                message: drustvoMessage,
+                timestamp: new Date(),
+                type: 'application_confirmation'
+            });
         }
         
         const status = odobreno ? 'odobrena' : 'zavrnjena';
         console.log(`Prijava ${prijavId} je bila ${status}`);
-        res.json({ message: `Prijava uspešno ${status}` });
-    });
+        
+        res.json({ 
+            success: true,
+            message: `Prijava uspešno ${status}`,
+            notificationsSent: true
+        });
+        
+    } catch (error) {
+        console.error('Napaka pri obdelavi prijave:', error);
+        res.status(500).json({ error: 'Napaka pri obdelavi prijave' });
+    }
 });
 
 module.exports = router;

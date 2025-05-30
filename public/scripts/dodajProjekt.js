@@ -30,6 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
             opis: projectForm.opis.value,
             kapaciteta: projectForm.kapaciteta.value,
             TK_Drustvo: TK_Drustvo,
+            zahteve: projectForm.zahteve.value,
         };
 
         let url = "/api/dodajanjeProjekta";
@@ -114,6 +115,7 @@ function nastaviProjekt(projectId) {
             form.kratekOpis.value = data.kratekOpis;
             form.opis.value = data.opis;
             form.kapaciteta.value = data.kapaciteta;
+            form.zahteve.value = data.zahteve;
         })
         .catch(error => {
             console.error('Napaka pri nalaganju projekta:', error);
