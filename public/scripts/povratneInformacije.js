@@ -17,7 +17,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function fetchParticipants(projectId) {
         const res = await fetch(`/api/projekti/${projectId}/volunteers/vsi`);
         if (!res.ok) {
-            alert("Napaka pri pridobivanju udeležencev!");
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'error',
+                title: 'Napaka pri pridobivanju udeležencev!',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: '#1a1a1a',
+                color: '#fff',
+                iconColor: 'var(--bs-main)'
+            });
             return [];
         }
         return await res.json();
@@ -76,7 +87,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
 
             if (res.ok) {
-                alert("Povratne informacije uspešno shranjene! Obvestili ste bili vsi udeleženci o potrditvi/zavrnitvi.");
+                await Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Povratne informacije uspešno shranjene! Obvestili ste bili vsi udeleženci o potrditvi/zavrnitvi.',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    background: '#1a1a1a',
+                    color: '#fff',
+                    iconColor: 'var(--bs-main)'
+                });
                 
                 // Posodobi obvestila
                 if (window.notificationManager) {
@@ -88,11 +110,19 @@ document.addEventListener("DOMContentLoaded", async () => {
                 
                 window.location.reload();
             } else {
-                alert("Napaka pri shranjevanju povratnih informacij.");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Napaka',
+                    text: 'Napaka pri shranjevanju povratnih informacij.'
+                });
             }
         } catch (error) {
             console.error('Napaka:', error);
-            alert("Prišlo je do napake. Poskusite znova.");
+            Swal.fire({
+                icon: 'error',
+                title: 'Napaka',
+                text: 'Prišlo je do napake. Poskusite znova.'
+            });
         }
     });
 });

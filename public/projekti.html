@@ -61,56 +61,107 @@
                         <h2 class="section-title white-text">PROJEKTI, KI <span class="redText">DELAJO SPREMEMBO</span>
                         </h2>
                     </div>
-                    <div class="filterWrapper diagonalCorner row mb-4">
-                        <form id="filterForm" class="row g-3 align-items-end w-100">
-                            <div class="col-12 col-md-6 col-xl-4">
-                                <label for="search" class="form-label">Iskanje</label>
-                                <input type="text" class="form-control" id="search" name="search"
-                                    placeholder="Naziv projekta">
-                            </div>
-                            <div class="col-12 col-md-6 col-xl-4">
-                                <label for="tezavnost" class="form-label">Težavnost</label>
-                                <select class="form-select" id="tezavnost" name="tezavnost">
-                                    <option value="">Vse</option>
-                                    <option value="Nizka">Nizka</option>
-                                    <option value="Srednja">Srednja</option>
-                                    <option value="Visoka">Visoka</option>
-                                </select>
-                            </div>
-                            <div class="col-12 col-md-6 col-xl-4">
-                                <label for="lokacija" class="form-label">Lokacija</label>
-                                <input type="text" class="form-control" id="lokacija" name="lokacija"
-                                    placeholder="Kraj ali regija">
-                            </div>
-                            <div class="w-100 d-none d-xl-block"></div>
-                            <div class="col-12 col-md-6 col-xl-4">
-                                <label for="spretnost" class="form-label">Zahtevana spretnost</label>
-                                <input type="text" class="form-control" id="spretnost" name="spretnost"
-                                    placeholder="Vpiši spretnost">
-                            </div>
-                            <div class="col-12 col-md-6 col-xl-4">
-                                <label for="sort" class="form-label">Sortiraj po</label>
-                                <select class="form-select" id="sort" name="sort">
-                                    <option value="">Privzeto</option>
-                                    <option value="datumIzvajanja_desc">Datum izvajanja (novejši)</option>
-                                    <option value="datumIzvajanja_asc">Datum izvajanja (starejši)</option>
-                                    <option value="datumRokaPrijave_asc">Rok prijave (najprej zapade)</option>
-                                    <option value="naziv_asc">Naziv (A-Z)</option>
-                                    <option value="naziv_desc">Naziv (Z-A)</option>
-                                </select>
-                            </div>
-                            <div class="col-12 col-md-6 col-xl-4 d-flex gap-2 align-items-end">
-                                <button type="submit" class="btn btn-primary w-100">Filtriraj</button>
-                                <button type="button" class="btn btn-secondary w-100" id="resetFilters">Ponastavi
-                                    filtre</button>
-                            </div>
-                        </form>
+
+                    <!-- Filter Sidebar -->
+                    <div class="offcanvas offcanvas-end pt-5" tabindex="-1" id="filterSidebar">
+                        <div class="offcanvas-header">
+                            <h5 class="offcanvas-title">Filtriraj projekte</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+                        </div>
+                        <div class="offcanvas-body">
+                            <form id="filterForm">
+                                <!-- Težavnost -->
+                                <div class="mb-3">
+                                    <label for="tezavnost" class="form-label">Težavnost</label>
+                                    <select class="form-select" id="tezavnost" name="tezavnost">
+                                        <option value="">Vse</option>
+                                        <option value="Nizka">Nizka</option>
+                                        <option value="Srednja">Srednja</option>
+                                        <option value="Visoka">Visoka</option>
+                                    </select>
+                                </div>
+
+                                <!-- Lokacija -->
+                                <div class="mb-3">
+                                    <label for="lokacija" class="form-label">Lokacija</label>
+                                    <input type="text" class="form-control" id="lokacija" name="lokacija"
+                                        placeholder="Kraj ali regija">
+                                </div>
+
+                                <!-- Spretnost -->
+                                <div class="mb-3">
+                                    <label for="spretnost" class="form-label">Zahtevana spretnost</label>
+                                    <input type="text" class="form-control" id="spretnost" name="spretnost"
+                                        placeholder="Vpiši spretnost">
+                                </div>
+
+                                <!-- Sortiranje -->
+                                <div class="mb-4">
+                                    <label for="sort" class="form-label">Sortiraj po</label>
+                                    <select class="form-select" id="sort" name="sort">
+                                        <option value="">Privzeto</option>
+                                        <option value="datumIzvajanja_desc">Datum izvajanja (novejši)</option>
+                                        <option value="datumIzvajanja_asc">Datum izvajanja (starejši)</option>
+                                        <option value="datumRokaPrijave_asc">Rok prijave (najprej zapade)</option>
+                                        <option value="naziv_asc">Naziv (A-Z)</option>
+                                        <option value="naziv_desc">Naziv (Z-A)</option>
+                                    </select>
+                                </div>
+
+                                <!-- Gumbi -->
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary">Filtriraj</button>
+                                    <button type="button" class="btn btn-secondary" id="resetFilters">Ponastavi
+                                        filtre</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                     <div class="row">
-                        <div class="row" id="projectsContainer">
+                        <!-- Search in Filter gumbi -->
+                        <div class="d-flex justify-content-between align-items-center p-0">
+                            <!-- Search bar -->
+                            <div class="search-wrapper d-flex align-items-center" style="margin-left: 12px;">
+                                <div id="searchContainer" class="search-input-container">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control  ps-4 diagonalCorner" id="searchInput"
+                                            placeholder="Iskanje...">
+                                        <button class="btn btn-primary" type="button" id="searchBtn">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- View Toggle in Filter gumbi -->
+                            <div class="d-flex align-items-center gap-3" style="margin-right: 12px;">
+                                <!-- ZEMLJEVID / PROJEKTI -->
+                                <div class="view-toggle-container d-flex align-items-center bg-light rounded-pill p-1">
+                                    <button type="button" class="view-toggle-btn active" data-view="projects">
+                                        <i class="fas fa-th-large me-2"></i>
+                                    </button>
+                                    <button type="button" class="view-toggle-btn" data-view="map">
+                                        <i class="fas fa-map-marked-alt me-2"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Filter gumb -->
+                                <button class="btn btn-outline-light d-flex align-items-center" type="button"
+                                    data-bs-toggle="offcanvas" data-bs-target="#filterSidebar">
+                                    <i class="fas fa-filter me-2"></i>
+                                    Filtriraj
+                                </button>
+                            </div>
+                        </div>
+                        <div id="niProjektov" class="text-center py-5 my-4" style="display: none;">
+                            <i class="fas fa-search fs-3 mb-3 d-block"></i>
+                            <h6 class="fw-normal">Ni bilo najdenih projektov</h6>
+                            <small>Poskusite z drugačnimi filtri</small>
+                        </div>
+                        <div class="row p-0 m-0 g-4" id="projectsContainer">
                             <!-- Trenuten templatee za psamezno kartico -->
                             <template id="projectTemplate">
-                                <div class="col-lg-4 col-md-6 mb-4">
+                                <div class="col-lg-4 col-md-6">
                                     <div
                                         class="campaign-card diagonalCorner h-100 d-flex flex-column position-relative">
                                         <!-- Slika -->
@@ -197,14 +248,106 @@
         // Preberi filtre iz URL-ja in nastavi vrednosti v formi
         document.addEventListener("DOMContentLoaded", () => {
             const urlParams = new URLSearchParams(window.location.search);
-            ['search', 'tezavnost', 'lokacija', 'sort', 'spretnost'].forEach(param => {
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            ['tezavnost', 'lokacija', 'sort', 'spretnost'].forEach(param => {
                 if (urlParams.get(param)) {
                     document.getElementById(param).value = urlParams.get(param);
                 }
             });
+            const filterForm = document.getElementById('filterForm');
+            if (filterForm) {
+                filterForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    const formData = new FormData(filterForm);
+                    const newUrlParams = new URLSearchParams(window.location.search);
+
+                    // Ohrani search parameter
+                    const currentSearch = newUrlParams.get('search');
+                    if (currentSearch) {
+                        newUrlParams.set('search', currentSearch);
+                    }
+
+                    // Dodaj filter parametre
+                    for (const [key, value] of formData.entries()) {
+                        if (value.trim()) {
+                            newUrlParams.set(key, value);
+                        }
+                    }
+
+                    // Zapri sidebar
+                    const sidebar = bootstrap.Offcanvas.getInstance(document.getElementById('filterSidebar'));
+                    if (sidebar) sidebar.hide();
+
+                    // Redirect
+                    window.location.search = newUrlParams.toString();
+                });
+            }
+
+            // Search funkcionalnost
+
+
+            function performSearch() {
+                const searchTerm = searchInput.value.trim();
+                const urlParams = new URLSearchParams(window.location.search);
+
+                if (searchTerm) {
+                    urlParams.set('search', searchTerm);
+                } else {
+                    urlParams.delete('search');
+                }
+
+                urlParams.delete('page');
+                window.location.search = urlParams.toString();
+            }
+
+            if (searchBtn) {
+                searchBtn.addEventListener('click', performSearch);
+            }
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        performSearch();
+                    }
+                });
+            }
+
+            // Nastavi search vrednost
+            const searchValue = urlParams.get('search');
+            if (searchValue) {
+                searchInput.value = searchValue;
+            }
+
             // Ponastavi filtre
             document.getElementById('resetFilters').addEventListener('click', function () {
                 window.location.search = '';
+            });
+            const viewToggleBtns = document.querySelectorAll('.view-toggle-btn');
+            const viewToggleContainer = document.querySelector('.view-toggle-container');
+
+            viewToggleBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    viewToggleBtns.forEach(b => b.classList.remove('active'));
+
+                    this.classList.add('active');
+
+                    const view = this.getAttribute('data-view');
+
+                    if (view === 'map') {
+                        viewToggleContainer.classList.add('map-active');
+                    } else {
+                        viewToggleContainer.classList.remove('map-active');
+                    }
+
+                    if (view === 'projects') {
+                        // LIST PROJEKTOV
+                        // TODO: PRIKAZE LIST MAPE, SKRIJE MAPOO
+                    } else if (view === 'map') {
+                        // MAPA
+                        // TODO: SKKKRIJE LIST PROJEKTOV, PRIKAZE MAPO
+                    }
+                });
             });
         });
     </script>

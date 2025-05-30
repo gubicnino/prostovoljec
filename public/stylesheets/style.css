@@ -21,7 +21,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    transition: all 0.3s ease;
+    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; /* More specific transitions */
 }
 body {
     font-family: var(--font-body);
@@ -221,7 +221,7 @@ nav {
     transition: all 0.3s ease;
     padding-bottom: 4px; /* space for underline */
 }
-.nav-item::after {
+.nav-item:not(#notification-li)::after {
     content: "";
     position: absolute;
     left: 0;
@@ -231,12 +231,15 @@ nav {
     background-color: var(--bs-main); /* same color as text */
     transition: width 0.3s ease-in-out;
 }
-.nav-item:hover::after {
+.nav-item:not(#notification-li):hover::after,
+.nav-item:not(#notification-li).active::after {
     width: 100%;
 }
-.nav-item:hover .nav-link {
-    color: var(--bs-main);
+.nav-item:not(#notification-li):hover .nav-link,
+.nav-item:not(#notification-li).active .nav-link {
+    color: var(--bs-main) !important;
 }
+
 .nav-link {
     color: var(--bs-white);
     font-family: var(--font-heading);
@@ -246,31 +249,67 @@ nav {
     margin-right: 2rem;
 }
 /* Stil za ikono v headerju */
-.iconNav {
+.nav-item a svg,
+.nav-item a i {
+    transition: color 0.3s ease;
+    font-size: 1.1rem !important;
+    width: 1.1rem !important;
+    height: 1.1rem !important;
+    display: inline-block !important;
+    line-height: 1 !important;
+    vertical-align: baseline !important;
+}
+
+.nav-item:has(a[href="našeZvezde.html"])::after {
+    left: 55% !important;
+    transform: translateX(-50%);
+}
+
+.nav-item:not(#notification-li):hover a svg,
+.nav-item:not(#notification-li).active a svg,
+.nav-item:not(#notification-li):hover a i,
+.nav-item:not(#notification-li).active a i {
+    stroke: var(--bs-main);
+    color: var(--bs-main) !important;
+    font-size: 1.1rem !important;
+    width: 1.1rem !important;
+    height: 1.1rem !important;
+}
+
+.nav-item#prijavaNav {
+    min-width: 40px;
+    display: flex;
+    justify-content: center;
+}
+
+.nav-item#prijavaNav .nav-link {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%; /* Poskrbi, da je ikona centrirana vertikalno */
+    min-width: 40px;
 }
 
-.iconNav a {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: var(--bs-white);
-    font-size: 1.5rem; /* Velikost ikone */
-    transition: color 0.3s ease; /* Gladek prehod barve */
+.nav-item#prijavaNav::after {
+    content: "";
+    position: absolute;
+    left: 47%; /* Changed from 50% to 45% to move it left */
+    bottom: 0;
+    height: 3px;
+    width: 0%;
+    background-color: var(--bs-main);
+    transition: width 0.3s ease-in-out;
+    transform: translateX(-50%);
 }
 
-.iconNav a:hover {
-    color: var(--bs-main); /* Rdeča barva ob hoverju */
+.nav-item#prijavaNav:hover::after,
+.nav-item#prijavaNav.active::after {
+    width: 30px;
 }
 /* Random Helpers */
 .redText {
     color: var(--bs-main);
 }
 
-/* TODO: */
 .diagonalCorner{
     border-radius: 0 30px 0 30px ;
 }
@@ -722,7 +761,31 @@ header .navbar {
     color: var(--bs-main) !important;
 }
 
-.white-page .nav-item:hover .nav-link {
+.white-page .nav-item a svg,
+.white-page .nav-item a i {
+    font-size: 1.1rem !important;
+    width: 1.1rem !important;
+    height: 1.1rem !important;
+    color: var(--bs-dark) !important;
+    transition: color 0.3s ease !important;
+    display: inline-block !important;
+    line-height: 1 !important;
+    vertical-align: baseline !important;
+}
+
+.white-page .nav-item:not(#notification-li):hover a svg,
+.white-page .nav-item:not(#notification-li).active a svg,
+.white-page .nav-item:not(#notification-li):hover a i,
+.white-page .nav-item:not(#notification-li).active a i {
+    color: var(--bs-main) !important;
+    font-size: 1.1rem !important;
+    width: 1.1rem !important;
+    height: 1.1rem !important;
+    stroke: var(--bs-main) !important;
+}
+
+.white-page .nav-item:not(#notification-li):hover .nav-link,
+.white-page .nav-item:not(#notification-li).active .nav-link {
     color: var(--bs-main) !important;
 }
 
@@ -871,4 +934,71 @@ header .navbar {
 
 #projectsContainer {
     padding: 0 ;
+}
+#niProjektov {
+    color: var(--bs-white) !important;
+}
+#niProjektov h6{
+    color: var(--bs-white) !important;
+}
+
+.view-toggle-container {
+    position: relative;
+    background-color: #f8f9fa !important;
+    border: 1px solid #dee2e6;
+    min-width: 150px;
+}
+
+.view-toggle-container::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: calc(50% - 4px);
+    height: calc(100% - 8px);
+    background: linear-gradient(135deg, var(--bs-main), #ff6b6b);
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(220, 40, 40, 0.3);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
+}
+
+.view-toggle-container.map-active::before {
+    transform: translateX(100%);
+}
+
+.view-toggle-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6c757d;
+    transition: color 0.3s ease;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px;
+}
+
+.view-toggle-btn.active {
+    color: white;
+    background: transparent;
+}
+
+.view-toggle-btn:hover:not(.active) {
+    color: var(--bs-main);
+}
+
+.view-toggle-btn i {
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    margin-left: 6px;
 }
