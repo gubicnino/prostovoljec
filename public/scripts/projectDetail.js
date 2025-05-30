@@ -298,18 +298,26 @@ function updateElementContent(elementId, content) {
     }
 }
 
-function loadProjectEdit(data) {
+async function loadProjectEdit(data) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const projectId = urlParams.get('id');
     const editDiv = document.getElementById('upravljanjeProjektov');
+    const povratneInformacijeBtn = document.getElementById('infoBtn');
     if(localStorage.getItem("drustvoId") == data.TK_Drustvo){
         editDiv.style.display = 'block';
+        const infoBtn = document.getElementById('infoBtn');
         const editButton = document.getElementById('editBtn');
+        const aliProjektKoncan = await projektKoncan(projectId);
+        console.log('Projekt končan:', projektKoncan);
+        if (aliProjektKoncan) {
+            infoBtn.style.display = 'block';
+        }
         if (editButton) {
             editButton.addEventListener('click', function(e) {
                 e.preventDefault();
                 window.location.href = `dodajanjeProjekta.html?id=${data.idProjekt}`;
             });
         }
-        const infoBtn = document.getElementById('infoBtn');
         if (infoBtn) {
             infoBtn.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -319,6 +327,19 @@ function loadProjectEdit(data) {
     }
 }
 
+async function projektKoncan(projectId) {
+    try {
+        const response = await fetch(`/api/projekti/${projectId}`);
+        const data = await response.json();
+        const currentDate = new Date();
+        const projectEndDate = new Date(data.datumIzvajanja);
+        
+        return currentDate > projectEndDate;
+    } catch (error) {
+        console.error('Napaka pri preverjanju datuma:', error);
+        return false;
+    }
+}
 async function logoutVolunteer(prostovoljecId, projektId) {
     console.log('logoutVolunteer pozvan sa:', { prostovoljecId, projektId });
 

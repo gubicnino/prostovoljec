@@ -34,7 +34,6 @@ function loadProjects(apiUrl = '/api/projekti', containerId = 'projectsContainer
             return response.json();
         })
         .then(projects => {
-            console.log(projects);
             const container = document.getElementById(containerId);
             const template = document.getElementById(templateId);
             container.innerHTML = '';
