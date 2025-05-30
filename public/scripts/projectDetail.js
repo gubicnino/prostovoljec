@@ -214,8 +214,6 @@ function redirectToLogin() {
 
 function displayVolunteers(volunteers) {
     const volunteersContainer = document.getElementById('volunteers-list');
-    const currentProstovoljecId = localStorage.getItem('prostovoljecId');
-    const isDrustvo = localStorage.getItem('drustvoId') !== null;
     if (!volunteersContainer) return;
 
     if (!volunteers || volunteers.length === 0) {
@@ -227,14 +225,11 @@ function displayVolunteers(volunteers) {
         return;
     }
 
-    // Dodaj proveru - da li je trenutno ulogovano društvo vlasnik ovog projekta
-    const drustvoId = localStorage.getItem('drustvoId');
     const urlParams = new URLSearchParams(window.location.search);
     const projectId = urlParams.get('id');
     
-    // Promeniti logiku da se dugme prikazuje samo ako je društvo vlasnik
     const volunteersHTML = volunteers.map(volunteer => {
-        console.log('Volunteer object:', volunteer); // Dodatno debagovanje
+        console.log('Volunteer object:', volunteer);
         return `
         <li class="list-group-item px-0 border-bottom d-flex align-items-center py-3">
             <div class="rounded-circle bg-light p-2 me-3">
@@ -259,16 +254,18 @@ function displayVolunteers(volunteers) {
                     <small class="text-muted">Ocena: ${volunteer.ocena}/5</small>
                 </div>
                 ` : ''}
+                ${shouldShowLogoutButton() ? `
                 <div class="mt-2">
                     <button class="btn btn-sm btn-outline-danger" 
-                            onclick="logoutVolunteer(${volunteer.idProstovoljec}, ${volunteer.TK_Projekt})">
+                            onclick="logoutVolunteer(${volunteer.idProstovoljec}, ${projectId})">
                         Odstrani prostovoljca
                     </button>
                 </div>
                 ` : ''}
             </div>
         </li>
-    `}).join('');
+        `;
+    }).join('');
 
     volunteersContainer.innerHTML = `
         <ul class="list-group list-group-flush">
@@ -281,9 +278,6 @@ function shouldShowLogoutButton() {
     const drustvoId = localStorage.getItem('drustvoId');
     const editDiv = document.getElementById('upravljanjeProjektov');
     
-    // Dugme se prikazuje samo ako:
-    // 1. Postoji drustvoId u localStorage (ulogovano je društvo)
-    // 2. editDiv je vidljiv (što znači da je društvo vlasnik projekta)
     return drustvoId && editDiv && editDiv.style.display === 'block';
 }
 
@@ -353,7 +347,6 @@ async function logoutVolunteer(prostovoljecId, projektId) {
         return;
     }
 
-    // Provera da li projekat pripada prijavljenom društvu
     try {
         const response = await fetch(`/api/projekti/drustvo?id=${drustvoId}`);
         const projects = await response.json();
@@ -381,18 +374,6 @@ async function logoutVolunteer(prostovoljecId, projektId) {
         });
         return;
     }
-
-    const confirmResult = await Swal.fire({
-        title: 'Ste prepričani?',
-        text: 'Ali želite odjaviti tega prostovoljca s projekta?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Da, odjavi!',
-        cancelButtonText: 'Prekliči',
-        reverseButtons: true,
-        background: '#1a1a1a',
-        color: '#fff'
-    });
 
     const potrditev = await Swal.fire({
         title: 'Ali ste prepričani?',
@@ -512,7 +493,6 @@ async function prijaviSeNaProjekt() {
             
             loadProjectVolunteers(projectId);
         } else if (result.message && result.message.includes('že poslali prijavo')) {
-            // Hide button if user already applied
             const volunteerBtnContainer = document.getElementById('volunteer-btn-bottom');
             const volunteerBtnContainer2 = document.getElementById('volunteer-btn');
             if (volunteerBtnContainer || volunteerBtnContainer2) {
@@ -565,7 +545,7 @@ async function odjavaIzProjekta(prostovoljecId, projektId) {
     });
 
     if (!isConfirmed) {
-        return; // uporabnik je preklical
+        return;
     }
 
     try {

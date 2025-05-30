@@ -114,11 +114,10 @@ router.post('/projekt', async (req, res) => {
 });
 
 // Odjava prostovoljca sa projekta
-
 router.delete('/projekt', (req, res) => {
     const { prostovoljecId, projektId } = req.body;
 
-    // Validacija podataka
+    // Validacija podatkov
     if (!prostovoljecId || !projektId) {
         return res.status(400).json({ 
             success: false, 
@@ -126,10 +125,6 @@ router.delete('/projekt', (req, res) => {
         });
     }
     
-    const deleteQuery = `
-        DELETE FROM Prostovoljec_Projekt 
-        WHERE TK_Prostovoljec = ? AND TK_Projekt = ?
-=======
     // Najprej pridobi podatke pred brisanjem za obvestila
     const getDataQuery = `
         SELECT p.naziv, p.TK_Drustvo, d.naziv as drustvo_naziv, pr.ime, pr.primek
@@ -138,7 +133,6 @@ router.delete('/projekt', (req, res) => {
         JOIN Drustvo d ON p.TK_Drustvo = d.idDrustvo
         JOIN Prostovoljec pr ON pp.TK_Prostovoljec = pr.idProstovoljec
         WHERE pp.TK_Prostovoljec = ? AND pp.TK_Projekt = ?
-
     `;
 
     connection.query(getDataQuery, [prostovoljecId, projektId], (err, dataResult) => {
@@ -146,7 +140,7 @@ router.delete('/projekt', (req, res) => {
             console.error('Napaka pri pridobivanju podatkov:', err);
         }
 
-        // SQL upit za brisanje veze između prostovoljca in projekta
+        // SQL query za brisanje veze med prostovoljcem in projektom
         const deleteQuery = `
             DELETE FROM Prostovoljec_Projekt 
             WHERE TK_Prostovoljec = ? AND TK_Projekt = ?
@@ -161,7 +155,7 @@ router.delete('/projekt', (req, res) => {
                 });
             }
 
-            // Provera da li je nešto obrisano
+            // Preveri, če je bilo kaj izbrisano
             if (result.affectedRows === 0) {
                 return res.status(404).json({ 
                     success: false, 
