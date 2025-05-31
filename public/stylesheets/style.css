@@ -1002,3 +1002,14 @@ header .navbar {
     line-height: 1;
     margin-left: 6px;
 }
+
+/* map-styles.css - Stilovi za Google Maps iframe */
+
+.map-view-container {
+    padding-top: 30px;
+}
+
+.map-view-container iframe {
+    max-width: 900px;
+    height: 500px;
+}
