@@ -61,7 +61,7 @@
                                 </div>
                             </div>
                             <div class="d-flex gap-3 justify-content-center mt-3">
-                                <a href="registracija.html"
+                                <a href="registracija.html" id="pridruzi-btn"
                                     class="btn btn-danger px-4 py-2 text-uppercase fw-bold diagonalCorner">
                                     <i class="fas fa-circle-check me-2"></i> Pridruži se
                                 </a>
@@ -174,8 +174,7 @@
                         <div class="col-lg-4 d-flex">
                             <div class="card-item-vertical diagonalCorner p-0 overflow-hidden w-100">
                                 <div class="image-wrapper m-0">
-                                    <img src="img/OnasKartica2.jpg" alt="Skupnost in podpora"
-                                        class="img-fluid w-100">
+                                    <img src="img/OnasKartica2.jpg" alt="Skupnost in podpora" class="img-fluid w-100">
                                 </div>
                                 <div class="p-3">
                                     <h3 class="fw-bold text-center">SKUPNOST IN PODPORA</h3>
@@ -209,6 +208,15 @@
         </main>
         <footer id="footer"></footer>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const isLoggedIn = localStorage.getItem('prijavljen') === "true" || localStorage.getItem('drustvoId') || localStorage.getItem('prostovoljecId');
+
+                if (isLoggedIn) {
+                    document.querySelector('a[href="registracija.html"]').style.display = 'none';
+                }
+            });
+        </script>
     </div>
 </body>
 
