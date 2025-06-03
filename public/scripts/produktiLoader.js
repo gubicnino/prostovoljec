@@ -34,6 +34,7 @@ function loadProjects(apiUrl = '/api/projekti', containerId = 'projectsContainer
             return response.json();
         })
         .then(projects => {
+            console.log('Loaded projects:', projects);
             const container = document.getElementById(containerId);
             const template = document.getElementById(templateId);
             container.innerHTML = '';
@@ -47,7 +48,7 @@ function loadProjects(apiUrl = '/api/projekti', containerId = 'projectsContainer
             currentProjects.forEach(project => {
                 const clone = template.content.cloneNode(true);
 
-                clone.querySelector('.project-image').src = 'img/campaing-3.jpg';
+                clone.querySelector('.project-image').src =  project.slika || 'img/campaing-3.jpg';
                 clone.querySelector('.project-image').alt = project.naziv;
                 clone.querySelector('.project-title').textContent = project.naziv;
                 clone.querySelector('.project-organization').textContent = project.drustvo_naziv;

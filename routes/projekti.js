@@ -7,7 +7,7 @@ router.get("/", function (req, res, next) {
 
     let query = `
         SELECT p.idProjekt, p.naziv, p.cilj, p.datumIzvajanja, p.trajanje, p.tezavnost, 
-               p.datumRokaPrijave, p.Lokacija, p.kratekOpis, p.opis, d.naziv as drustvo_naziv
+               p.datumRokaPrijave, p.Lokacija, p.kratekOpis, p.opis, p.slika, d.naziv as drustvo_naziv
         FROM Projekt p
         LEFT JOIN Drustvo d ON p.TK_Drustvo = d.idDrustvo
         WHERE 1=1
@@ -67,7 +67,7 @@ router.get('/drustvo', (req, res) => {
     if (!drustvoId) return res.status(400).json({ error: 'Manjka id društva' });
 
     const query = `
-        SELECT p.idProjekt, p.naziv, p.cilj, p.datumIzvajanja, p.trajanje, p.tezavnost, p.datumRokaPrijave, p.Lokacija, p.kratekOpis, p.opis, d.naziv as drustvo_naziv
+        SELECT p.idProjekt, p.naziv, p.cilj, p.datumIzvajanja, p.trajanje, p.tezavnost, p.datumRokaPrijave, p.Lokacija, p.kratekOpis, p.opis, p.slika, d.naziv as drustvo_naziv
         FROM Projekt p
         LEFT JOIN Drustvo d ON p.TK_Drustvo = d.idDrustvo
         WHERE p.TK_Drustvo = ?
@@ -100,6 +100,7 @@ router.get('/prostovoljec', (req, res) => {
             p.Lokacija, 
             p.kratekOpis, 
             p.opis, 
+            p.slika,
             d.naziv as drustvo_naziv
         FROM Projekt p
         LEFT JOIN Drustvo d ON p.TK_Drustvo = d.idDrustvo
@@ -120,7 +121,7 @@ router.get('/prostovoljec', (req, res) => {
 router.get('/latest', (req, res) => {
     console.log("Fetching latest 3 projects");
     const query = `
-        SELECT p.idProjekt, p.naziv, p.cilj, p.datumIzvajanja, p.trajanje, p.tezavnost, p.datumRokaPrijave, p.Lokacija, p.kratekOpis, p.opis, d.naziv as drustvo_naziv
+        SELECT p.idProjekt, p.naziv, p.cilj, p.datumIzvajanja, p.trajanje, p.tezavnost, p.datumRokaPrijave, p.Lokacija, p.kratekOpis, p.opis, p.slika, d.naziv as drustvo_naziv
         FROM Projekt p
         LEFT JOIN Drustvo d ON p.TK_Drustvo = d.idDrustvo
         WHERE p.datumIzvajanja >= CURDATE()
