@@ -1042,3 +1042,35 @@ header .navbar {
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
+
+/* DELI PROJEKTE */
+
+.social-icon:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    color: white;
+}
+
+.social-icon[data-platform="facebook"]:hover {
+    background-color: #1877F2 !important;
+    border-color: #1877F2;
+}
+
+.social-icon[data-platform="twitter"]:hover {
+    background-color: #1DA1F2 !important;
+    border-color: #1DA1F2;
+}
+
+.social-icon[data-platform="instagram"]:hover {
+    background-color: #E1306C !important;
+    border-color: #E1306C;
+}
+
+.social-icon[data-platform="linkedin"]:hover {
+    background-color: #0A66C2 !important;
+    border-color: #0A66C2;
+}
+
+.instagram-share-modal {
+    max-width: 500px;
+}

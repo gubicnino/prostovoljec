@@ -1,4 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
+    FilePond.registerPlugin(
+        FilePondPluginImagePreview,
+        FilePondPluginImageExifOrientation,
+        FilePondPluginFileValidateSize,
+        FilePondPluginImageEdit
+    );
+
+    window.pond = FilePond.create(document.getElementById('filepondImg'), {
+        allowMultiple: false,
+        maxFiles: 1,
+        maxFileSize: '3MB',
+        acceptedFileTypes: ['image/*'],
+        labelIdle: 'Povlecite datoteko ali <span class="filepond--label-action">Izberite datoteko</span>',
+        labelFileProcessingError: 'Napaka pri obdelavi datoteke',
+        storeAsFile: true,
+    });
     const projectForm = document.forms["addProject"];
     const TK_Drustvo = localStorage.getItem("drustvoId");
     const params = new URLSearchParams(window.location.search);
@@ -17,6 +33,37 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("Forma nije validna");
             return;
         }
+        let uploadedImagePath = null;
+        if (window.pond && window.pond.getFiles().length > 0) {
+            const file = window.pond.getFiles()[0].file;
+            try {
+                const formData = new FormData();
+                formData.append('slika', file);
+                console.log(formData);
+                const uploadResponse = await fetch('/api/upload/projekt', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const uploadResult = await uploadResponse.json();
+
+                if (uploadResponse.ok) {
+                    uploadedImagePath = uploadResult.path;
+                } else {
+                    throw new Error(uploadResult.error || 'Napaka pri uploadu slike');
+                }
+            } catch (error) {
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Napaka pri uploadu slike',
+                    text: error.message,
+                    confirmButtonColor: 'var(--bs-main)',
+                    background: '#1a1a1a',
+                    color: '#fff'
+                });
+                return;
+            }
+        }
 
         const data = {
             naziv: projectForm.naziv.value,
@@ -31,7 +78,9 @@ document.addEventListener("DOMContentLoaded", () => {
             kapaciteta: projectForm.kapaciteta.value,
             TK_Drustvo: TK_Drustvo,
             zahteve: projectForm.zahteve.value,
+            slika: uploadedImagePath || null
         };
+        console.log("Podatki projekta:", data);
 
         let url = "/api/dodajanjeProjekta";
         if (projectId) {
@@ -140,8 +189,12 @@ function nastaviProjekt(projectId) {
             form.opis.value = data.opis;
             form.kapaciteta.value = data.kapaciteta;
             form.zahteve.value = data.zahteve;
+
         })
         .catch(error => {
             console.error('Napaka pri nalaganju projekta:', error);
         });
+}
+function nalaganjeSlik() {
+
 }
