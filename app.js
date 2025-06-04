@@ -21,6 +21,8 @@ var dodajanjeRouter = require('./routes/dodajanjeProjekta');
 var naseZvezdeRouter = require('./routes/naseZvezde'); 
 var prijavaProjektRouter = require('./routes/prijavaProjekt');
 var obvestilaRouter = require('./routes/obvestila');
+const uploadSlike = require('./routes/uploadSlike');
+
 
 initializeSocketIO(io);
 app.set('io', io);
@@ -41,6 +43,7 @@ app.use('/api/dodajanjeProjekta', dodajanjeRouter);
 app.use('/api/prijavaProjekt', prijavaProjektRouter);
 app.use('/api/naseZvezde', naseZvezdeRouter);
 app.use('/api/obvestila', obvestilaRouter);
+app.use('/api/upload', uploadSlike);
 
 // Middleware za 404 greške
 app.use((req, res) => {

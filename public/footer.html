@@ -85,4 +85,19 @@
             <p class="text-white-50 my-1 text-center">© 2025 ManusMano. All Rights Reserved.</p>
         </div>
     </div>
+    <script>
+        setTimeout(function() {
+            const isLoggedIn = localStorage.getItem('prijavljen') === "true" || localStorage.getItem('drustvoId') || localStorage.getItem('prostovoljecId');
+            
+            if (isLoggedIn) {
+                const footer = document.querySelector('footer');
+                if (footer) {
+                    const registrationLink = footer.querySelector('a[href="registracija.html"]');
+                    if (registrationLink) {
+                        registrationLink.parentElement.style.display = 'none';
+                    }
+                }
+            }
+        }, 100);
+    </script>
 </footer>

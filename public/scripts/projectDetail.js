@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (projectId) {
         loadProjectDetails(projectId);
         loadProjectVolunteers(projectId);
+        initializeSocialSharing();
     }
 });
 
@@ -208,7 +209,7 @@ function redirectToLogin() {
         color: '#fff',
         iconColor: 'var(--bs-main)'
     }).then(() => {
-        //window.location.href = 'prijava.html';
+        document.getElementById('prijava').click();
     });
 }
 
@@ -400,9 +401,7 @@ async function logoutVolunteer(prostovoljecId, projektId) {
         title: 'Ali ste prepričani?',
         text: 'Ali želite odjaviti tega prostovoljca s projekta?',
         icon: 'warning',
-        showCancelButton: true,
         confirmButtonText: 'Da',
-        cancelButtonText: 'Ne'
     });
 
     if (!potrditev.isConfirmed) {
@@ -554,14 +553,11 @@ async function odjavaIzProjekta(prostovoljecId, projektId) {
         title: 'Potrditev odjave',
         text: 'Ali ste prepričani, da se želite odjaviti s tega projekta?',
         icon: 'question',
-        showCancelButton: true,
         confirmButtonText: 'Da, odjavi me',
-        cancelButtonText: 'Prekliči',
         background: '#1a1a1a',
         color: '#fff',
         iconColor: 'var(--bs-main)',
         confirmButtonColor: 'var(--bs-main)',
-        cancelButtonColor: '#888',
         reverseButtons: true
     });
 
@@ -617,3 +613,238 @@ async function odjavaIzProjekta(prostovoljecId, projektId) {
         });
     }
 }
+
+/* DELI PROJEKTE */
+function initializeSocialSharing() {
+    const shareButtons = document.querySelectorAll('.social-icon[data-platform]');
+    
+    shareButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const platform = this.dataset.platform;
+            shareProject(platform);
+        });
+    });
+}
+
+function shareProject(platform) {
+    const projectTitle = document.getElementById('project-title').textContent;
+    const projectLocation = document.getElementById('project-location').textContent;
+    const projectDate = document.getElementById('project-date').textContent;
+    const projectOrganization = document.getElementById('project-organization').textContent;
+    
+    const currentUrl = window.location.href;
+    
+    const messages = {
+        twitter: {
+            url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(generateMessage('twitter'))}&url=${encodeURIComponent(currentUrl)}&hashtags=prostovoljstvo,ManusMano,pomagaj`
+        },
+        facebook: {
+            action: 'copy'
+        },
+        linkedin: {
+            action: 'copy'
+        },
+        instagram: {
+            action: 'copy'
+        }
+    };
+    
+    function generateMessage(platform) {
+        const baseMessage = `🤝 Pridruži se prostovoljskemu projektu "${projectTitle}"!\n\n📍 Lokacija: ${projectLocation}\n📅 Datum: ${projectDate}\n🏢 Organizator: ${projectOrganization}\n\n`;
+        
+        switch(platform) {
+            case 'facebook':
+                return `${baseMessage}Za več informacij obiščite našo spletno stran ManusMano.\n\n#prostovoljstvo #ManusMano #pomagaj #skupnost`;
+                
+            case 'twitter':
+                return `🤝 Pridruži se "${projectTitle}" v "${projectLocation}!" 📍\n📅 ${projectDate}\n🏢 ${projectOrganization}\n\nVsak prostovoljec šteje! 💪`;
+                
+            case 'linkedin':
+                return `${baseMessage}Za več informacij obiščite našo spletno stran ManusMano.\n\n#prostovoljstvo #ManusMano #pomagaj #skupnost`;
+                
+            case 'instagram':
+                return `${baseMessage}Za več informacij obiščite našo spletno stran ManusMano.\n\n#prostovoljstvo #ManusMano #pomagaj #skupnost`;
+                
+            default:
+                return baseMessage;
+        }
+    }
+    
+    if (platform === 'instagram') {
+        showSocialModal(generateMessage('instagram'), currentUrl, 'Instagram', 'instagram');
+    } else if (platform === 'facebook') {
+        showSocialModal(generateMessage('facebook'), currentUrl, 'Facebook', 'facebook');
+    } else if (platform === 'linkedin') {
+        showSocialModal(generateMessage('linkedin'), currentUrl, 'LinkedIn', 'linkedin');
+    } else {
+        const config = messages[platform];
+        if (config && config.url) {
+            const width = 600;
+            const height = 500;
+            const left = (window.innerWidth - width) / 2;
+            const top = (window.innerHeight - height) / 2;
+            
+            window.open(
+                config.url,
+                `share-${platform}`,
+                `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
+            );
+        }
+    }
+}
+
+function showSocialModal(message, url, platformName, platform) {
+    const fullMessage = message + '\n\n' + url;
+    
+    let iconClass;
+    switch(platform) {
+        case 'instagram':
+            iconClass = 'fab fa-instagram';
+            break;
+        case 'facebook':
+            iconClass = 'fab fa-facebook';
+            break;
+        case 'linkedin':
+            iconClass = 'fab fa-linkedin';
+            break;
+        default:
+            iconClass = `fab fa-${platform}`;
+    }
+    
+    Swal.fire({
+        title: `Deli na ${platformName}`,
+        html: `
+            <div class="text-start">
+                <div class="bg-light p-3 rounded mb-3" style="background-color: #2d2d2d !important; color: #fff; border: 1px solid #444;">
+                    <small style="color: #fff; line-height: 1.4;">${message.replace(/\n/g, '<br>')}</small>
+                </div>
+                <div class="text-center">
+                    <button type="button" class="btn btn-secondary btn-sm me-2" id="copy-social-btn">
+                        <i class="fas fa-copy me-1"></i> Kopiraj besedilo
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="openSocialPlatform('${platform}')">
+                        <i class="${iconClass} me-1"></i> Odpri ${platformName}
+                    </button>
+                </div>
+            </div>
+        `,
+        showCancelButton: false,
+        showConfirmButton: false,
+        background: '#1a1a1a',
+        color: '#fff',
+        width: '500px',
+        allowOutsideClick: true,
+        allowEscapeKey: true,
+        customClass: {
+            popup: 'social-share-modal'
+        },
+        didOpen: () => {
+            const copyBtn = document.getElementById('copy-social-btn');
+            if (copyBtn) {
+                copyBtn.addEventListener('click', () => {
+                    copySocialMessage(fullMessage);
+                });
+            }
+        }
+    });
+}
+
+window.copySocialMessage = function(fullMessage) {
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(fullMessage).then(() => {
+            showCustomToast('Besedilo kopirano!', 'success');
+        }).catch(() => {
+            fallbackCopy(fullMessage);
+        });
+    } else {
+        fallbackCopy(fullMessage);
+    }
+};
+
+function fallbackCopy(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-999999px";
+    textArea.style.top = "-999999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        const successful = document.execCommand('copy');
+        
+        if (successful) {
+            showCustomToast('Besedilo kopirano!', 'success');
+        } else {
+            throw new Error('Copy command failed');
+        }
+    } catch (err) {
+        showCustomToast('Ročno označite in kopirajte besedilo zgoraj.', 'error');
+    }
+    
+    document.body.removeChild(textArea);
+}
+
+function showCustomToast(message, type) {
+    // SVOJ TOAST ELEMENT, MORAL SEM NAREIT DA SE OKNO NE ZAPRE KO KLIKNEM NA KOPIRAJ, TAK MI BLO LAZJE
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 99999;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+        transform: translateX(100%);
+        ${type === 'success' ? 'background-color: #28a745;' : 'background-color: #dc3545;'}
+    `;
+    toast.innerHTML = `
+        <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} me-2"></i>
+        ${message}
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.transform = 'translateX(0)';
+    }, 100);
+    
+    setTimeout(() => {
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            if (toast.parentNode) {
+                document.body.removeChild(toast);
+            }
+        }, 300);
+    }, 2000);
+}
+
+window.openSocialPlatform = function(platform) {
+    const platformUrls = {
+        instagram: 'https://www.instagram.com/',
+        facebook: 'https://www.facebook.com/sharer/sharer.php',
+        linkedin: 'https://www.linkedin.com/sharing/share-offsite/'
+    };
+    
+    const width = platform === 'instagram' ? 450 : 600;
+    const height = 700;
+    const left = (window.innerWidth - width) / 2;
+    const top = (window.innerHeight - height) / 2;
+    
+    const socialWindow = window.open(
+        platformUrls[platform],
+        `${platform}-window`,
+        `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes,menubar=no,toolbar=no,location=no,status=no`
+    );
+    
+    if (!socialWindow || socialWindow.closed || typeof socialWindow.closed == 'undefined') {
+        window.open(platformUrls[platform], '_blank');
+    }
+};
