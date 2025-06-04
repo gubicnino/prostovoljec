@@ -208,7 +208,7 @@ function redirectToLogin() {
         color: '#fff',
         iconColor: 'var(--bs-main)'
     }).then(() => {
-        window.location.href = 'prijava.html';
+        //window.location.href = 'prijava.html';
     });
 }
 
