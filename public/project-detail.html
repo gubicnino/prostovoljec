@@ -16,6 +16,7 @@
         rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <script src="/scripts/popup.js" defer></script>
+    <script src="/scripts/obrisiProjekt.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
@@ -203,14 +204,17 @@
                         <div class="col-lg-4 mt-5 mt-lg-0">
                             <!-- Urejanje projekta -->
                             <div class="upravljanjeProjektov" id="upravljanjeProjektov" style="display: none;">
-                                <h4 class="mb-3">Organizator</h3>
+                                <h4 class="mb-3">Organizator</h4>
                                  <div class="mb-4">
-                                    <a href="" id="editBtn" class="btn diagonalCorner mb-4">
+                                    <a href="" id="editBtn" class="btn diagonalCorner mb-2 w-100">
                                         <i class="fas fa-edit me-2" ></i> Upravljanje projekta
                                     </a>
-                                    <a href="" id="infoBtn" class="btn diagonalCorner mb-4" style="display: none;">
-                                        <i class="fas fa-comments"></i> Povratne informacije o prostovoljcih
+                                    <a href="" id="infoBtn" class="btn diagonalCorner mb-2 w-100" style="display: none;">
+                                        <i class="fas fa-comments me-2"></i> Povratne informacije o prostovoljcih
                                     </a>
+                                    <button id="deleteBtn" class="btn btn-danger diagonalCorner w-100 delete-project-btn" data-project-id="">
+                                        <i class="fas fa-trash me-2"></i> Izbriši projekt
+                                    </button>
                                  </div>
                             </div>
                             <!-- info o organizacije -->

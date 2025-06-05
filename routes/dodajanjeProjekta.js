@@ -130,3 +130,70 @@ router.post('/urejanje', (req, res) => {
 });
 
 module.exports = router;
+
+// DELETE endpoint za brisanje projekta
+router.delete('/:id', (req, res) => {
+    console.log('DELETE zahtev primljen na /dodajanjeProjekta/:id:', req.params.id, req.body);
+
+    const projectId = parseInt(req.params.id, 10);
+    const { drustvoId } = req.body;
+
+    // Validacija ulaznih podataka
+    if (isNaN(projectId) || !drustvoId) {
+        console.log('Nevalidni parametri:', { projectId, drustvoId });
+        return res.status(400).json({ error: 'Manjkajoči ali nevalidni parametri: id projekta i id društva su obavezni' });
+    }
+
+    // Provera da li projekat postoji i pripada društvu
+    const checkSql = `
+        SELECT idProjekt
+        FROM Projekt
+        WHERE idProjekt = ? AND TK_Drustvo = ?
+    `;
+
+    connection.query(checkSql, [projectId, drustvoId], (err, results) => {
+        if (err) {
+            console.error('Napaka pri proveri projekta:', err);
+            return res.status(500).json({ error: `Napaka pri proveri projekta: ${err.message}` });
+        }
+
+        if (results.length === 0) {
+            console.log('Projekat nije pronađen ili društvo nema ovlašćenje:', { projectId, drustvoId });
+            return res.status(403).json({ error: 'Projekat nije pronađen ili nemate ovlašćenje za brisanje' });
+        }
+
+        // Brisanje povezanih podataka iz Prostovoljec_Projekt
+        const deleteRelatedSql = `
+            DELETE FROM Prostovoljec_Projekt
+            WHERE TK_Projekt = ?
+        `;
+
+        connection.query(deleteRelatedSql, [projectId], (err) => {
+            if (err) {
+                console.error('Napaka pri brisanju povezanih podataka:', err);
+                return res.status(500).json({ error: `Napaka pri brisanju povezanih podataka: ${err.message}` });
+            }
+
+            // Brisanje projekta
+            const deleteSql = `
+                DELETE FROM Projekt
+                WHERE idProjekt = ?
+            `;
+
+            connection.query(deleteSql, [projectId], (err, result) => {
+                if (err) {
+                    console.error('Napaka pri brisanju projekta:', err);
+                    return res.status(500).json({ error: `Napaka pri brisanju projekta: ${err.message}` });
+                }
+
+                if (result.affectedRows === 0) {
+                    console.log('Projekat nije pronađen:', projectId);
+                    return res.status(404).json({ error: 'Projekat nije pronađen' });
+                }
+
+                console.log('Projekat uspešno obrisan, ID:', projectId);
+                res.status(200).json({ message: 'Projekat uspešno obrisan' });
+            });
+        });
+    });
+});
