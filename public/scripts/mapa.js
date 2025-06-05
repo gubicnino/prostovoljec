@@ -3,6 +3,9 @@
 let mapContainer;
 let map;
 let markers = [];
+let currentPopup = null; // Za shranjevanje trenutnega oblačka
+let isMouseOverPopup = false; // Za sledenje, ali je miška nad oblačkom
+let isMouseOverMarker = false; // Za sledenje, ali je miška nad označevalcem
 
 // Vaš Mapbox access token (zamenjajte z pravim)
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoicGV0YXIxMzA2IiwiYSI6ImNtYmphZTI5czBkNHQyaXBqZ2U3cmVhbzUifQ.uXoTGXst52A40QIKgbsmfg';
@@ -135,7 +138,7 @@ async function loadProjectMarkers() {
             }
         });
 
-        // Dodaj source in layer za označevalce
+        // Dodaj source za označevalce
         map.addSource('projects', {
             type: 'geojson',
             data: geojsonData,
@@ -144,7 +147,7 @@ async function loadProjectMarkers() {
             clusterRadius: 50
         });
 
-        // Layer za kroge grozdov
+        // Layer za kroge grozdov - rdeči
         map.addLayer({
             id: 'clusters',
             type: 'circle',
@@ -154,11 +157,11 @@ async function loadProjectMarkers() {
                 'circle-color': [
                     'step',
                     ['get', 'point_count'],
-                    '#51bbd6',
+                    '#dc3545', // Rdeča barva za majhne grozde
                     5,
-                    '#f1c40f',
+                    '#c82333', // Temnejša rdeča za srednje grozde
                     10,
-                    '#f28cb1'
+                    '#a71e2a'  // Najtemnejša rdeča za velike grozde
                 ],
                 'circle-radius': [
                     'step',
@@ -182,29 +185,126 @@ async function loadProjectMarkers() {
                 'text-field': '{point_count_abbreviated}',
                 'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
                 'text-size': 12
-            }
-        });
-
-        // Layer za posamezne označevalce
-        map.addLayer({
-            id: 'unclustered-point',
-            type: 'circle',
-            source: 'projects',
-            filter: ['!', ['has', 'point_count']],
+            },
             paint: {
-                'circle-color': '#3498db',
-                'circle-radius': 8,
-                'circle-stroke-width': 2,
-                'circle-stroke-color': '#fff'
+                'text-color': '#ffffff' // Bela barva za besedilo
             }
         });
 
-        // Hover efekt
-        map.on('mouseenter', 'unclustered-point', () => {
+        // Naloži sliko za pin ikono
+        map.loadImage(
+            'https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png', // Generic Mapbox pin icon
+            (error, image) => {
+                if (error) {
+                    console.error('Napaka pri nalaganju slike za pin:', error);
+                    return;
+                }
+                map.addImage('custom-pin', image);
+
+                // Layer za posamezne označevalce - pin ikone
+                map.addLayer({
+                    id: 'unclustered-point',
+                    type: 'symbol',
+                    source: 'projects',
+                    filter: ['!', ['has', 'point_count']],
+                    layout: {
+                        'icon-image': 'custom-pin',
+                        'icon-size': 0.8, // Prilagodi velikost ikone
+                        'icon-anchor': 'bottom' // Sidro na dnu ikone za pravilno pozicioniranje
+                    }
+                });
+            }
+        );
+
+        // Hover efekt - oblaček se odpre na hover
+        map.on('mouseenter', 'unclustered-point', (e) => {
+            map.getCanvas().style.cursor = 'pointer';
+            isMouseOverMarker = true;
+            
+            // Zapri prejšnji oblaček, če obstaja
+            if (currentPopup) {
+                currentPopup.remove();
+                currentPopup = null;
+            }
+            
+            const project = e.features[0].properties;
+            
+            // Ustvari vsebino pojavnega okna
+            const projectImage = getProjectImage(project);
+            
+            const popupContent = `
+                <div class="map-info-window" style="width: 300px; max-width: 300px;">
+                    <img src="${projectImage}" alt="${project.naziv}" class="map-info-window-img" 
+                        style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div class="no-image" style="display: none; text-align: center; padding: 20px; background: #f5f5f5; border-radius: 8px; margin-bottom: 10px;">
+                        <i class="fas fa-image" style="font-size: 24px; color: #ccc; margin-bottom: 8px;"></i><br>
+                        <span style="color: #666;">Slika ni na voljo</span>
+                    </div>
+                    <h4 style="margin: 0 0 10px 0; font-size: 16px; font-weight: bold;">${project.naziv}</h4>
+                    <p style="margin: 0 0 8px 0; font-size: 14px; color: #666;">
+                        <i class="fas fa-building" style="margin-right: 8px; color: #dc3545;"></i> ${project.drustvo_naziv}
+                    </p>
+                    <p style="margin: 0 0 8px 0; font-size: 14px; color: #666;">
+                        <i class="fas fa-map-marker-alt" style="margin-right: 8px; color: #dc3545;"></i> ${project.Lokacija}
+                    </p>
+                    <p style="margin: 0 0 12px 0; font-size: 14px; color: #666;">
+                        <i class="fas fa-calendar" style="margin-right: 8px; color: #dc3545;"></i> ${new Date(project.datumIzvajanja).toLocaleDateString('sl')}
+                    </p>
+                    <a href="project-detail.html?id=${project.idProjekt}" class="btn" 
+                       style="display: inline-block; background: #dc3545; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; font-size: 14px;">
+                        Več informacij
+                    </a>
+                </div>
+            `;
+
+            // Ustvari oblaček brez X gumba
+            currentPopup = new mapboxgl.Popup({ 
+                offset: 25,
+                closeButton: false, // Odstrani X gumb
+                closeOnClick: false, // Ne zapri ob kliku zunaj
+                closeOnMove: false // Ne zapri ob premikanju mape
+            })
+                .setLngLat(e.features[0].geometry.coordinates)
+                .setHTML(popupContent)
+                .addTo(map);
+
+            // Dodaj event listenerje za oblaček
+            const popupElement = currentPopup._content;
+            popupElement.addEventListener('mouseenter', () => {
+                isMouseOverPopup = true;
+            });
+            popupElement.addEventListener('mouseleave', () => {
+                isMouseOverPopup = false;
+                setTimeout(() => {
+                    if (!isMouseOverPopup && !isMouseOverMarker && currentPopup) {
+                        currentPopup.remove();
+                        currentPopup = null;
+                    }
+                }, 100);
+            });
+        });
+
+        // Posodobi stanje, ko miška zapusti označevalec
+        map.on('mouseleave', 'unclustered-point', () => {
+            map.getCanvas().style.cursor = '';
+            isMouseOverMarker = false;
+            
+            // Zapri oblaček po kratki zamudi, če miška ni nad oblačkom ali označevalcem
+            setTimeout(() => {
+                if (!isMouseOverPopup && !isMouseOverMarker && currentPopup) {
+                    currentPopup.remove();
+                    currentPopup = null;
+                }
+            }, 100);
+        });
+
+        // Hover efekt za grozde
+        map.on('mouseenter', 'clusters', () => {
             map.getCanvas().style.cursor = 'pointer';
         });
 
-        map.on('mouseleave', 'unclustered-point', () => {
+        map.on('mouseleave', 'clusters', () => {
             map.getCanvas().style.cursor = '';
         });
 
@@ -224,43 +324,6 @@ async function loadProjectMarkers() {
                     });
                 }
             );
-        });
-
-        // Klik na posamezen označevalec
-        map.on('click', 'unclustered-point', (e) => {
-            const project = e.features[0].properties;
-            
-            // Ustvari vsebino pojavnega okna
-            const projectImage = getProjectImage(project);
-            
-            const popupContent = `
-                <div class="map-info-window">
-                    <img src="${projectImage}" alt="${project.naziv}" class="map-info-window-img" 
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div class="no-image">
-                        <i class="fas fa-image"></i><br>
-                        Slika ni na voljo
-                    </div>
-                    <h4>${project.naziv}</h4>
-                    <p>
-                        <i class="fas fa-building"></i> ${project.drustvo_naziv}
-                    </p>
-                    <p>
-                        <i class="fas fa-map-marker-alt"></i> ${project.Lokacija}
-                    </p>
-                    <p>
-                        <i class="fas fa-calendar"></i> ${new Date(project.datumIzvajanja).toLocaleDateString('sl')}
-                    </p>
-                    <a href="project-detail.html?id=${project.idProjekt}" class="btn">
-                        Več informacij
-                    </a>
-                </div>
-            `;
-
-            new mapboxgl.Popup({ offset: 25 })
-                .setLngLat(e.features[0].geometry.coordinates)
-                .setHTML(popupContent)
-                .addTo(map);
         });
 
         // Prilagodi mapo, da prikaže vse označevalce
