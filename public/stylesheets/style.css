@@ -1074,3 +1074,79 @@ header .navbar {
 .instagram-share-modal {
     max-width: 500px;
 }
+
+
+/* Map styles */
+.map-info-window {
+    background-color: var(--bs-white);
+    padding: 15px;
+    max-width: 300px;
+    border-radius: 0 1.5rem 0 1.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    font-family: var(--font-body);
+    transition: all 0.3s ease;
+}
+
+.map-info-window img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 0 1rem 0 1rem;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.map-info-window .no-image {
+    text-align: center;
+    padding: 20px;
+    color: var(--bs-dark6);
+    display: none;
+    font-size: 0.95rem;
+}
+
+.map-info-window h4 {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--bs-main);
+    margin: 0 0 10px 0;
+    line-height: 1.3;
+}
+
+.map-info-window p {
+    font-size: 0.95rem;
+    color: var(--bs-dark8);
+    margin: 0 0 8px 0;
+    line-height: 1.5;
+}
+
+.map-info-window i {
+    margin-right: 8px;
+    color: var(--bs-main);
+    font-size: 0.9rem;
+    width: 16px;
+    text-align: center;
+}
+
+.map-info-window .btn {
+    display: inline-block;
+    background-color: var(--bs-main);
+    color: var(--bs-white);
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 0 1rem 0 1rem;
+    font-family: var(--font-heading);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+    border: 2px solid var(--bs-main);
+    transition: all 0.3s ease;
+}
+
+.map-info-window .btn:hover {
+    background-color: #a62828;
+    box-shadow: 0 2px 8px rgba(33, 33, 33, 0.18);
+    color: var(--bs-white);
+}

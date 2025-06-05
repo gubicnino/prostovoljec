@@ -1,5 +1,11 @@
+// mapbox-mapa.js - Nova različica z Mapbox-om
+
 let mapContainer;
 let map;
+let markers = [];
+
+// Vaš Mapbox access token (zamenjajte z pravim)
+const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoicGV0YXIxMzA2IiwiYSI6ImNtYmphZTI5czBkNHQyaXBqZ2U3cmVhbzUifQ.uXoTGXst52A40QIKgbsmfg';
 
 function createMapContainer() {
     const existingMap = document.getElementById('mapViewContainer');
@@ -7,9 +13,24 @@ function createMapContainer() {
         existingMap.remove();
     }
     
+    // Dodamo Mapbox CSS in JS, če še nista naložena
+    if (!document.querySelector('link[href*="mapbox-gl"]')) {
+        const mapboxCSS = document.createElement('link');
+        mapboxCSS.href = 'https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css';
+        mapboxCSS.rel = 'stylesheet';
+        document.head.appendChild(mapboxCSS);
+    }
+
+    if (!document.querySelector('script[src*="mapbox-gl"]')) {
+        const mapboxJS = document.createElement('script');
+        mapboxJS.src = 'https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js';
+        mapboxJS.onload = initMap;
+        document.head.appendChild(mapboxJS);
+    }
+    
     const mapHtml = `
         <div id="mapViewContainer" class="map-view-container" style="display: none;">
-            <div id="googleMap" 
+            <div id="mapboxMap" 
                  style="width: calc(100% - 24px); 
                         height: 600px; 
                         border-radius: 15px; 
@@ -25,154 +46,272 @@ function createMapContainer() {
     if (projectsContainer) {
         projectsContainer.insertAdjacentHTML('afterend', mapHtml);
         mapContainer = document.getElementById('mapViewContainer');
-        // Wait for Google Maps to be fully loaded
-        if (typeof google !== 'undefined' && google.maps) {
+        
+        // Poskus inicializacije mape
+        if (typeof mapboxgl !== 'undefined') {
             initMap();
         } else {
-            console.error('Google Maps API not loaded yet. Waiting...');
-            setTimeout(initMap, 1000); // Retry after 1 second
+            console.log('Mapbox se nalaga...');
         }
     }
 }
 
-window.initMap = function() {
-    const slovenia = { lat: 46.1512, lng: 14.9955 };
-    
+function initMap() {
     try {
-        // Preveri ali je google objekt definiran
-        if (typeof google === 'undefined') {
-            throw new Error('Google Maps API ni pravilno naložen');
+        if (typeof mapboxgl === 'undefined') {
+            console.error('Mapbox GL JS ni naložen');
+            return;
         }
+
+        mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
         
-        // Preveri ali je maps objekt dostopen
-        if (typeof google.maps === 'undefined') {
-            throw new Error('Google Maps API ni omogočen');
-        }
-        
-        map = new google.maps.Map(document.getElementById("googleMap"), {
-            zoom: 8,
-            center: slovenia,
-            mapTypeControl: true,
-            streetViewControl: true,
-            fullscreenControl: true,
-            zoomControl: true,
-            gestureHandling: 'greedy' 
+        map = new mapboxgl.Map({
+            container: 'mapboxMap',
+            style: 'mapbox://styles/mapbox/streets-v12', // Sodoben stil cest
+            center: [14.9955, 46.1512], // Slovenija [lng, lat]
+            zoom: 7.5,
+            attributionControl: false // Odstranimo privzeto atribucijo
         });
 
-        console.log('Google Maps uspešno inicializiran');
-        loadProjectMarkers();
+        // Dodamo kontrole
+        map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+        map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+        
+        // Prilagojena atribucija
+        map.addControl(new mapboxgl.AttributionControl({
+            compact: true,
+            customAttribution: '© Mapbox © OpenStreetMap'
+        }), 'bottom-right');
+
+        // Ko se mapa naloži, dodaj označevalce
+        map.on('load', () => {
+            console.log('Mapbox mapa uspešno inicializirana');
+            loadProjectMarkers();
+        });
+
     } catch (error) {
-        console.error('Napaka pri inicializaciji mape:', error);
+        console.error('Napaka pri inicializaciji Mapbox mape:', error);
     }
 }
-
 
 async function loadProjectMarkers() {
     try {
         const response = await fetch('/api/projekti');
         const projects = await response.json();
 
-        const bounds = new google.maps.LatLngBounds();
+        // Koordinate za prilagajanje mape
+        const coordinates = [];
         
-        projects.forEach(project => {
-            const geocoder = new google.maps.Geocoder();
-            
-            geocoder.geocode({ 
-                address: project.Lokacija + ', Slovenia',
-                region: 'SI'
-            }, (results, status) => {
-                if (status === 'OK' && results[0]) {
-                    const position = results[0].geometry.location;
-                    bounds.extend(position);
-                    
-                    const marker = new google.maps.Marker({
-                        position: position,
-                        map: map,
-                        title: project.naziv,
-                        animation: google.maps.Animation.DROP
-                    });
+        // Ustvari GeoJSON source za označevalce
+        const geojsonData = {
+            type: 'FeatureCollection',
+            features: []
+        };
 
-                    const infoWindow = new google.maps.InfoWindow({
-                        content: `
-                            <style>
-                                .gm-style-iw { overflow: hidden !important; padding: 0 !important; }
-                                .gm-style-iw-d { overflow: hidden !important; }
-                                .gm-style-iw-d::-webkit-scrollbar { display: none !important; }
-                                .gm-style-iw > div { overflow: hidden !important; }
-                                .map-info-window { overflow: hidden !important; }
-                            </style>
-                            <div class="map-info-window" style="margin: 0; padding: 0;">
-                                <img src="img/campaing-3.jpg" alt="${project.naziv}" 
-                                     style="width: 100%; height: 180px; object-fit: cover; display: block;">
-                                <div style="padding: 12px;">
-                                    <h5 style="margin: 0 0 8px 0; font-size: 17px; line-height: 1.3;">${project.naziv}</h5>
-                                    <p style="margin: 0 0 4px 0; font-size: 15px;"><i class="fas fa-building"></i> ${project.drustvo_naziv}</p>
-                                    <p style="margin: 0 0 4px 0; font-size: 15px;"><i class="fas fa-map-marker-alt"></i> ${project.Lokacija}</p>
-                                    <p style="margin: 0 0 8px 0; font-size: 15px;"><i class="fas fa-calendar"></i> ${new Date(project.datumIzvajanja).toLocaleDateString('sl')}</p>
-                                    <a href="project-detail.html?id=${project.idProjekt}" 
-                                       class="btn btn-sm btn-primary" style="width: 100%; margin-bottom: 8px;">Več info</a>
-                                </div>
-                            </div>
-                        `,
-                        maxWidth: 340,
-                        pixelOffset: new google.maps.Size(0, -5)
-                    });
+        // Geokodiranje za vsak projekt
+        const geocodePromises = projects.map(project => 
+            geocodeAddress(project.Lokacija + ', Slovenia', project)
+        );
 
-                    let isInfoWindowHovered = false;
-
-                    // Add listener for when info window is opened
-                    google.maps.event.addListener(infoWindow, 'domready', () => {
-                        const container = document.querySelector('.map-info-window');
-                        if (container) {
-                            container.addEventListener('mouseenter', () => {
-                                isInfoWindowHovered = true;
-                            });
-                            container.addEventListener('mouseleave', () => {
-                                isInfoWindowHovered = false;
-                                setTimeout(() => {
-                                    if (!isInfoWindowHovered) {
-                                        infoWindow.close();
-                                    }
-                                }, 500);
-                            });
-                        }
-                    });
-
-                    // Hover events
-                    marker.addListener('mouseover', () => {
-                        if (window.currentInfoWindow) {
-                            window.currentInfoWindow.close();
-                        }
-                        infoWindow.open(map, marker);
-                        window.currentInfoWindow = infoWindow;
-                    });
-
-                    // Click event for navigation
-                    marker.addListener('click', () => {
-                        window.location.href = `project-detail.html?id=${project.idProjekt}`;
-                    });
-
-                    marker.addListener('mouseout', () => {
-                        setTimeout(() => {
-                            if (!isInfoWindowHovered) {
-                                infoWindow.close();
-                            }
-                        }, 500);
-                    });
-
-                    // Fit map to show all markers
-                    map.fitBounds(bounds);
-                } else {
-                    console.warn(`Geocoding failed for address: ${project.Lokacija}`, status);
-                }
-            });
+        const geocodedProjects = await Promise.all(geocodePromises);
+        
+        geocodedProjects.forEach(result => {
+            if (result && result.coordinates) {
+                const [lng, lat] = result.coordinates;
+                coordinates.push([lng, lat]);
+                
+                // Dodaj feature v GeoJSON
+                geojsonData.features.push({
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [lng, lat]
+                    },
+                    properties: {
+                        ...result.project,
+                        coordinates: [lng, lat]
+                    }
+                });
+            }
         });
+
+        // Dodaj source in layer za označevalce
+        map.addSource('projects', {
+            type: 'geojson',
+            data: geojsonData,
+            cluster: true,
+            clusterMaxZoom: 14,
+            clusterRadius: 50
+        });
+
+        // Layer za kroge grozdov
+        map.addLayer({
+            id: 'clusters',
+            type: 'circle',
+            source: 'projects',
+            filter: ['has', 'point_count'],
+            paint: {
+                'circle-color': [
+                    'step',
+                    ['get', 'point_count'],
+                    '#51bbd6',
+                    5,
+                    '#f1c40f',
+                    10,
+                    '#f28cb1'
+                ],
+                'circle-radius': [
+                    'step',
+                    ['get', 'point_count'],
+                    20,
+                    5,
+                    30,
+                    10,
+                    40
+                ]
+            }
+        });
+
+        // Layer za številke v grozdih
+        map.addLayer({
+            id: 'cluster-count',
+            type: 'symbol',
+            source: 'projects',
+            filter: ['has', 'point_count'],
+            layout: {
+                'text-field': '{point_count_abbreviated}',
+                'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+                'text-size': 12
+            }
+        });
+
+        // Layer za posamezne označevalce
+        map.addLayer({
+            id: 'unclustered-point',
+            type: 'circle',
+            source: 'projects',
+            filter: ['!', ['has', 'point_count']],
+            paint: {
+                'circle-color': '#3498db',
+                'circle-radius': 8,
+                'circle-stroke-width': 2,
+                'circle-stroke-color': '#fff'
+            }
+        });
+
+        // Hover efekt
+        map.on('mouseenter', 'unclustered-point', () => {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+
+        map.on('mouseleave', 'unclustered-point', () => {
+            map.getCanvas().style.cursor = '';
+        });
+
+        // Klik na grozd - povečaj
+        map.on('click', 'clusters', (e) => {
+            const features = map.queryRenderedFeatures(e.point, {
+                layers: ['clusters']
+            });
+            const clusterId = features[0].properties.cluster_id;
+            map.getSource('projects').getClusterExpansionZoom(
+                clusterId,
+                (err, zoom) => {
+                    if (err) return;
+                    map.easeTo({
+                        center: features[0].geometry.coordinates,
+                        zoom: zoom
+                    });
+                }
+            );
+        });
+
+        // Klik na posamezen označevalec
+        map.on('click', 'unclustered-point', (e) => {
+            const project = e.features[0].properties;
+            
+            // Ustvari vsebino pojavnega okna
+            const projectImage = getProjectImage(project);
+            
+            const popupContent = `
+                <div class="map-info-window">
+                    <img src="${projectImage}" alt="${project.naziv}" class="map-info-window-img" 
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div class="no-image">
+                        <i class="fas fa-image"></i><br>
+                        Slika ni na voljo
+                    </div>
+                    <h4>${project.naziv}</h4>
+                    <p>
+                        <i class="fas fa-building"></i> ${project.drustvo_naziv}
+                    </p>
+                    <p>
+                        <i class="fas fa-map-marker-alt"></i> ${project.Lokacija}
+                    </p>
+                    <p>
+                        <i class="fas fa-calendar"></i> ${new Date(project.datumIzvajanja).toLocaleDateString('sl')}
+                    </p>
+                    <a href="project-detail.html?id=${project.idProjekt}" class="btn">
+                        Več informacij
+                    </a>
+                </div>
+            `;
+
+            new mapboxgl.Popup({ offset: 25 })
+                .setLngLat(e.features[0].geometry.coordinates)
+                .setHTML(popupContent)
+                .addTo(map);
+        });
+
+        // Prilagodi mapo, da prikaže vse označevalce
+        if (coordinates.length > 0) {
+            const bounds = coordinates.reduce((bounds, coord) => {
+                return bounds.extend(coord);
+            }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
+            
+            map.fitBounds(bounds, {
+                padding: { top: 50, bottom: 50, left: 50, right: 50 }
+            });
+        }
+
     } catch (error) {
-        console.error('Error loading project markers:', error);
+        console.error('Napaka pri nalaganju označevalcev:', error);
     }
 }
 
-// Setup view toggle
+// Funkcija za geokodiranje z uporabo Mapbox Geocoding API
+async function geocodeAddress(address, project) {
+    try {
+        const response = await fetch(
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${MAPBOX_ACCESS_TOKEN}&country=SI&limit=1`
+        );
+        const data = await response.json();
+        
+        if (data.features && data.features.length > 0) {
+            return {
+                coordinates: data.features[0].center,
+                project: project
+            };
+        }
+        return null;
+    } catch (error) {
+        console.error(`Geokodiranje neuspešno za ${address}:`, error);
+        return null;
+    }
+}
+
+// Funkcija za določevanje slike projekta
+function getProjectImage(project) {
+    if (project.slika && project.slika.trim() !== '') {
+        if (project.slika.startsWith('img/')) {
+            return project.slika;
+        }
+        return `img/projekti/${project.slika}`;
+    }
+    return 'img/campaing-3.jpg';
+}
+
+// Nastavitev preklapljanja pogleda - enako kot prej
 function setupMapToggle() {
     const viewToggleBtns = document.querySelectorAll('.view-toggle-btn');
     const projectsContainer = document.getElementById('projectsContainer');
@@ -193,12 +332,11 @@ function setupMapToggle() {
                 
                 if (mapContainer) {
                     mapContainer.style.display = 'block';
-                    // Check if Google Maps is loaded before triggering resize
-                    if (typeof google !== 'undefined' && google.maps && map) {
-                        google.maps.event.trigger(map, 'resize');
-                    } else {
-                        console.warn('Map not initialized yet, initializing now...');
-                        initMap();
+                    // Spremeni velikost mape, ko se prikaže
+                    if (map) {
+                        setTimeout(() => {
+                            map.resize();
+                        }, 100);
                     }
                 }
             } else {
@@ -213,12 +351,27 @@ function setupMapToggle() {
     });
 }
 
-// Initialize when page loads
-document.addEventListener('DOMContentLoaded', () => {
-    if (typeof google === 'undefined') {
-        console.error('Google Maps API not loaded. Please check your API key and connection.');
-        return;
+// Alternativno lahko neposredno vključite Mapbox v HTML
+function addMapboxToHead() {
+    if (!document.querySelector('link[href*="mapbox-gl"]')) {
+        const css = document.createElement('link');
+        css.href = 'https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css';
+        css.rel = 'stylesheet';
+        document.head.appendChild(css);
     }
-    createMapContainer();
-    setupMapToggle();
+
+    if (!document.querySelector('script[src*="mapbox-gl"]')) {
+        const script = document.createElement('script');
+        script.src = 'https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js';
+        script.onload = () => {
+            createMapContainer();
+            setupMapToggle();
+        };
+        document.head.appendChild(script);
+    }
+}
+
+// Inicializiraj, ko se stran naloži
+document.addEventListener('DOMContentLoaded', () => {
+    addMapboxToHead();
 });
