@@ -1,4 +1,4 @@
-// mapbox-mapa.js - Nova različica z Mapbox-om
+// mapbox-mapa.js - Ispravljena verzija s crvenim pinovima i poboljšanim hover efektom
 
 let mapContainer;
 let map;
@@ -6,6 +6,7 @@ let markers = [];
 let currentPopup = null; // Za shranjevanje trenutnega oblačka
 let isMouseOverPopup = false; // Za sledenje, ali je miška nad oblačkom
 let isMouseOverMarker = false; // Za sledenje, ali je miška nad označevalcem
+let popupTimeout = null; // Za upravljanje timeout funkcija
 
 // Vaš Mapbox access token (zamenjajte z pravim)
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoicGV0YXIxMzA2IiwiYSI6ImNtYmphZTI5czBkNHQyaXBqZ2U3cmVhbzUifQ.uXoTGXst52A40QIKgbsmfg';
@@ -95,6 +96,112 @@ function initMap() {
     } catch (error) {
         console.error('Napaka pri inicializaciji Mapbox mape:', error);
     }
+}
+
+// Funkcija za ustvarjanje prilagojene rdeče ikone pina
+function createCustomPinIcon() {
+    return new Promise((resolve) => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const size = 40;
+        
+        canvas.width = size;
+        canvas.height = size;
+        
+        // Narišemo rdečo ikono pina
+        ctx.fillStyle = '#dc3545'; // Rdeča barva kot grozdi
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        
+        // Pin oblika
+        const centerX = size / 2;
+        const centerY = size / 3;
+        const radius = 12;
+        
+        // Krog
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+        
+        // Spodnji del pina
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY + radius - 4);
+        ctx.lineTo(centerX, size - 4);
+        ctx.lineTo(centerX - 3, centerY + radius + 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        
+        // Bela pika v sredini
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 4, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        resolve(canvas);
+    });
+}
+
+// Funkcija za centriranje popup-a u vidljivom području
+function centerPopupInView(popup, coordinates) {
+    setTimeout(() => {
+        const mapCanvas = map.getCanvas();
+        const mapRect = mapCanvas.getBoundingClientRect();
+        const popupElement = popup.getElement();
+        
+        if (!popupElement) return;
+        
+        const popupRect = popupElement.getBoundingClientRect();
+        const popupWidth = popupRect.width;
+        const popupHeight = popupRect.height;
+        
+        // Dobijamo trenutni centar mape
+        const currentCenter = map.getCenter();
+        const markerPoint = map.project(coordinates);
+        
+        let needsReposition = false;
+        let newCenter = { ...currentCenter };
+        
+        // Proveravamo da li je popup van granica levo/desno
+        if (popupRect.left < mapRect.left + 20) {
+            // Popup je van leve granice
+            const offsetPixels = (mapRect.left + 20 - popupRect.left) + popupWidth/2;
+            const offsetLngLat = map.unproject([markerPoint.x - offsetPixels, markerPoint.y]);
+            newCenter.lng = offsetLngLat.lng;
+            needsReposition = true;
+        } else if (popupRect.right > mapRect.right - 20) {
+            // Popup je van desne granice
+            const offsetPixels = (popupRect.right - mapRect.right + 20) + popupWidth/2;
+            const offsetLngLat = map.unproject([markerPoint.x + offsetPixels, markerPoint.y]);
+            newCenter.lng = offsetLngLat.lng;
+            needsReposition = true;
+        }
+        
+        // Proveravamo da li je popup van granica gore/dole
+        if (popupRect.top < mapRect.top + 20) {
+            // Popup je van gornje granice
+            const offsetPixels = (mapRect.top + 20 - popupRect.top) + popupHeight/2;
+            const offsetLngLat = map.unproject([markerPoint.x, markerPoint.y - offsetPixels]);
+            newCenter.lat = offsetLngLat.lat;
+            needsReposition = true;
+        } else if (popupRect.bottom > mapRect.bottom - 20) {
+            // Popup je van donje granice
+            const offsetPixels = (popupRect.bottom - mapRect.bottom + 20) + popupHeight/2;
+            const offsetLngLat = map.unproject([markerPoint.x, markerPoint.y + offsetPixels]);
+            newCenter.lat = offsetLngLat.lat;
+            needsReposition = true;
+        }
+        
+        // Ako treba da se repozicionira mapa
+        if (needsReposition) {
+            map.easeTo({
+                center: [newCenter.lng, newCenter.lat],
+                duration: 300,
+                essential: true
+            });
+        }
+    }, 100); // Čekamo da se popup renderuje
 }
 
 async function loadProjectMarkers() {
@@ -191,35 +298,38 @@ async function loadProjectMarkers() {
             }
         });
 
-        // Naloži sliko za pin ikono
-        map.loadImage(
-            'https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png', // Generic Mapbox pin icon
-            (error, image) => {
-                if (error) {
-                    console.error('Napaka pri nalaganju slike za pin:', error);
-                    return;
+        // Ustvari prilagojeno rdečo ikono pina
+        const pinCanvas = await createCustomPinIcon();
+        const pinImage = new Image();
+        pinImage.onload = () => {
+            map.addImage('custom-red-pin', pinImage);
+            
+            // Layer za posamezne označevalce - rdeči pin
+            map.addLayer({
+                id: 'unclustered-point',
+                type: 'symbol',
+                source: 'projects',
+                filter: ['!', ['has', 'point_count']],
+                layout: {
+                    'icon-image': 'custom-red-pin',
+                    'icon-size': 0.8,
+                    'icon-anchor': 'bottom',
+                    'icon-allow-overlap': true
                 }
-                map.addImage('custom-pin', image);
+            });
+        };
+        pinImage.src = pinCanvas.toDataURL();
 
-                // Layer za posamezne označevalce - pin ikone
-                map.addLayer({
-                    id: 'unclustered-point',
-                    type: 'symbol',
-                    source: 'projects',
-                    filter: ['!', ['has', 'point_count']],
-                    layout: {
-                        'icon-image': 'custom-pin',
-                        'icon-size': 0.8, // Prilagodi velikost ikone
-                        'icon-anchor': 'bottom' // Sidro na dnu ikone za pravilno pozicioniranje
-                    }
-                });
-            }
-        );
-
-        // Hover efekt - oblaček se odpre na hover
+        // Poboljšan hover efekt sa centriranjem
         map.on('mouseenter', 'unclustered-point', (e) => {
             map.getCanvas().style.cursor = 'pointer';
             isMouseOverMarker = true;
+            
+            // Očisti obstoječi timeout
+            if (popupTimeout) {
+                clearTimeout(popupTimeout);
+                popupTimeout = null;
+            }
             
             // Zapri prejšnji oblaček, če obstaja
             if (currentPopup) {
@@ -228,6 +338,7 @@ async function loadProjectMarkers() {
             }
             
             const project = e.features[0].properties;
+            const coordinates = e.features[0].geometry.coordinates;
             
             // Ustvari vsebino pojavnega okna
             const projectImage = getProjectImage(project);
@@ -261,42 +372,58 @@ async function loadProjectMarkers() {
             // Ustvari oblaček brez X gumba
             currentPopup = new mapboxgl.Popup({ 
                 offset: 25,
-                closeButton: false, // Odstrani X gumb
-                closeOnClick: false, // Ne zapri ob kliku zunaj
-                closeOnMove: false // Ne zapri ob premikanju mape
+                closeButton: false,
+                closeOnClick: false,
+                closeOnMove: false,
+                maxWidth: '320px'
             })
-                .setLngLat(e.features[0].geometry.coordinates)
+                .setLngLat(coordinates)
                 .setHTML(popupContent)
                 .addTo(map);
 
-            // Dodaj event listenerje za oblaček
-            const popupElement = currentPopup._content;
-            popupElement.addEventListener('mouseenter', () => {
-                isMouseOverPopup = true;
-            });
-            popupElement.addEventListener('mouseleave', () => {
-                isMouseOverPopup = false;
-                setTimeout(() => {
-                    if (!isMouseOverPopup && !isMouseOverMarker && currentPopup) {
-                        currentPopup.remove();
-                        currentPopup = null;
-                    }
-                }, 100);
-            });
+            // Centrovaj popup da bude vidljiv
+            centerPopupInView(currentPopup, coordinates);
+
+            // Dodaj event listenerje za oblaček po kratki zamudi (da se DOM posodobi)
+            setTimeout(() => {
+                const popupElement = currentPopup?._content;
+                if (popupElement) {
+                    popupElement.addEventListener('mouseenter', () => {
+                        isMouseOverPopup = true;
+                        if (popupTimeout) {
+                            clearTimeout(popupTimeout);
+                            popupTimeout = null;
+                        }
+                    });
+                    
+                    popupElement.addEventListener('mouseleave', () => {
+                        isMouseOverPopup = false;
+                        schedulePopupClose();
+                    });
+                }
+            }, 50);
         });
+
+        // Funkcija za načrtovanje zaprtja popup-a
+        function schedulePopupClose() {
+            if (popupTimeout) {
+                clearTimeout(popupTimeout);
+            }
+            
+            popupTimeout = setTimeout(() => {
+                if (!isMouseOverPopup && !isMouseOverMarker && currentPopup) {
+                    currentPopup.remove();
+                    currentPopup = null;
+                }
+                popupTimeout = null;
+            }, 150);
+        }
 
         // Posodobi stanje, ko miška zapusti označevalec
         map.on('mouseleave', 'unclustered-point', () => {
             map.getCanvas().style.cursor = '';
             isMouseOverMarker = false;
-            
-            // Zapri oblaček po kratki zamudi, če miška ni nad oblačkom ali označevalcem
-            setTimeout(() => {
-                if (!isMouseOverPopup && !isMouseOverMarker && currentPopup) {
-                    currentPopup.remove();
-                    currentPopup = null;
-                }
-            }, 100);
+            schedulePopupClose();
         });
 
         // Hover efekt za grozde
@@ -308,7 +435,7 @@ async function loadProjectMarkers() {
             map.getCanvas().style.cursor = '';
         });
 
-        // Klik na grozd - povečaj
+        // Klik na grozd - povećaj
         map.on('click', 'clusters', (e) => {
             const features = map.queryRenderedFeatures(e.point, {
                 layers: ['clusters']
@@ -326,7 +453,20 @@ async function loadProjectMarkers() {
             );
         });
 
-        // Prilagodi mapo, da prikaže vse označevalce
+        // Zapri popup ob kliku na mapu (ne na marker)
+        map.on('click', (e) => {
+            const features = map.queryRenderedFeatures(e.point, {
+                layers: ['unclustered-point', 'clusters']
+            });
+            
+            // Če nismo kliknili na marker ili grozd, zapri popup
+            if (features.length === 0 && currentPopup) {
+                currentPopup.remove();
+                currentPopup = null;
+            }
+        });
+
+        // Prilagodi mapu, da prikaže sve označevalce
         if (coordinates.length > 0) {
             const bounds = coordinates.reduce((bounds, coord) => {
                 return bounds.extend(coord);
