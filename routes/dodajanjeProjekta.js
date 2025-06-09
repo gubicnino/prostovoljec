@@ -129,11 +129,9 @@ router.post('/urejanje', (req, res) => {
     });
 });
 
-module.exports = router;
 
 // DELETE endpoint za brisanje projekta
-router.delete('/:id', (req, res) => {
-    console.log('DELETE zahtev primljen na /dodajanjeProjekta/:id:', req.params.id, req.body);
+router.delete('/odstraniProjekt/:id', (req, res) => {
 
     const projectId = parseInt(req.params.id, 10);
     const { drustvoId } = req.body;
@@ -141,7 +139,7 @@ router.delete('/:id', (req, res) => {
     // Validacija ulaznih podataka
     if (isNaN(projectId) || !drustvoId) {
         console.log('Nevalidni parametri:', { projectId, drustvoId });
-        return res.status(400).json({ error: 'Manjkajoči ali nevalidni parametri: id projekta i id društva su obavezni' });
+        return res.status(400).json({ error: 'Manjkajoči ali nevalidni parametri: id projekta in id društva so obvezni' });
     }
 
     // Provera da li projekat postoji i pripada društvu
@@ -159,7 +157,7 @@ router.delete('/:id', (req, res) => {
 
         if (results.length === 0) {
             console.log('Projekat nije pronađen ili društvo nema ovlašćenje:', { projectId, drustvoId });
-            return res.status(403).json({ error: 'Projekat nije pronađen ili nemate ovlašćenje za brisanje' });
+            return res.status(403).json({ error: 'Projekat nije pronađen ali društvo nema ovlašćenje za brisanje' });
         }
 
         // Brisanje povezanih podataka iz Prostovoljec_Projekt
@@ -197,3 +195,5 @@ router.delete('/:id', (req, res) => {
         });
     });
 });
+
+module.exports = router;

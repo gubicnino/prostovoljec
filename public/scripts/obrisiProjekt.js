@@ -8,7 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     deleteButtons.forEach(button => {
         button.addEventListener('click', async (e) => {
             e.preventDefault();
-            const projectId = button.dataset.projectId;
+            const params = new URLSearchParams(window.location.search);
+            const projectId = params.get('id');
             await potvrdiBrisanjeProjekta(projectId);
         });
     });
@@ -53,8 +54,7 @@ async function potvrdiBrisanjeProjekta(projectId) {
 
     try {
         // Slanje zahteva za brisanje projekta
-        console.log(`Brisanje projekta z ID: ${projectId} za društvo z ID: ${drustvoId}`);
-        const response = await fetch(`/api/dodajanjeProjekta/${projectId}`, {
+        const response = await fetch(`/api/dodajanjeProjekta/odstraniProjekt/${projectId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
