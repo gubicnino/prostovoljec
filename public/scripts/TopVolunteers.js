@@ -70,16 +70,6 @@ function loadTopVolunteers() {
                                             <h5 class="mb-0 fw-bold">${Math.ceil(hours/8)} delovnih dni</h5>
                                         </div>
                                     </div>
-                                    
-                                    <!-- Skills -->
-                                    <div class="d-flex align-items-center p-2 bg-light rounded">
-                                        <div class="me-3">
-                                            <i class="fas fa-tools" style="color: ${badgeInfo.color}"></i>
-                                        </div>
-                                        <div style="overflow-wrap: break-word; word-wrap: break-word;">
-                                            <h5 class="mb-0 fw-bold">${volunteer.spretnost || 'Različne spretnosti'}</h5>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>

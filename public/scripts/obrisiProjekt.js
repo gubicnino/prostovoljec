@@ -53,6 +53,7 @@ async function potvrdiBrisanjeProjekta(projectId) {
 
     try {
         // Slanje zahteva za brisanje projekta
+        console.log(`Brisanje projekta z ID: ${projectId} za društvo z ID: ${drustvoId}`);
         const response = await fetch(`/api/dodajanjeProjekta/${projectId}`, {
             method: 'DELETE',
             headers: {

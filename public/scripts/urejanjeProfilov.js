@@ -36,7 +36,6 @@ function loadCorrectProfiles() {
                 document.getElementById('datumRojstva').value = data.datumRojstva ? data.datumRojstva.substring(0, 10) : '';
                 document.getElementById('email').value = data.email || '';
                 document.getElementById('naslov').value = data.naslov || '';
-                document.getElementById('spretnost').value = data.spretnost || '';
                 const badge = BadgeSystem.getBadgeInfo(data.opravljeneUre || 0);
                 document.getElementById('opravljeneUre').innerHTML = `
                                     <div class="d-flex align-items-center p-2 rounded">

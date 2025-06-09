@@ -93,7 +93,7 @@ function updateProjectDetails(data) {
                 break;
             case 'srednja':
                 badgeClass = 'bg-warning text-dark';
-                break;
+                break;  
             case 'nizka':
                 badgeClass = 'bg-success';
                 break;
@@ -103,6 +103,10 @@ function updateProjectDetails(data) {
             <i class="fas fa-person-hiking me-2"></i>
             <span class="project-difficulty-text">${data.tezavnost}</span>
         `;
+    }
+    const projectImage = document.getElementById('project-image');
+    if (projectImage) {
+            projectImage.src = data.slika;
     }
 
     const statusText = document.getElementById('project-status');
@@ -324,21 +328,6 @@ async function loadProjectEdit(data) {
                 e.preventDefault();
                 window.location.href = `povratneInformacije.html?projektId=${data.idProjekt}`;
             });
-        }
-
-        if (editDiv.style.display === 'block') {
-            // Postavi project ID na delete dugme
-            const deleteBtn = document.getElementById('deleteBtn');
-            if (deleteBtn) {
-                deleteBtn.setAttribute('data-project-id', data.idProjekt);
-                
-                // Dodaj event listener za brisanje
-                deleteBtn.addEventListener('click', async function(e) {
-                    e.preventDefault();
-                    const projectId = this.dataset.projectId || data.idProjekt;
-                    await potvrdiBrisanjeProjekta(projectId);
-                });
-            }
         }
     }
 }
@@ -863,83 +852,3 @@ window.openSocialPlatform = function(platform) {
         window.open(platformUrls[platform], '_blank');
     }
 };
-
-async function potvrdiBrisanjeProjekta(projectId) {
-    // Provera da li je korisnik prijavljen kao društvo
-    const drustvoId = localStorage.getItem('drustvoId');
-    if (!drustvoId) {
-        await Swal.fire({
-            icon: 'error',
-            title: 'Napaka',
-            text: 'Morate biti prijavljeni kao društvo da biste obrisali projekat.',
-            confirmButtonColor: 'var(--bs-main)',
-            background: '#1a1a1a',
-            color: '#fff',
-            iconColor: 'var(--bs-main)'
-        });
-        return;
-    }
-
-    // Potvrda brisanja
-    const potvrda = await Swal.fire({
-        title: 'Ali ste prepričani?',
-        text: 'Brisanje projekta je trajno in ni mogoče razveljaviti.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Da, izbriši',
-        cancelButtonText: 'Prekliči',
-        confirmButtonColor: 'var(--bs-main)',
-        cancelButtonColor: '#6c757d',
-        background: '#1a1a1a',
-        color: '#fff',
-        iconColor: 'var(--bs-main)',
-        reverseButtons: true
-    });
-
-    if (!potvrda.isConfirmed) {
-        return;
-    }
-
-    try {
-        // Slanje zahteva za brisanje projekta
-        const response = await fetch(`/api/dodajanjeProjekta/${projectId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ drustvoId })
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            await Swal.fire({
-                icon: 'success',
-                title: 'Uspeh',
-                text: 'Projekt je uspešno izbrisan.',
-                confirmButtonColor: 'var(--bs-main)',
-                background: '#1a1a1a',
-                color: '#fff',
-                iconColor: 'var(--bs-main)',
-                timer: 2500,
-                showConfirmButton: false
-            });
-
-            // Preusmeravanje na profil
-            window.location.href = 'profil.html';
-        } else {
-            throw new Error(result.error || 'Napaka pri brisanju projekta');
-        }
-    } catch (error) {
-        console.error('Napaka pri brisanju projekta:', error);
-        await Swal.fire({
-            icon: 'error',
-            title: 'Napaka',
-            text: `Napaka pri brisanju projekta: ${error.message}`,
-            confirmButtonColor: 'var(--bs-main)',
-            background: '#1a1a1a',
-            color: '#fff',
-            iconColor: 'var(--bs-main)'
-        });
-    }
-}
