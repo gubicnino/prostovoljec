@@ -1,15 +1,18 @@
-// mapbox-mapa.js - Ispravljena verzija s crvenim pinovima i poboljšanim hover efektom
-
-let mapContainer;
-let map;
-let markers = [];
-let currentPopup = null; // Za shranjevanje trenutnega oblačka
-let isMouseOverPopup = false; // Za sledenje, ali je miška nad oblačkom
-let isMouseOverMarker = false; // Za sledenje, ali je miška nad označevalcem
-let popupTimeout = null; // Za upravljanje timeout funkcija
+let currentPopup = null;
+let hoverTimeout = null;
 
 // Vaš Mapbox access token (zamenjajte z pravim)
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoicGV0YXIxMzA2IiwiYSI6ImNtYmphZTI5czBkNHQyaXBqZ2U3cmVhbzUifQ.uXoTGXst52A40QIKgbsmfg';
+
+// Funkcija za onemogućavanje skrolovanja stranice
+function disablePageScroll() {
+    document.body.style.overflow = 'hidden';
+}
+
+// Funkcija za omogućavanje skrolovanja stranice
+function enablePageScroll() {
+    document.body.style.overflow = 'auto';
+}
 
 function createMapContainer() {
     const existingMap = document.getElementById('mapViewContainer');
@@ -50,6 +53,13 @@ function createMapContainer() {
     if (projectsContainer) {
         projectsContainer.insertAdjacentHTML('afterend', mapHtml);
         mapContainer = document.getElementById('mapViewContainer');
+        
+        // Dodaj event listenere za onemogućavanje skrolovanja kada je miš na mapi
+        const mapElement = document.getElementById('mapboxMap');
+        if (mapElement) {
+            mapElement.addEventListener('mouseenter', disablePageScroll);
+            mapElement.addEventListener('mouseleave', enablePageScroll);
+        }
         
         // Poskus inicializacije mape
         if (typeof mapboxgl !== 'undefined') {
@@ -143,65 +153,164 @@ function createCustomPinIcon() {
     });
 }
 
-// Funkcija za centriranje popup-a u vidljivom području
-function centerPopupInView(popup, coordinates) {
-    setTimeout(() => {
-        const mapCanvas = map.getCanvas();
-        const mapRect = mapCanvas.getBoundingClientRect();
-        const popupElement = popup.getElement();
-        
-        if (!popupElement) return;
-        
-        const popupRect = popupElement.getBoundingClientRect();
-        const popupWidth = popupRect.width;
-        const popupHeight = popupRect.height;
-        
-        // Dobijamo trenutni centar mape
-        const currentCenter = map.getCenter();
-        const markerPoint = map.project(coordinates);
-        
-        let needsReposition = false;
-        let newCenter = { ...currentCenter };
-        
-        // Proveravamo da li je popup van granica levo/desno
-        if (popupRect.left < mapRect.left + 20) {
-            // Popup je van leve granice
-            const offsetPixels = (mapRect.left + 20 - popupRect.left) + popupWidth/2;
-            const offsetLngLat = map.unproject([markerPoint.x - offsetPixels, markerPoint.y]);
-            newCenter.lng = offsetLngLat.lng;
-            needsReposition = true;
-        } else if (popupRect.right > mapRect.right - 20) {
-            // Popup je van desne granice
-            const offsetPixels = (popupRect.right - mapRect.right + 20) + popupWidth/2;
-            const offsetLngLat = map.unproject([markerPoint.x + offsetPixels, markerPoint.y]);
-            newCenter.lng = offsetLngLat.lng;
-            needsReposition = true;
-        }
-        
-        // Proveravamo da li je popup van granica gore/dole
-        if (popupRect.top < mapRect.top + 20) {
-            // Popup je van gornje granice
-            const offsetPixels = (mapRect.top + 20 - popupRect.top) + popupHeight/2;
-            const offsetLngLat = map.unproject([markerPoint.x, markerPoint.y - offsetPixels]);
-            newCenter.lat = offsetLngLat.lat;
-            needsReposition = true;
-        } else if (popupRect.bottom > mapRect.bottom - 20) {
-            // Popup je van donje granice
-            const offsetPixels = (popupRect.bottom - mapRect.bottom + 20) + popupHeight/2;
-            const offsetLngLat = map.unproject([markerPoint.x, markerPoint.y + offsetPixels]);
-            newCenter.lat = offsetLngLat.lat;
-            needsReposition = true;
-        }
-        
-        // Ako treba da se repozicionira mapa
-        if (needsReposition) {
-            map.easeTo({
-                center: [newCenter.lng, newCenter.lat],
-                duration: 300,
-                essential: true
-            });
-        }
-    }, 100); // Čekamo da se popup renderuje
+// Funkcija za formatiranje datuma
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('sl-SI', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+}
+
+// Funkcija za dobivanje težavnosti badge-a
+function getDifficultyBadge(difficulty) {
+    const difficultyMap = {
+        'Nizka': { color: 'success', text: 'Nizka' },
+        'Srednja': { color: 'warning', text: 'Srednja' },
+        'Visoka': { color: 'danger', text: 'Visoka' }
+    };
+    
+    const diff = difficultyMap[difficulty] || { color: 'secondary', text: difficulty || 'Neznana' };
+    return `<span class="badge bg-${diff.color} text-white">${diff.text}</span>`;
+}
+
+// Funkcija za ustvarjanje kompaktnega popup-a
+function createProjectPopupContent(project) {
+    const projectImage = getProjectImage(project);
+    const formattedDateIzvajanja = formatDate(project.datumIzvajanja);
+    const formattedDateRok = formatDate(project.datumRokaPrijave);
+    
+    return `
+        <div class="campaign-card compact-popup" style="width: 280px; border-radius: 12px; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.15); background: white; padding-bottom: 15px">
+            <!-- Kompaktna slika - smanjena visina -->
+            <div class="campaign-image position-relative">
+                <img src="${projectImage}" alt="${project.naziv}" class="w-100" 
+                     style="height: 200px; object-fit: cover;"
+                     onerror="this.src='img/campaing-3.jpg';">
+                <!-- Ure u gornjem desnom kotu -->
+                <div class="position-absolute rounded-pill bg-danger text-white shadow-sm d-flex align-items-center py-1 px-2"
+                     style="top: 8px; right: 8px; z-index: 10;">
+                    <span class="fw-bold" style="font-size: 0.8rem;">${project.trajanje || '6'}</span>
+                    <span style="font-size: 0.7rem;" class="ms-1">ur</span>
+                </div>
+                <!-- Težavnost u spodnjem levom kotu -->
+                <div class="position-absolute" style="bottom: 8px; left: 8px;">
+                    <span class="badge" style="background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.7rem;">
+                        <i class="fas fa-person-hiking me-1"></i>
+                        ${project.tezavnost || 'Ni podatka'}
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Smanjeni padding i kompaktniji sadržaj -->
+            <div style="padding: 15px 15px 0 15px;">
+                <!-- Naslov -->
+                <h4 class="fw-bold mb-2" style="font-size: 0.9rem; line-height: 1.2; color: #333; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                    ${project.naziv}
+                </h4>
+                
+                <!-- Organizacija -->
+                <p class="text-muted mb-2" style="font-size: 0.75rem; margin-bottom: 8px !important;">
+                    <i class="fas fa-building me-1" style="color: #dc3545;"></i> 
+                    ${project.drustvo_naziv}
+                </p>
+                
+                <!-- Lokacija -->
+                <div class="d-flex align-items-center mb-2" style="font-size: 0.75rem; margin-bottom: 8px !important;">
+                    <i class="fas fa-location-dot text-danger me-1"></i>
+                    <span>${project.Lokacija}</span>
+                </div>
+                
+                <!-- Datumi - kompaktno -->
+                <div style="font-size: 0.7rem; margin-bottom: 8px;">
+                    <div class="d-flex align-items-center mb-1">
+                        <i class="fas fa-calendar-days text-primary me-1"></i>
+                        <span><strong>Izvaja:</strong> ${formattedDateIzvajanja}</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-calendar-xmark text-info me-1"></i>
+                        <span><strong>Prijave do:</strong> ${formattedDateRok}</span>
+                    </div>
+                </div>
+                
+                <!-- Kratek opis - još kompaktniji -->
+                <p class="text-dark mb-2" style="font-size: 0.8rem; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 10px !important;">
+                    ${project.opis || 'Opis projekta ni na voljo'}
+                </p>
+                
+                <!-- Gumb -->
+                <a href="project-detail.html?id=${project.idProjekt}" 
+                   class="btn w-100 d-flex align-items-center justify-content-center gap-2"
+                   style="background: linear-gradient(135deg, #dc3545, #c82333); color: white; border: none; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.8rem; padding: 8px 12px; transition: all 0.3s ease;"
+                   onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(220,53,69,0.4)';"
+                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                    <span>Više informacija</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    `;
+}
+
+// ISPRAVLJENA funkcija za pametan positioning popup-a tako da ostane u granicama mape
+function getSmartPopupOffset(markerCoordinates) {
+    const mapCanvas = map.getCanvas();
+    const mapRect = mapCanvas.getBoundingClientRect();
+    const markerPoint = map.project(markerCoordinates);
+    
+    // Dimenzije popup-a
+    const popupWidth = 280;
+    const popupHeight = 200;
+    const padding = 20;
+    const pinDistance = 5; // Bliza pin-u - smanjeno sa 30
+    
+    // Dostupan prostor levo i desno
+    const spaceLeft = markerPoint.x;
+    const spaceRight = mapRect.width - markerPoint.x;
+    
+    let offsetX = 0;
+    let offsetY = 0;
+    let anchor = 'left';
+    
+    // Logika: Uvek prikaži SAMO levo ili desno, gde ima više prostora
+    if (spaceLeft >= popupWidth + padding && spaceLeft >= spaceRight) {
+        // Prikaži levo od pin-a
+        offsetX = -popupWidth/2 - pinDistance;
+        anchor = 'right';
+    } else if (spaceRight >= popupWidth + padding) {
+        // Prikaži desno od pin-a
+        offsetX = popupWidth/2 + pinDistance;
+        anchor = 'left';
+    } else if (spaceLeft > spaceRight) {
+        // Nema dovoljno prostora, ali levo je bolje
+        offsetX = -popupWidth/2 - pinDistance;
+        anchor = 'right';
+    } else {
+        // Nema dovoljno prostora, ali desno je bolje
+        offsetX = popupWidth/2 + pinDistance;
+        anchor = 'left';
+    }
+    
+    // Vertikalno centriranje - popup se prikazuje na istoj visini kao pin
+    offsetY = 0;
+    
+    // Proveri da li popup izlazi van granica mape vertikalno
+    const popupTop = markerPoint.y - popupHeight/2;
+    const popupBottom = markerPoint.y + popupHeight/2;
+    
+    if (popupTop < padding) {
+        // Popup je previše gore, pomeri dole
+        offsetY = padding - popupTop;
+    } else if (popupBottom > mapRect.height - padding) {
+        // Popup je previše dole, pomeri gore
+        offsetY = (mapRect.height - padding) - popupBottom;
+    }
+    
+    return {
+        offset: [offsetX, offsetY],
+        anchor: anchor
+    };
 }
 
 async function loadProjectMarkers() {
@@ -320,18 +429,19 @@ async function loadProjectMarkers() {
         };
         pinImage.src = pinCanvas.toDataURL();
 
-        // Poboljšan hover efekt sa centriranjem
+        // ========================================================================
+        // POJEDNOSTAVLJENI HOVER EFEKT SA DODATNIM EVENT LISTENERIMA ZA POPUP
+        // ========================================================================
         map.on('mouseenter', 'unclustered-point', (e) => {
             map.getCanvas().style.cursor = 'pointer';
-            isMouseOverMarker = true;
             
-            // Očisti obstoječi timeout
-            if (popupTimeout) {
-                clearTimeout(popupTimeout);
-                popupTimeout = null;
+            // Otkaži postojeći timeout
+            if (hoverTimeout) {
+                clearTimeout(hoverTimeout);
+                hoverTimeout = null;
             }
             
-            // Zapri prejšnji oblaček, če obstaja
+            // Ukloni postojeći popup
             if (currentPopup) {
                 currentPopup.remove();
                 currentPopup = null;
@@ -340,90 +450,63 @@ async function loadProjectMarkers() {
             const project = e.features[0].properties;
             const coordinates = e.features[0].geometry.coordinates;
             
-            // Ustvari vsebino pojavnega okna
-            const projectImage = getProjectImage(project);
+            // Pametan offset
+            const smartPosition = getSmartPopupOffset(coordinates);
             
-            const popupContent = `
-                <div class="map-info-window" style="width: 300px; max-width: 300px;">
-                    <img src="${projectImage}" alt="${project.naziv}" class="map-info-window-img" 
-                        style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div class="no-image" style="display: none; text-align: center; padding: 20px; background: #f5f5f5; border-radius: 8px; margin-bottom: 10px;">
-                        <i class="fas fa-image" style="font-size: 24px; color: #ccc; margin-bottom: 8px;"></i><br>
-                        <span style="color: #666;">Slika ni na voljo</span>
-                    </div>
-                    <h4 style="margin: 0 0 10px 0; font-size: 16px; font-weight: bold;">${project.naziv}</h4>
-                    <p style="margin: 0 0 8px 0; font-size: 14px; color: #666;">
-                        <i class="fas fa-building" style="margin-right: 8px; color: #dc3545;"></i> ${project.drustvo_naziv}
-                    </p>
-                    <p style="margin: 0 0 8px 0; font-size: 14px; color: #666;">
-                        <i class="fas fa-map-marker-alt" style="margin-right: 8px; color: #dc3545;"></i> ${project.Lokacija}
-                    </p>
-                    <p style="margin: 0 0 12px 0; font-size: 14px; color: #666;">
-                        <i class="fas fa-calendar" style="margin-right: 8px; color: #dc3545;"></i> ${new Date(project.datumIzvajanja).toLocaleDateString('sl')}
-                    </p>
-                    <a href="project-detail.html?id=${project.idProjekt}" class="btn" 
-                       style="display: inline-block; background: #dc3545; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; font-size: 14px;">
-                        Več informacij
-                    </a>
-                </div>
-            `;
+            // Ustvari popup
+            const popupContent = createProjectPopupContent(project);
 
-            // Ustvari oblaček brez X gumba
             currentPopup = new mapboxgl.Popup({ 
-                offset: 25,
+                offset: smartPosition.offset,
+                anchor: smartPosition.anchor,
                 closeButton: false,
                 closeOnClick: false,
                 closeOnMove: false,
-                maxWidth: '320px'
+                maxWidth: '300px',
+                className: 'custom-compact-popup'
             })
                 .setLngLat(coordinates)
                 .setHTML(popupContent)
                 .addTo(map);
 
-            // Centrovaj popup da bude vidljiv
-            centerPopupInView(currentPopup, coordinates);
-
-            // Dodaj event listenerje za oblaček po kratki zamudi (da se DOM posodobi)
+            // Dodaj hover handling za popup nakon kratke pauze
             setTimeout(() => {
                 const popupElement = currentPopup?._content;
                 if (popupElement) {
+                    // Onemogući skrolovanje i kada je miš na popup-u
                     popupElement.addEventListener('mouseenter', () => {
-                        isMouseOverPopup = true;
-                        if (popupTimeout) {
-                            clearTimeout(popupTimeout);
-                            popupTimeout = null;
+                        disablePageScroll();
+                        if (hoverTimeout) {
+                            clearTimeout(hoverTimeout);
+                            hoverTimeout = null;
                         }
                     });
                     
                     popupElement.addEventListener('mouseleave', () => {
-                        isMouseOverPopup = false;
-                        schedulePopupClose();
+                        enablePageScroll();
+                        hoverTimeout = setTimeout(() => {
+                            if (currentPopup) {
+                                currentPopup.remove();
+                                currentPopup = null;
+                            }
+                        }, 100);
                     });
                 }
             }, 50);
         });
 
-        // Funkcija za načrtovanje zaprtja popup-a
-        function schedulePopupClose() {
-            if (popupTimeout) {
-                clearTimeout(popupTimeout);
-            }
+        map.on('mouseleave', 'unclustered-point', () => {
+            map.getCanvas().style.cursor = '';
             
-            popupTimeout = setTimeout(() => {
-                if (!isMouseOverPopup && !isMouseOverMarker && currentPopup) {
+            // Postavi timeout za zatvaranje
+            hoverTimeout = setTimeout(() => {
+                if (currentPopup) {
                     currentPopup.remove();
                     currentPopup = null;
                 }
-                popupTimeout = null;
-            }, 150);
-        }
-
-        // Posodobi stanje, ko miška zapusti označevalec
-        map.on('mouseleave', 'unclustered-point', () => {
-            map.getCanvas().style.cursor = '';
-            isMouseOverMarker = false;
-            schedulePopupClose();
+                // Omogući skrolovanje kada nema popup-a
+                enablePageScroll();
+            }, 200);
         });
 
         // Hover efekt za grozde
@@ -459,10 +542,12 @@ async function loadProjectMarkers() {
                 layers: ['unclustered-point', 'clusters']
             });
             
-            // Če nismo kliknili na marker ili grozd, zapri popup
+            // Če nismo kliknuli na marker ili grozd, zapri popup
             if (features.length === 0 && currentPopup) {
                 currentPopup.remove();
                 currentPopup = null;
+                // Omogući skrolovanje kada zatvorimo popup
+                enablePageScroll();
             }
         });
 
@@ -481,6 +566,7 @@ async function loadProjectMarkers() {
         console.error('Napaka pri nalaganju označevalcev:', error);
     }
 }
+
 
 // Funkcija za geokodiranje z uporabo Mapbox Geocoding API
 async function geocodeAddress(address, project) {
@@ -514,7 +600,7 @@ function getProjectImage(project) {
     return 'img/campaing-3.jpg';
 }
 
-// Nastavitev preklapljanja pogleda - enako kot prej
+// Nastavitev preklapljanja pogleda
 function setupMapToggle() {
     const viewToggleBtns = document.querySelectorAll('.view-toggle-btn');
     const projectsContainer = document.getElementById('projectsContainer');
@@ -543,6 +629,9 @@ function setupMapToggle() {
                     }
                 }
             } else {
+                // Kada se prebacujemo sa mape, omogući skrolovanje
+                enablePageScroll();
+                
                 if (projectsContainer) projectsContainer.style.display = 'flex';
                 if (pagination) pagination.style.display = 'block';
                 
@@ -552,6 +641,46 @@ function setupMapToggle() {
             }
         });
     });
+}
+
+// ISPRAVLJENI custom CSS stilovi za kompaktne popup-e
+function addCustomPopupStyles() {
+    if (!document.querySelector('#custom-popup-styles')) {
+        const style = document.createElement('style');
+        style.id = 'custom-popup-styles';
+        style.textContent = `
+            .mapboxgl-popup {
+                max-width: none !important;
+            }
+            
+            .mapboxgl-popup-content {
+                padding: 0 !important;
+                border-radius: 12px !important;
+                box-shadow: 0 6px 20px rgba(0,0,0,0.15) !important;
+                border: none !important;
+            }
+            
+            .mapboxgl-popup-tip {
+                border-top-color: white !important;
+                border-bottom-color: white !important;
+            }
+            
+            .custom-compact-popup .mapboxgl-popup-content {
+                overflow: hidden;
+                max-width: 280px;
+            }
+            
+            .compact-popup {
+                transform: scale(1);
+                transition: transform 0.2s ease;
+            }
+            
+            .compact-popup:hover {
+                transform: scale(1.02);
+            }
+        `;
+        document.head.appendChild(style);
+    }
 }
 
 // Alternativno lahko neposredno vključite Mapbox v HTML
@@ -567,6 +696,7 @@ function addMapboxToHead() {
         const script = document.createElement('script');
         script.src = 'https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js';
         script.onload = () => {
+            addCustomPopupStyles(); // Dodaj custom stilove
             createMapContainer();
             setupMapToggle();
         };
