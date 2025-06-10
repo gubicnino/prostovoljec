@@ -192,19 +192,19 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>Ana Novak</td>
-                                        <td>Zbiranje igrač</td>
-                                        <td>12. 5. 2024</td>
-                                        <td>
+                                        <td data-label="Prostovoljec">Ana Novak</td>
+                                        <td data-label="Projekt">Zbiranje igrač</td>
+                                        <td data-label="Datum prijave">12. 5. 2024</td>
+                                        <td data-label="Akcija">
                                             <button class="btn btn-success btn-sm me-2">Sprejmi</button>
                                             <button class="btn btn-danger btn-sm">Zavrni</button>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Marko Kovač</td>
-                                        <td>Pomoč starejšim</td>
-                                        <td>10. 5. 2024</td>
-                                        <td>
+                                        <td data-label="Prostovoljec">Marko Kovač</td>
+                                        <td data-label="Projekt">Pomoč starejšim</td>
+                                        <td data-label="Datum prijave">10. 5. 2024</td>
+                                        <td data-label="Akcija">
                                             <button class="btn btn-success btn-sm me-2">Sprejmi</button>
                                             <button class="btn btn-danger btn-sm">Zavrni</button>
                                         </td>
@@ -266,14 +266,16 @@
                                 <label for="naslov" class="form-label">Naslov</label>
                                 <input type="text" class="form-control" id="naslov" disabled>
                             </div>
-                            <div class="col-12 d-flex align-items-center gap-3">
-                                <div class="d-flex gap-2  align-items-center">
-                                    <span class="fw-bold">Opravljene ure:</span>
-                                    <div class id="opravljeneUre"></div>
-                                </div>
-                                <div class="d-flex gap-2  align-items-center">
-                                    <span class="fw-bold">Značka:</span>
-                                    <div id="znacka"></div>
+                            <div class="col-12">
+                                <div class="d-flex flex-column flex-md-row gap-3">
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <span class="fw-bold">Opravljene ure:</span>
+                                        <div class id="opravljeneUre"></div>
+                                    </div>
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <span class="fw-bold">Značka:</span>
+                                        <div id="znacka"></div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-12 d-flex justify-content-start gap-3 mb-3">

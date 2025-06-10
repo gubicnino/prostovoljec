@@ -128,16 +128,213 @@ footer {
 }
 
 
-/* Hero section */
-.hero-section {
-    margin-top: -100px;
-    padding: 0px 0 0 0;
+/* Hero section - izboljšana responsive verzija */
+.hero-section, .hero-podstran {
+    padding: 180px 0 120px;
     position: relative;
     overflow: hidden;
-    height: 100vh;
+    min-height: 60vh;
     display: flex;
-    justify-content: center;
     align-items: center;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+}
+
+.hero-podstran {
+    min-height: 45vh;
+}
+
+/* Hero content container za boljši responsive */
+.hero-content {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    text-align: center;
+    z-index: 2;
+    position: relative;
+}
+
+/* Hero naslov z fluid typography */
+.hero-title {
+    font-size: clamp(2rem, 5vw, 4rem);
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+.hero-title {
+    color: var(--bs-white);
+    font-size: clamp(1.5rem, 4vw, 4rem);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    line-height: 1.2;
+    max-width: 100%;
+}
+
+.hero-subtitle {
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    line-height: 1.4;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+/* Large tablets/Small desktops */
+@media (max-width: 1200px) {
+    .hero-section, .hero-podstran {
+        padding: 160px 0 100px;
+    }
+    
+    .hero-content {
+        padding: 0 30px;
+    }
+}
+
+/* Tablets */
+@media (max-width: 991px) {
+    .hero-section, .hero-podstran {
+        padding: 140px 0 80px;
+        background-attachment: scroll; /* Bolje za mobile performance */
+    }
+
+    .hero-section {
+        min-height: 55vh;
+    }
+
+    .hero-podstran {
+        min-height: 40vh;
+    }
+    
+    .hero-content {
+        padding: 0 25px;
+    }
+    section {
+    padding: 60px 0; 
+}
+}
+
+/* Large mobile */
+@media (max-width: 768px) {
+    .hero-section, .hero-podstran {
+        padding: 130px 0 70px;
+    }
+
+    .hero-section {
+        min-height: 50vh;
+    }
+
+    .hero-podstran {
+        min-height: 38vh;
+    }
+    
+    .hero-content {
+        padding: 0 20px;
+    }
+
+    .search-input-container {
+        display: flex;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .search-input-container .input-group {
+        display: flex;
+        width: 100%;
+        gap: 0;
+    }
+
+    .search-input-container .form-control {
+        width: 75% !important;
+        flex: 0 0 75%;
+    }
+
+    .search-input-container .btn {
+        width: 25% !important;
+        flex: 0 0 25%;
+        margin-left: 0;
+    }
+
+    /* Search container */
+    .search-wrapper {
+        margin-bottom: 1rem;
+        width: 100%;
+    }
+
+    /* Map toggle and filter buttons container */
+    .d-flex.align-items-stretch.gap-3.flex-column.flex-md-row {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 10px !important;
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    /* View toggle container */
+    .view-toggle-container {
+        flex: 1;
+        width: 50%;
+        margin-bottom: 0;
+    }
+
+    /* Filter button */
+    .btn-outline-light {
+        flex: 1;
+        width: 50%;
+    }
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+    .hero-section, .hero-podstran {
+        padding: 120px 0 60px;
+    }
+
+    .hero-section {
+        min-height: 45vh;
+    }
+
+    .hero-podstran {
+        min-height: 35vh;
+    }
+    
+    .hero-content {
+        padding: 0 15px;
+    }
+    section {
+    padding: 40px 0; 
+}
+}
+
+/* Extra small mobile */
+@media (max-width: 400px) {
+    .hero-section, .hero-podstran {
+        padding: 100px 0 50px;
+        min-height: 40vh;
+    }
+
+    .hero-podstran {
+        min-height: 30vh;
+    }
+    
+    .hero-content {
+        padding: 0 10px;
+    }
+    section {
+    padding: 20px 0; 
+}
+}
+
+/* Landscape mobile fix */
+@media (max-height: 500px) and (orientation: landscape) {
+    .hero-section, .hero-podstran {
+        min-height: 80vh;
+        padding: 80px 0 40px;
+    }
 }
 
 .hero-title {
@@ -734,9 +931,6 @@ nav {
     color: var(--bs-white);
 }
 
-
-
-
 /* header (black tekst on white pages, white tekst on dark pages */
 header {
     position: absolute;
@@ -814,6 +1008,7 @@ header .navbar {
     z-index: 2000;
     justify-content: center;
     align-items: center;
+    padding: 15px;
 }
 
 .login-modal.active {
@@ -828,6 +1023,9 @@ header .navbar {
     border-radius: 5px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     position: relative;
+    margin: auto;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .login-modal-close {
@@ -1149,4 +1347,327 @@ header .navbar {
     background-color: #a62828;
     box-shadow: 0 2px 8px rgba(33, 33, 33, 0.18);
     color: var(--bs-white);
+}
+
+/* Navigation */
+@media (max-width: 991px) {
+    .navbar-collapse {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        right: 0;
+        width: 100vw;
+        transform: translateX(-50%);
+        margin: 0;
+        padding: 1rem;
+        background-color: var(--bs-dark);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .navbar-collapse.collapsing {
+        transition: none !important;
+    }
+
+    .white-page .navbar-collapse {
+        background-color: var(--bs-dark) !important;
+    }
+
+    .white-page .nav-link {
+        color: var(--bs-white) !important;
+    }
+
+    .white-page .nav-item a svg,
+    .white-page .nav-item a i {
+        color: var(--bs-white) !important;
+    }
+
+    .nav-item:not(#notification-li):hover::after,
+    .nav-item:not(#notification-li).active::after {
+        width: 100% !important;
+    }
+
+    .nav-item::after {
+        bottom: -4px !important;
+    }
+
+    #notification-li {
+        position: relative;
+        display: inline-block;
+        transition: all 0.3s ease;
+        padding-bottom: 4px;
+    }
+
+    #notification-li::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 3px;
+        width: 0%;
+        background-color: var(--bs-main);
+        transition: width 0.3s ease-in-out;
+    }
+
+    #notification-li:hover::after {
+        width: 100%;
+    }
+
+    #notification-li:hover .nav-link,
+    #notification-li:hover i {
+        color: var(--bs-main) !important;
+    }
+
+    .nav-item#prijavaNav {
+        min-width: auto;
+        display: block;
+        justify-content: flex-start;
+    }
+
+    .nav-item#prijavaNav .nav-link {
+        display: flex;
+        justify-content: flex-start;
+        min-width: auto;
+        padding-left: 0;
+    }
+
+    .nav-item#prijavaNav::after {
+        left: 0;
+        transform: none;
+    }
+
+    .nav-item#prijavaNav:hover::after,
+    .nav-item#prijavaNav.active::after {
+        width: 100%;
+    }
+
+    .nav-item:has(a[href="našeZvezde.html"])::after {
+        left: 0 !important;
+        transform: none !important;
+    }
+
+    .nav-item:has(a[href="našeZvezde.html"]):hover::after,
+    .nav-item:has(a[href="našeZvezde.html"]).active::after {
+        width: 100%;
+    }
+
+    #notification-li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    #notification-li .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0;
+    }
+
+    #notification-li .notification-count {
+        position: static;
+        display: inline-flex;
+        margin-left: 0.25rem;
+    }
+}
+
+/* Responsive Hero */
+@media (max-width: 991px) {
+    .hero-section {
+        padding: 160px 0 80px; /* Adjusted for mobile */
+        min-height: auto;
+    }
+
+    .hero-content {
+        text-align: center;
+        padding: 0 20px;
+    }
+
+    .home-hero-title {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-description {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    .image-container {
+        margin-top: 2rem;
+        padding: 0 20px;
+    }
+
+    .hero-image {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-section {
+        padding: 140px 0 60px; /* Further adjusted for smaller screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .d-flex.flex-column.flex-md-row .btn {
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    .register-form .d-flex.flex-column.flex-md-row {
+        margin: 0 auto;
+    }
+
+    .register-form .btn {
+        padding: 12px 24px;
+        margin: 0;
+    }
+
+    /* Search container */
+    .search-wrapper {
+        margin-bottom: 1rem;
+        width: 100%;
+    }
+
+    /* Map toggle and filter buttons container */
+    .d-flex.align-items-stretch.gap-3.flex-column.flex-md-row {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 10px !important;
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    #prijavnice .table {
+        background-color: transparent;
+    }
+
+    #prijavnice .table thead {
+        display: none;
+    }
+
+    #prijavnice .table tr {
+        display: block;
+        margin-bottom: 1rem;
+        background-color: var(--bs-dark2);
+        border-radius: 12px;
+        padding: 1rem;
+    }
+
+    #prijavnice .table td {
+        display: block;
+        width: 100%;
+        text-align: left;
+        padding: 0.5rem 0;
+        color: var(--bs-white);
+    }
+
+    #prijavnice td::before {
+        content: attr(data-label);
+        display: block;
+        font-weight: 600;
+        color: var(--bs-white8);
+        margin-bottom: 0.25rem;
+    }
+
+    #prijavnice td:last-child {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    #prijavnice td:last-child::before {
+        margin-bottom: 0.5rem;
+    }
+
+    #prijavnice .btn {
+        margin: 0.25rem;
+        min-width: 100px;
+    }
+}
+
+#prijavnice h5 {
+    color: var(--bs-white);
+    margin-bottom: 1.5rem;
+}
+
+#prijavnice .table {
+    color: var(--bs-white);
+}
+
+#prijavnice .table td {
+    color: var(--bs-white8);
+}
+
+@media (max-width: 768px) {
+    #prijavnice td::before {
+        color: var(--bs-white);
+        font-weight: 600;
+    }
+
+    #prijavnice td {
+        color: var(--bs-white8);
+    }
+}
+
+.search-controls-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.search-wrapper {
+    flex: 2; /* Takes up more space than the buttons */
+}
+
+.controls-wrapper {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+}
+
+.view-toggle-container,
+.btn-outline-light {
+    flex: 1;
+}
+
+@media (max-width: 768px) {
+    .search-controls-container {
+        flex-direction: column;
+    }
+
+    .search-wrapper,
+    .controls-wrapper {
+        width: 100%;
+    }
+    
+    /* Search container */
+    .search-wrapper {
+        margin-bottom: 1rem;
+        width: 100%;
+    }
+
+    /* Map toggle and filter buttons container */
+    .d-flex.align-items-stretch.gap-3.flex-column.flex-md-row {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 10px !important;
+        width: 100%;
+        margin-top: 1rem;
+    }
+}
+
+/* Header exceptions */
+.register header {
+    position: relative;
+    background-color: var(--bs-dark) !important;
+}
+
+.register {
+    padding-top: 100px;
 }

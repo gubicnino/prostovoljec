@@ -31,4 +31,20 @@ $(document).ready(function() {
         });
     });
     $("#footer").load("footer.html");
+    
+    // Add event listener for navbar toggler
+    document.addEventListener('DOMContentLoaded', () => {
+        const navbarToggler = document.querySelector('.navbar-toggler');
+        const navbarCollapse = document.querySelector('.navbar-collapse');
+        
+        if (navbarToggler && navbarCollapse) {
+            navbarCollapse.style.transition = 'none';
+            navbarToggler.addEventListener('click', () => {
+                requestAnimationFrame(() => {
+                    navbarCollapse.classList.toggle('show');
+                    navbarToggler.classList.toggle('collapsed');
+                });
+            });
+        }
+    });
 });
