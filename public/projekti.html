@@ -28,24 +28,26 @@
             <section class="hero-podstran"
                 style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url(img/HeroProjekti.jpg) center/cover no-repeat;">
                 <div class="position-absolute rounded-circle bg-warning"
-                    style="width: 15px; height: 15px; top: 20%; left: 10%;"></div>
+                    style="width: 15px; height: 15px; top: 20%; left: 10%; z-index: 3;"></div>
                 <div class="position-absolute rounded-circle bg-danger"
-                    style="width: 15px; height: 15px; bottom: 20%; right: 15%;"></div>
-                <div class="container py-5 mt-4">
-                    <div class="row justify-content-center text-center">
-                        <div class="col-lg-8">
-                            <h1 class="hero-title fw-bold mb-3">Projekti</h1>
-                            <nav aria-label="breadcrumb">
-                                <ol class="breadcrumb justify-content-center mb-0">
-                                    <li class="breadcrumb-item">
-                                        <a href="index.html"
-                                            class="text-white text-decoration-none hover-link">ManusMano</a>
-                                    </li>
-                                    <li class="breadcrumb-item">
-                                        <span class="redText">Projekti</span>
-                                    </li>
-                                </ol>
-                            </nav>
+                    style="width: 15px; height: 15px; bottom: 20%; right: 15%; z-index: 3;"></div>
+                <div class="hero-content">
+                    <div class="container">
+                        <div class="row justify-content-center text-center">
+                            <div class="col-lg-8">
+                                <h1 class="hero-title fw-bold mb-3">Projekti</h1>
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb justify-content-center mb-0">
+                                        <li class="breadcrumb-item">
+                                            <a href="index.html"
+                                                class="text-white text-decoration-none hover-link">ManusMano</a>
+                                        </li>
+                                        <li class="breadcrumb-item">
+                                            <span class="redText">Projekti</span>
+                                        </li>
+                                    </ol>
+                                </nav>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -122,12 +124,12 @@
                     </div>
                     <div class="row">
                         <!-- Search in Filter gumbi -->
-                        <div class="d-flex justify-content-between align-items-center p-0">
+                        <div class="search-controls-container">
                             <!-- Search bar -->
-                            <div class="search-wrapper d-flex align-items-center" style="margin-left: 12px;">
-                                <div id="searchContainer" class="search-input-container">
+                            <div class="search-wrapper">
+                                <div id="searchContainer" class="search-input-container w-100">
                                     <div class="input-group">
-                                        <input type="text" class="form-control  ps-4 diagonalCorner" id="searchInput"
+                                        <input type="text" class="form-control ps-4 diagonalCorner" id="searchInput"
                                             placeholder="Iskanje...">
                                         <button class="btn btn-primary" type="button" id="searchBtn">
                                             <i class="fas fa-search"></i>
@@ -137,7 +139,7 @@
                             </div>
 
                             <!-- View Toggle in Filter gumbi -->
-                            <div class="d-flex align-items-center gap-3" style="margin-right: 12px;">
+                            <div class="controls-wrapper">
                                 <!-- ZEMLJEVID / PROJEKTI -->
                                 <div class="view-toggle-container d-flex align-items-center bg-light rounded-pill p-1">
                                     <button type="button" class="view-toggle-btn active" data-view="projects">
@@ -149,7 +151,7 @@
                                 </div>
 
                                 <!-- Filter gumb -->
-                                <button class="btn btn-outline-light d-flex align-items-center" type="button"
+                                <button class="btn btn-outline-light d-flex align-items-center justify-content-center" type="button"
                                     data-bs-toggle="offcanvas" data-bs-target="#filterSidebar">
                                     <i class="fas fa-filter me-2"></i>
                                     Filtriraj

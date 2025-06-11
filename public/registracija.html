@@ -19,9 +19,9 @@
 </head>
 
 <body>
-    <header id="header" class="white-page"></header>
+    <header id="header" class="white-page position-relative"></header>
     
-    <section class="register" style="min-height: 800px;">
+    <section class="register pt-3 mt-3" style="min-height: 800px;">
         <div class="container">
             <div class="prijavaRegistracijaWrapper">
                 <h2 class="mb-4">Registracija</h2>
@@ -81,8 +81,10 @@
                             <input type="password" id="password" name="password" class="form-control" placeholder="Geslo" required>
                             <div class="invalid-feedback">Prosimo, vnesite geslo.</div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Registriraj</button>
-                        <button type="reset" class="btn mx-3">Ponastavi</button>
+                        <div class="d-flex flex-column flex-md-row gap-3">
+                            <button type="submit" class="btn btn-primary w-100">Registriraj</button>
+                            <button type="reset" class="btn w-100">Ponastavi</button>
+                        </div>
                     </form>
                     <p class="text-start mt-3">
                         Že imate račun? <a href="#" id="prijava" class="text-decoration-none link-danger">Prijavite se</a>
@@ -143,8 +145,10 @@
                             <input type="password" id="password" name="password" class="form-control" placeholder="Geslo" required>
                             <div class="invalid-feedback">Prosimo, vnesite geslo.</div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Registriraj</button>
-                        <button type="reset" class="btn mx-3">Ponastavi</button>
+                        <div class="d-flex flex-column flex-md-row gap-3">
+                            <button type="submit" class="btn btn-primary w-100">Registriraj</button>
+                            <button type="reset" class="btn w-100">Ponastavi</button>
+                        </div>
                     </form>
                     <p class="text-start mt-3">
                         Že imate račun? <a href="#" id="prijava" class="text-decoration-none link-danger">Prijavite se</a>
