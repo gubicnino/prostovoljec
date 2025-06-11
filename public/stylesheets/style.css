@@ -128,12 +128,40 @@ footer {
 }
 
 
-/* Hero section - izboljšana responsive verzija */
-.hero-section, .hero-podstran {
+.hero-section {
+    margin-top: -100px;
+    padding: 0px 0 0 0;
+    position: relative;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero-title {
+    color: var(--bs-white);
+    font-size: 4rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+.home-hero-title {
+    color: var(--bs-dark);
+    font-size: 4rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.hero-description {
+    margin-bottom: 2rem;
+    font-size: 1.3rem;
+}
+
+.hero-podstran { 
     padding: 180px 0 120px;
     position: relative;
     overflow: hidden;
-    min-height: 60vh;
+    min-height: 45vh;
     display: flex;
     align-items: center;
     background-position: center;
@@ -142,44 +170,8 @@ footer {
     background-attachment: scroll;
 }
 
-.hero-podstran {
-    min-height: 45vh;
-}
-
-/* Hero content container za boljši responsive */
-.hero-content {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-    text-align: center;
-    z-index: 2;
-    position: relative;
-}
-
-/* Hero naslov z fluid typography */
-.hero-title {
-    font-size: clamp(2rem, 5vw, 4rem);
-    line-height: 1.2;
-    margin-bottom: 1rem;
-    font-weight: bold;
-}
-
-.hero-title {
-    color: var(--bs-white);
-    font-size: clamp(1.5rem, 4vw, 4rem);
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    hyphens: auto;
-    line-height: 1.2;
-    max-width: 100%;
-}
 
 .hero-subtitle {
-    font-size: clamp(1rem, 2.5vw, 1.5rem);
-    line-height: 1.4;
     margin-bottom: 2rem;
     opacity: 0.9;
 }
@@ -1358,7 +1350,9 @@ header .navbar {
     color: var(--bs-white);
 }
 
-
+.hero-content {
+    width: 100%;
+}
 
 /* Navigation */
 @media (max-width: 991px) {
@@ -1394,7 +1388,6 @@ header .navbar {
 
     .nav-item:not(#notification-li):hover::after,
     .nav-item:not(#notification-li).active::after {
-        width: 100% !important;
     }
 
     .nav-item::after {
@@ -1454,7 +1447,7 @@ header .navbar {
     .nav-item:has(a[href="našeZvezde.html"])::after {
         left: 0 !important;
         transform: none !important;
-    }
+    } 
 
     .nav-item:has(a[href="našeZvezde.html"]):hover::after,
     .nav-item:has(a[href="našeZvezde.html"]).active::after {
