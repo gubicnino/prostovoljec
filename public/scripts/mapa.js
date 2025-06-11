@@ -4,14 +4,40 @@ let hoverTimeout = null;
 // Vaš Mapbox access token (zamenjajte z pravim)
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoicGV0YXIxMzA2IiwiYSI6ImNtYmphZTI5czBkNHQyaXBqZ2U3cmVhbzUifQ.uXoTGXst52A40QIKgbsmfg';
 
-// Funkcija za onemogućavanje skrolovanja stranice
+let scrollDisabled = false;
+
+// Funkcija za onemogočavanje skrolovanja stranice
 function disablePageScroll() {
-    document.body.style.overflow = 'hidden';
+    if (!scrollDisabled) {
+        scrollDisabled = true;
+        // Prepreči scroll dogodke
+        document.addEventListener('wheel', preventDefault, { passive: false });
+        document.addEventListener('touchmove', preventDefault, { passive: false });
+        document.addEventListener('keydown', preventDefaultForScrollKeys, { passive: false });
+    }
 }
 
-// Funkcija za omogućavanje skrolovanja stranice
+// Funkcija za omogočavanje skrolovanja stranice
 function enablePageScroll() {
-    document.body.style.overflow = 'auto';
+    if (scrollDisabled) {
+        scrollDisabled = false;
+        // Odstrani preventivne event listenere
+        document.removeEventListener('wheel', preventDefault);
+        document.removeEventListener('touchmove', preventDefault);
+        document.removeEventListener('keydown', preventDefaultForScrollKeys);
+    }
+}
+
+// Helper funkcije
+function preventDefault(e) {
+    e.preventDefault();
+}
+
+function preventDefaultForScrollKeys(e) {
+    const scrollKeys = [32, 33, 34, 35, 36, 37, 38, 39, 40]; // space, page up/down, home, end, arrow keys
+    if (scrollKeys.includes(e.keyCode)) {
+        preventDefault(e);
+    }
 }
 
 function createMapContainer() {
@@ -56,10 +82,6 @@ function createMapContainer() {
         
         // Dodaj event listenere za onemogućavanje skrolovanja kada je miš na mapi
         const mapElement = document.getElementById('mapboxMap');
-        if (mapElement) {
-            mapElement.addEventListener('mouseenter', disablePageScroll);
-            mapElement.addEventListener('mouseleave', enablePageScroll);
-        }
         
         // Poskus inicializacije mape
         if (typeof mapboxgl !== 'undefined') {
@@ -176,83 +198,81 @@ function getDifficultyBadge(difficulty) {
 }
 
 // Funkcija za ustvarjanje kompaktnega popup-a
+// Funkcija za ustvarjanje popup-a, ki je enak projektni kartici
 function createProjectPopupContent(project) {
     const projectImage = getProjectImage(project);
     const formattedDateIzvajanja = formatDate(project.datumIzvajanja);
     const formattedDateRok = formatDate(project.datumRokaPrijave);
     
     return `
-        <div class="campaign-card compact-popup" style="width: 280px; border-radius: 12px; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.15); background: white; padding-bottom: 15px">
-            <!-- Kompaktna slika - smanjena visina -->
+        <div class="campaign-card-mapa diagonalCorner h-100 d-flex flex-column position-relative">
+            <!-- Slika -->
             <div class="campaign-image position-relative">
-                <img src="${projectImage}" alt="${project.naziv}" class="w-100" 
+                <img src="${projectImage}" alt="${project.naziv}" class="diagonalCorner project-image w-100" 
                      style="height: 200px; object-fit: cover;"
                      onerror="this.src='img/campaing-3.jpg';">
-                <!-- Ure u gornjem desnom kotu -->
-                <div class="position-absolute rounded-pill bg-danger text-white shadow-sm d-flex align-items-center py-1 px-2"
-                     style="top: 8px; right: 8px; z-index: 10;">
-                    <span class="fw-bold" style="font-size: 0.8rem;">${project.trajanje || '6'}</span>
-                    <span style="font-size: 0.7rem;" class="ms-1">ur</span>
-                </div>
-                <!-- Težavnost u spodnjem levom kotu -->
-                <div class="position-absolute" style="bottom: 8px; left: 8px;">
-                    <span class="badge" style="background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.7rem;">
-                        <i class="fas fa-person-hiking me-1"></i>
-                        ${project.tezavnost || 'Ni podatka'}
-                    </span>
+                <span class="badge project-difficulty position-absolute top-0 end-0 m-3 py-2 px-3 d-flex align-items-center ${getTezavnostClass(project.tezavnost)}">
+                    <i class="fas fa-person-hiking me-1" title="Težavnost projekta"></i>
+                    <span>${project.tezavnost || 'Ni podatka'}</span>
+                </span>
+                <!-- Ure pridobljene za vsakega posameznika za delo -->
+                <div class="position-absolute rounded-pill bg-danger text-white shadow-sm d-flex align-items-center py-1 px-3"
+                     style="bottom: 15px; right: 20px; z-index: 10;">
+                    <span class="project-duration-hours fs-1 fw-bold lh-1">${project.trajanje || '6'}</span>
+                    <span class="small fw-medium ms-1">ur</span>
                 </div>
             </div>
             
-            <!-- Smanjeni padding i kompaktniji sadržaj -->
-            <div style="padding: 15px 15px 0 15px;">
-                <!-- Naslov -->
-                <h4 class="fw-bold mb-2" style="font-size: 0.9rem; line-height: 1.2; color: #333; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                    ${project.naziv}
-                </h4>
-                
-                <!-- Organizacija -->
-                <p class="text-muted mb-2" style="font-size: 0.75rem; margin-bottom: 8px !important;">
-                    <i class="fas fa-building me-1" style="color: #dc3545;"></i> 
-                    ${project.drustvo_naziv}
-                </p>
-                
-                <!-- Lokacija -->
-                <div class="d-flex align-items-center mb-2" style="font-size: 0.75rem; margin-bottom: 8px !important;">
-                    <i class="fas fa-location-dot text-danger me-1"></i>
-                    <span>${project.Lokacija}</span>
+            <!-- Header -->
+            <div class="p-3 flex-column flex-grow-1 d-flex justify-content-between gap-1">
+                <div class="">
+                    <h3 class="campaign-title project-title fs-4 mb-1 overflow-hidden"
+                        style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.3;">
+                        ${project.naziv}
+                    </h3>
+                    <p class="text-muted project-organization small">
+                        <i class="fas fa-building me-1"></i> 
+                        <span>${project.drustvo_naziv}</span>
+                    </p>
                 </div>
-                
-                <!-- Datumi - kompaktno -->
-                <div style="font-size: 0.7rem; margin-bottom: 8px;">
-                    <div class="d-flex align-items-center mb-1">
-                        <i class="fas fa-calendar-days text-primary me-1"></i>
-                        <span><strong>Izvaja:</strong> ${formattedDateIzvajanja}</span>
+                <div class="campaignGreyLineH"></div>
+                <div class="d-flex flex-column">
+                    <!-- Lokacija -->
+                    <div class="d-flex small">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-location-dot text-danger me-2"></i>
+                            <span class="project-location">${project.Lokacija}</span>
+                        </div>
                     </div>
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-calendar-xmark text-info me-1"></i>
-                        <span><strong>Prijave do:</strong> ${formattedDateRok}</span>
+                    <!-- Datumi -->
+                    <div class="d-flex flex-column small">
+                        <div class="d-flex align-items-center mb-1">
+                            <i class="fas fa-calendar-days text-primary me-2"></i>
+                            <strong>Izvaja se:</strong> <span class="project-date ms-1">${formattedDateIzvajanja}</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-calendar-xmark text-info me-2"></i>
+                            <strong>Prijave do:</strong> <span class="project-deadline ms-1">${formattedDateRok}</span>
+                        </div>
                     </div>
                 </div>
-                
-                <!-- Kratek opis - još kompaktniji -->
-                <p class="text-dark mb-2" style="font-size: 0.8rem; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 10px !important;">
-                    ${project.opis || 'Opis projekta ni na voljo'}
-                </p>
-                
-                <!-- Gumb -->
-                <a href="project-detail.html?id=${project.idProjekt}" 
-                   class="btn w-100 d-flex align-items-center justify-content-center gap-2"
-                   style="background: linear-gradient(135deg, #dc3545, #c82333); color: white; border: none; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.8rem; padding: 8px 12px; transition: all 0.3s ease;"
-                   onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(220,53,69,0.4)';"
-                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
-                    <span>Više informacija</span>
-                    <i class="fas fa-arrow-right"></i>
-                </a>
             </div>
+            <button class="btn donate-btn" data-project-id="${project.idProjekt}" title="Podrobnosti projekta"
+                    onclick="window.location.href='project-detail.html?id=${project.idProjekt}'">
+                <i class="fas fa-arrow-right"></i>
+            </button>
         </div>
     `;
 }
 
+function getTezavnostClass(tezavnost) {
+    switch (tezavnost?.toLowerCase()) {
+        case 'nizka': return 'bg-success';
+        case 'srednja': return 'bg-warning';
+        case 'visoka': return 'bg-danger';
+        default: return 'bg-secondary';
+    }
+}
 // ISPRAVLJENA funkcija za pametan positioning popup-a tako da ostane u granicama mape
 function getSmartPopupOffset(markerCoordinates) {
     const mapCanvas = map.getCanvas();
@@ -263,7 +283,7 @@ function getSmartPopupOffset(markerCoordinates) {
     const popupWidth = 280;
     const popupHeight = 200;
     const padding = 20;
-    const pinDistance = 5; // Bliza pin-u - smanjeno sa 30
+    const pinDistance = -100; // Bliza pin-u - smanjeno sa 30
     
     // Dostupan prostor levo i desno
     const spaceLeft = markerPoint.x;
@@ -643,7 +663,7 @@ function setupMapToggle() {
     });
 }
 
-// ISPRAVLJENI custom CSS stilovi za kompaktne popup-e
+// POSODOBLJENI custom CSS stilovi za popup-e, ki so enaki karticam
 function addCustomPopupStyles() {
     if (!document.querySelector('#custom-popup-styles')) {
         const style = document.createElement('style');
@@ -651,32 +671,20 @@ function addCustomPopupStyles() {
         style.textContent = `
             .mapboxgl-popup {
                 max-width: none !important;
+                border-radius: 0 30px 0 30px !important; ;
             }
             
             .mapboxgl-popup-content {
                 padding: 0 !important;
-                border-radius: 12px !important;
-                box-shadow: 0 6px 20px rgba(0,0,0,0.15) !important;
-                border: none !important;
-            }
-            
-            .mapboxgl-popup-tip {
-                border-top-color: white !important;
-                border-bottom-color: white !important;
-            }
-            
-            .custom-compact-popup .mapboxgl-popup-content {
+                box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
                 overflow: hidden;
-                max-width: 280px;
             }
-            
-            .compact-popup {
-                transform: scale(1);
-                transition: transform 0.2s ease;
-            }
-            
-            .compact-popup:hover {
-                transform: scale(1.02);
+
+            .custom-compact-popup .mapboxgl-popup-content {
+                border-radius: 0 30px 0 30px !important;
+                overflow: hidden;
+                max-width: 320px;
+                width: 320px;
             }
         `;
         document.head.appendChild(style);

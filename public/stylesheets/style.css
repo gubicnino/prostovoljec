@@ -387,6 +387,15 @@ nav {
     color: var(--bs-dark);
     padding-bottom: 80px;
 }
+.campaign-card-mapa {
+    background-color: var(--bs-white);
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    height: 100%;
+    position: relative;
+    color: var(--bs-dark);
+    padding-bottom: 30px;
+}
 
 .campaign-image {
     position: relative;
