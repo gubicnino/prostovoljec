@@ -84,18 +84,18 @@ router.post("/drustvoShrani", function (req, res, next) {
 });
 
 router.post("/prostovoljecShrani", function (req, res, next) {
-    const { id, ime, primek, telStevilka, datumRojstva, email, naslov, spretnost, username, password } = req.body;
+    const { id, ime, primek, telStevilka, datumRojstva, email, naslov, username, password } = req.body;
     console.log("Shranjevanje podatkov za prostovoljca z id: " + id);
 
-    if (!id || !ime || !primek || !telStevilka || !datumRojstva || !email || !naslov || !spretnost || !username || !password) {
+    if (!id || !ime || !primek || !telStevilka || !datumRojstva || !email || !naslov || !username || !password) {
         return res.status(400).json({ error: 'Manjkajoči podatki' });
     }
     const query = `
         UPDATE Prostovoljec
-        SET ime = ?, primek = ?, telStevilka = ?, datumRojstva = ?, email = ?, naslov = ?, spretnost = ?, username = ?, password = ?
+        SET ime = ?, primek = ?, telStevilka = ?, datumRojstva = ?, email = ?, naslov = ?, username = ?, password = ?
         WHERE idProstovoljec = ?
     `;
-    connection.query(query, [ime, primek, telStevilka, datumRojstva, email, naslov, spretnost, username, password, id], function (err, results) {
+    connection.query(query, [ime, primek, telStevilka, datumRojstva, email, naslov, username, password, id], function (err, results) {
         if (err) {
             console.error("Napaka pri shranjevanju podatkov za prostovoljca:", err);
             return res.status(500).json({ error: "Napaka pri shranjevanju podatkov" });

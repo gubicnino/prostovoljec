@@ -234,10 +234,8 @@ function shraniSpremembe() {
         const datumRojstva = document.getElementById('datumRojstva').value;
         const email = document.getElementById('email').value;
         const naslov = document.getElementById('naslov').value;
-        const spretnost = document.getElementById('spretnost').value;
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
-
         fetch('/api/profil/prostovoljecShrani', {
             method: 'POST',
             headers: {
@@ -251,7 +249,6 @@ function shraniSpremembe() {
                 datumRojstva,
                 email,
                 naslov,
-                spretnost,
                 username,
                 password
             })
