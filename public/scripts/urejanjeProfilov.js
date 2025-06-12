@@ -81,7 +81,7 @@ function naložiPrijavnice(drustvoId) {
                         </div>
                     </td>
                     <td>${prijava.projekt_naziv}</td>
-                    <td>${prijava.datumPrijave}</td>
+                    <td>${new Date(prijava.datumPrijave).toLocaleDateString('sl-SI')}</td>
                     <td>
                         <button class="btn btn-success btn-sm me-2" onclick="potrdiPrijavo('${prijava.prijavId}', true)">
                             <i class="fas fa-check me-1"></i> Sprejmi
