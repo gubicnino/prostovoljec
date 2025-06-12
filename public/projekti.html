@@ -124,38 +124,47 @@
                     </div>
                     <div class="row">
                         <!-- Search in Filter gumbi -->
-                        <div class="search-controls-container">
-                            <!-- Search bar -->
-                            <div class="search-wrapper">
-                                <div id="searchContainer" class="search-input-container w-100">
+                        <div class="col-12">
+                            <div class="row align-items-center g-3 g-md-2 gy-lg-3">
+                                <!-- Search bar  -->
+                                <div class="col-12 col-md-4 col-lg-3">
                                     <div class="input-group">
-                                        <input type="text" class="form-control ps-4 diagonalCorner" id="searchInput"
-                                            placeholder="Iskanje...">
+                                        <input type="text" class="form-control ps-4 diagonalCorner" id="searchInput" placeholder="Iskanje...">
                                         <button class="btn btn-primary" type="button" id="searchBtn">
                                             <i class="fas fa-search"></i>
                                         </button>
                                     </div>
                                 </div>
-                            </div>
-
-                            <!-- View Toggle in Filter gumbi -->
-                            <div class="controls-wrapper">
-                                <!-- ZEMLJEVID / PROJEKTI -->
-                                <div class="view-toggle-container d-flex align-items-center bg-light rounded-pill p-1">
-                                    <button type="button" class="view-toggle-btn active" data-view="projects">
-                                        <i class="fas fa-th-large me-2"></i>
-                                    </button>
-                                    <button type="button" class="view-toggle-btn" data-view="map">
-                                        <i class="fas fa-map-marked-alt me-2"></i>
+                                
+                                <!-- Empty space 3/12 za srednje zaslone -->
+                                <div class="col-md-3 d-none d-md-block d-lg-none"></div>
+                                
+                                <!-- Empty space 5/12 za velike zaslone -->
+                                <div class="col-lg-5 d-none d-lg-block"></div>
+                                
+                                <!-- Map toggle  -->
+                                <div class="col-6 col-md-2">
+                                    <div class="view-toggle-container d-flex align-items-center bg-light rounded-pill p-1 w-100">
+                                        <button type="button" class="view-toggle-btn active" data-view="projects">
+                                            <i class="fas fa-th-large me-2"></i>
+                                        </button>
+                                        <button type="button" class="view-toggle-btn" data-view="map">
+                                            <i class="fas fa-map-marked-alt me-2"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Gap 1/12 -->
+                                <div class="col-md-1 d-none d-md-block d-lg-none"></div>
+                                
+                                <!-- Filter button  -->
+                                <div class="col-6 col-md-2">
+                                    <button class="btn btn-outline-light d-flex align-items-center justify-content-center w-100"
+                                            type="button" data-bs-toggle="offcanvas" data-bs-target="#filterSidebar">
+                                        <i class="fas fa-filter me-2"></i>
+                                        Filtriraj
                                     </button>
                                 </div>
-
-                                <!-- Filter gumb -->
-                                <button class="btn btn-outline-light d-flex align-items-center justify-content-center" type="button"
-                                    data-bs-toggle="offcanvas" data-bs-target="#filterSidebar">
-                                    <i class="fas fa-filter me-2"></i>
-                                    Filtriraj
-                                </button>
                             </div>
                         </div>
                         <div id="niProjektov" class="text-center py-5 my-4" style="display: none;">
